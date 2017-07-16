@@ -1,0 +1,260 @@
+apply plugin: 'base'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'pmd'
+apply plugin: 'groovy'
+
+group = 'net.arksea'
+version = '1.0.0'
+
+description = """Config Server"""
+
+[compileJava, compileTestJava, compileGroovy, compileTestGroovy]*.options*.encoding = 'UTF-8'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenLocal()
+    maven { url "http://172.17.149.8:8081/nexus/content/groups/public/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile project (':service-config')
+    compile 'org.springframework:spring-core:4.2.2.RELEASE'
+    compile 'org.springframework:spring-context:4.2.2.RELEASE'
+    compile 'org.springframework:spring-context-support:4.2.2.RELEASE'
+    compile 'org.springframework:spring-webmvc:4.2.2.RELEASE'
+    compile 'org.springframework:spring-websocket:4.2.2.RELEASE'
+    compile 'org.springframework.data:spring-data-jpa:1.9.0.RELEASE'
+    compile  'org.hibernate:hibernate-entitymanager:4.3.5.Final'
+    compile  'org.hibernate:hibernate-validator:5.0.3.Final'
+    compile 'commons-codec:commons-codec:1.9'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.0'
+    compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.4.0'
+    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.8'
+    compile 'com.google.guava:guava:17.0'
+
+    compile 'org.assertj:assertj-core:1.6.1'
+    compile 'redis.clients:jedis:2.8.1'
+    compile 'org.codehaus.groovy:groovy-all:2.4.4'
+    
+    runtime 'org.aspectj:aspectjweaver:1.7.4'
+    runtime 'com.h2database:h2:1.3.176'
+    runtime 'mysql:mysql-connector-java:5.1.22'
+    runtime 'javax.validation:validation-api:1.1.0.Final'
+    runtime 'com.googlecode.log4jdbc:log4jdbc:1.2'
+    //runtime  'c3p0:c3p0:0.9.1.2'
+    runtime 'org.apache.tomcat:tomcat-dbcp:8.0.30'
+    runtime 'commons-dbcp:commons-dbcp:1.4'
+    runtime 'org.apache.commons:commons-pool2:2.2'
+
+//    testCompile 'com.felink:felink-base-test:1.0-SNAPSHOT'
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.springframework:spring-test:4.2.2.RELEASE'
+    providedCompile  'javax.servlet:javax.servlet-api:3.1.0'
+}
+
+//IDE中运行与调试的配置
+//def runMainClass = 'com.felink.base.jetty.QuickStartServer'
+
+//配置在IDE中运行及调试时的参数
+//task run(type: JavaExec, dependsOn: 'classes') {
+//    classpath = sourceSets.test.runtimeClasspath + sourceSets.main.runtimeClasspath
+//    main = runMainClass
+//    standardInput = System.in
+//    standardOutput = System.out
+//    jvmArgs = ['-Dspring.profiles.active="development,importData"']
+//}
+
+//task debug(type: JavaExec, dependsOn: 'classes') {
+//    classpath = sourceSets.test.runtimeClasspath + sourceSets.main.runtimeClasspath
+//    main = runMainClass
+//    standardInput = System.in
+//    standardOutput = System.out
+//    jvmArgs = ['-Dspring.profiles.active="development,importData"']
+//    debug = true
+//}
+
+//test.testLogging.showStandardStreams = true
+
+//拷贝部署文件到指定目录
+task publishDev <<{
+    //拷贝前先删除部署目录
+    delete('webapps/weather-api-dev/apps')
+    delete('webapps/weather-api-dev/error')
+    delete('webapps/weather-api-dev/static')
+    delete('webapps/weather-api-dev/WEB-INF')
+    delete('webapps/weather-api-dev/META-INF')
+    copy{ //拷贝本项目WEB相关文件
+        from 'src/main/webapp/'
+        into 'webapps/weather-api-dev'
+    }
+    copy{ //拷贝依赖库
+        from configurations.runtime
+        into 'webapps/weather-api-dev/WEB-INF/lib'
+    }
+    copy{ //拷贝类
+        from 'build/classes/groovy/main/'
+        into 'webapps/weather-api-dev/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/main/'
+        into 'webapps/weather-api-dev/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/test/'
+        into 'webapps/weather-api-dev/WEB-INF/classes'
+    }
+    copy{ //拷贝META-INF
+        from 'build/tmp/war/'
+        into 'webapps/weather-api-dev/META-INF/'
+    }
+}
+publishDev.dependsOn(build)
+
+//发布部署文件，并提交到部署SVN
+task publishToSvnDev(type: Exec) {
+    commandLine 'cmd', '/c', 'TortoiseProc.exe /command:commit /path:"./webapps/weather-api-dev"'
+}
+publishToSvnDev.dependsOn(publishDev)
+
+//拷贝部署文件到指定目录
+task publishBlue <<{
+    //拷贝前先删除部署目录
+    delete('webapps/weather-api-blue/apps')
+    delete('webapps/weather-api-blue/error')
+    delete('webapps/weather-api-blue/static')
+    delete('webapps/weather-api-blue/WEB-INF')
+    delete('webapps/weather-api-blue/META-INF')
+    copy{ //拷贝本项目WEB相关文件
+        from 'src/main/webapp/'
+        into 'webapps/weather-api-blue'
+    }
+    copy{ //拷贝依赖库
+        from configurations.runtime
+        into 'webapps/weather-api-blue/WEB-INF/lib'
+    }
+    copy{ //拷贝类
+        from 'build/classes/groovy/main/'
+        into 'webapps/weather-api-blue/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/main/'
+        into 'webapps/weather-api-blue/WEB-INF/classes'
+    }
+    copy{ //拷贝META-INF
+        from 'build/tmp/war/'
+        into 'webapps/weather-api-blue/META-INF/'
+    }
+}
+publishBlue.dependsOn(build)
+
+//发布部署文件，并提交到部署SVN
+task publishToSvnBlue(type: Exec) {
+    commandLine 'cmd', '/c', 'TortoiseProc.exe /command:commit /path:"./webapps/weather-api-blue"'
+}
+publishToSvnBlue.dependsOn(publishBlue)
+
+
+//拷贝部署文件到指定目录
+task publishOnline <<{
+    //拷贝前先删除部署目录
+    delete('webapps/weather-api-online/apps')
+    delete('webapps/weather-api-online/error')
+    delete('webapps/weather-api-online/static')
+    delete('webapps/weather-api-online/WEB-INF')
+    delete('webapps/weather-api-online/META-INF')
+    copy{ //拷贝本项目WEB相关文件
+        from 'src/main/webapp/'
+        into 'webapps/weather-api-online'
+    }
+    copy{ //拷贝依赖库
+        from configurations.runtime
+        into 'webapps/weather-api-online/WEB-INF/lib'
+    }
+    copy{ //拷贝类
+        from 'build/classes/groovy/main/'
+        into 'webapps/weather-api-online/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/main/'
+        into 'webapps/weather-api-online/WEB-INF/classes'
+    }
+    copy{ //拷贝META-INF
+        from 'build/tmp/war/'
+        into 'webapps/weather-api-online/META-INF/'
+    }
+}
+publishOnline.dependsOn(build)
+
+//发布部署文件，并提交到部署SVN
+task publishToSvnOnline(type: Exec) {
+    commandLine 'cmd', '/c', 'TortoiseProc.exe /command:commit /path:"./webapps/weather-api-online"'
+}
+publishToSvnOnline.dependsOn(publishOnline)
+
+//拷贝部署文件到指定目录
+task publishQA <<{
+    //拷贝前先删除部署目录
+    delete('webapps/weather-api-qa/apps')
+    delete('webapps/weather-api-qa/error')
+    delete('webapps/weather-api-qa/static')
+    delete('webapps/weather-api-qa/WEB-INF')
+    delete('webapps/weather-api-qa/META-INF')
+    copy{ //拷贝本项目WEB相关文件
+        from 'src/main/webapp/'
+        into 'webapps/weather-api-qa'
+    }
+    copy{ //拷贝依赖库
+        from configurations.runtime
+        into 'webapps/weather-api-qa/WEB-INF/lib'
+    }
+    copy{ //拷贝类
+        from 'build/classes/groovy/main/'
+        into 'webapps/weather-api-qa/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/main/'
+        into 'webapps/weather-api-qa/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/test/'
+        into 'webapps/weather-api-qa/WEB-INF/classes'
+    }
+    copy{ //拷贝META-INF
+        from 'build/tmp/war/'
+        into 'webapps/weather-api-qa/META-INF/'
+    }
+}
+publishQA.dependsOn(build)
+
+//发布部署文件，并提交到部署SVN
+task publishToSvnQA(type: Exec) {
+    commandLine 'cmd', '/c', 'TortoiseProc.exe /command:commit /path:"./webapps/weather-api-qa"'
+}
+publishToSvnQA.dependsOn(publishQA)
+
+
+//pmdMain {
+//    excludes = ["com/felink/weather/api/util/CalendarUtil.java"]
+//}
+//pmd {
+//    toolVersion = '5.1.3'
+//    ruleSets = [
+//        'java-basic',
+//        'java-braces',
+//        'java-clone',
+//        //'java-codesize',
+//        'java-design',
+//        'java-empty',
+//        'java-finalizers',
+//        'java-imports',
+//        'java-migrating',
+//        //'java-optimizations',
+//        'java-sunsecure',
+//        'java-unnecessary',
+//        'java-unusedcode'
+//    ]
+//}

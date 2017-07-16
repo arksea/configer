@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="180">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} | %-5level | %msg | %c{1}.%M(%L) | %t | %X{akkaSource}%n</Pattern>
+            </PatternLayout>
+        </Console>
+        <RollingRandomAccessFile  name="file" fileName="tomcat/logs/server.log" filePattern="tomcat/logs/$${date:yyyy-MM}/server-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <charset>UTF-8</charset>
+                <Pattern>%d{HH:mm:ss.SSS} | %-5level | %msg | %c{1}.%M(%L) | %t | %X{akkaSource}%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="net.arksea.config.server" level="debug"/>
+        <Logger name="net.arksea.config.server.rest" level="debug"/>
+        <Root level="info">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </Root>
+    </Loggers>
+</Configuration>
