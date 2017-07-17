@@ -1,7 +1,6 @@
 package net.arksea.config.server.entity;
 
 import javax.persistence.*;
-import java.util.Map;
 
 /**
  *
@@ -12,7 +11,6 @@ import java.util.Map;
 public class Project extends IdEntity {
     private String name;
     private String description;
-    private Map<String, Config> configs;
 
     @Column(length = 128, nullable = false)
     public String getName() {
@@ -30,15 +28,5 @@ public class Project extends IdEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @OneToMany(mappedBy = "project")
-    @MapKey(name="name")
-    public Map<String, Config> getConfigs() {
-        return configs;
-    }
-
-    public void setConfigs(Map<String, Config> configs) {
-        this.configs = configs;
     }
 }

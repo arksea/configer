@@ -36,6 +36,6 @@ public class ConfigService {
                 return "localConfigCache";
             }
         };
-        localArticleCache = LocalCacheCreator.createLocalCache(system, cfg, serverPaths, timeout);
+        localArticleCache = LocalCacheCreator.createLocalCache(system, cfg, serverPaths, timeout, timeout);
     }
 }

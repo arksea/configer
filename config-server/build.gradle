@@ -1,7 +1,4 @@
-apply plugin: 'base'
-apply plugin: 'java'
 apply plugin: 'war'
-apply plugin: 'pmd'
 apply plugin: 'groovy'
 
 group = 'net.arksea'
@@ -22,12 +19,12 @@ repositories {
 
 dependencies {
     compile project (':service-config')
-    compile 'org.springframework:spring-core:4.2.2.RELEASE'
-    compile 'org.springframework:spring-context:4.2.2.RELEASE'
-    compile 'org.springframework:spring-context-support:4.2.2.RELEASE'
-    compile 'org.springframework:spring-webmvc:4.2.2.RELEASE'
-    compile 'org.springframework:spring-websocket:4.2.2.RELEASE'
-    compile 'org.springframework.data:spring-data-jpa:1.9.0.RELEASE'
+    compile 'org.springframework:spring-core:4.3.9.RELEASE'
+    compile 'org.springframework:spring-context:4.3.9.RELEASE'
+    compile 'org.springframework:spring-context-support:4.3.9.RELEASE'
+    compile 'org.springframework:spring-webmvc:4.3.9.RELEASE'
+    compile 'org.springframework:spring-websocket:4.3.9.RELEASE'
+    compile 'org.springframework.data:spring-data-jpa:1.11.4.RELEASE'
     compile  'org.hibernate:hibernate-entitymanager:4.3.5.Final'
     compile  'org.hibernate:hibernate-validator:5.0.3.Final'
     compile 'commons-codec:commons-codec:1.9'
@@ -45,7 +42,6 @@ dependencies {
     runtime 'mysql:mysql-connector-java:5.1.22'
     runtime 'javax.validation:validation-api:1.1.0.Final'
     runtime 'com.googlecode.log4jdbc:log4jdbc:1.2'
-    //runtime  'c3p0:c3p0:0.9.1.2'
     runtime 'org.apache.tomcat:tomcat-dbcp:8.0.30'
     runtime 'commons-dbcp:commons-dbcp:1.4'
     runtime 'org.apache.commons:commons-pool2:2.2'
@@ -235,26 +231,3 @@ task publishToSvnQA(type: Exec) {
     commandLine 'cmd', '/c', 'TortoiseProc.exe /command:commit /path:"./webapps/weather-api-qa"'
 }
 publishToSvnQA.dependsOn(publishQA)
-
-
-//pmdMain {
-//    excludes = ["com/felink/weather/api/util/CalendarUtil.java"]
-//}
-//pmd {
-//    toolVersion = '5.1.3'
-//    ruleSets = [
-//        'java-basic',
-//        'java-braces',
-//        'java-clone',
-//        //'java-codesize',
-//        'java-design',
-//        'java-empty',
-//        'java-finalizers',
-//        'java-imports',
-//        'java-migrating',
-//        //'java-optimizations',
-//        'java-sunsecure',
-//        'java-unnecessary',
-//        'java-unusedcode'
-//    ]
-//}

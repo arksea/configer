@@ -17,7 +17,7 @@ public class Config extends IdEntity {
     private ConfigDoc doc;
 
     @ManyToOne
-    @JoinColumn(name="project_id")
+    @JoinColumn(name="project_id",nullable = false)
     public Project getProject() {
         return project;
     }
@@ -36,8 +36,8 @@ public class Config extends IdEntity {
         this.name = name;
     }
 
-    @OneToOne
-    @JoinColumn(name = "doc_id", unique = true)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "doc_id", unique = true, nullable = false)
     public ConfigDoc getDoc() {
         return doc;
     }
