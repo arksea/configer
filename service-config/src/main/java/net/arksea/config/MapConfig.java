@@ -12,9 +12,6 @@ import java.util.Map;
  */
 public class MapConfig extends AbstractConfig<Map> {
     private static ObjectMapper objectMapper = new ObjectMapper();
-    public MapConfig(String key, Map defaultValue, ConfigService service) {
-        super(key, defaultValue, service);
-    }
     public MapConfig(String key, ConfigService service) throws CacheAskException {
         super(key, service);
     }

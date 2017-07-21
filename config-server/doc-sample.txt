@@ -1,4 +1,4 @@
-////////////////////////////////////
+--value--
 {
    icon: http://abc/def/ghi.jpg,
    ids: {
@@ -8,67 +8,41 @@
    count: 5
 }
 
-
-
+--metadata--
 {
-	meta: {
-	    type: object,
-        title:app,
-        desc: hello
-	},
-	data: {
+	type: object,
+    desc: hello,
+	fields: {
         icon: {
-            meta: {
-                type: file,
-                title:icon,
-                desc: 广告图标
-            },
-            data: http://abc/def/ghi.jpg
+            type: file,
+            desc: 广告图标
         },
         ids: {
-            meta: {
-                type: object,
-                title: ids
-                desc: id list
-            },
-            data: {
+            type: object,
+            desc: id list
+            fields: {
             	a: {
-                    meta: {
-                       type: string,
-                       title: a,
-                       desc: a
-                    },
-                    data: aaaa
+                   type: string,
+                   desc: a
             	},
             	b: {
-            		meta: {
-                       type: string,
-                       title: b,
-                       desc: b
-                    },
-                    data: bbbb
+                   type: string,
+                   desc: b
             	}
             }
         }
         count: {
-            meta: {
-                type: int,
-                title:count,
-                desc: 广告个数
-            },
-            data: 5
+            type: int,
+            desc: 广告个数
         }
 	}
 }
 
-///////////////////////////////
+--value--
 50
 
+--metadata--
 {
-	meta: {
-		type: int,
-		title: count,
-		desc: hello
-	},
-	data: 50
+	type: int,
+	desc: hello
 }

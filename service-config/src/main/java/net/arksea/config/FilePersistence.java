@@ -43,13 +43,15 @@ public class FilePersistence implements IConfigPersistence {
     }
 
     public void update(String key, String value) {
-        configMap.put(key, value);
-        long now = System.currentTimeMillis();
-        if (now - lastUpdateTime > MIN_SAVE_INTERVAL) {
-            synchronized (this) {
-                if (now - lastUpdateTime > MIN_SAVE_INTERVAL) {
-                    lastUpdateTime = System.currentTimeMillis();
-                    save();
+        String old = configMap.put(key, value);
+        if (old == null || old!=value && !old.equals(value)) {
+            long now = System.currentTimeMillis();
+            if (now - lastUpdateTime > MIN_SAVE_INTERVAL) {
+                synchronized (this) {
+                    if (now - lastUpdateTime > MIN_SAVE_INTERVAL) {
+                        lastUpdateTime = System.currentTimeMillis();
+                        save();
+                    }
                 }
             }
         }

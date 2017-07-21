@@ -48,6 +48,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         cfg1.setDescription("app init config at startup");
         ConfigDoc doc1 = new ConfigDoc();
         doc1.setValue("123");
+        doc1.setMetadata("456");
         cfg1.setDoc(doc1);
         configDao.save(cfg1);
 
@@ -58,6 +59,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         assertThat(cfg.getName()).isEqualTo("appBootConfig");
         assertThat(cfg.getDescription()).isEqualTo("app init config at startup");
         assertThat(cfg.getDoc().getValue()).isEqualTo("123");
+        assertThat(cfg.getDoc().getMetadata()).isEqualTo("456");
     }
     
 }
