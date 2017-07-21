@@ -23,6 +23,7 @@ dependencies {
     compile 'org.apache.logging.log4j:log4j-core:2.5'
 
     compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.0'
 
     compile 'com.typesafe.akka:akka-actor_2.11:2.4.8'
     compile 'com.typesafe.akka:akka-remote_2.11:2.4.8'

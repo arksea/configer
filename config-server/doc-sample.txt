@@ -1,0 +1,74 @@
+////////////////////////////////////
+{
+   icon: http://abc/def/ghi.jpg,
+   ids: {
+   		a: aaa,
+   		b: bbb
+   	},
+   count: 5
+}
+
+
+
+{
+	meta: {
+	    type: object,
+        title:app,
+        desc: hello
+	},
+	data: {
+        icon: {
+            meta: {
+                type: file,
+                title:icon,
+                desc: 广告图标
+            },
+            data: http://abc/def/ghi.jpg
+        },
+        ids: {
+            meta: {
+                type: object,
+                title: ids
+                desc: id list
+            },
+            data: {
+            	a: {
+                    meta: {
+                       type: string,
+                       title: a,
+                       desc: a
+                    },
+                    data: aaaa
+            	},
+            	b: {
+            		meta: {
+                       type: string,
+                       title: b,
+                       desc: b
+                    },
+                    data: bbbb
+            	}
+            }
+        }
+        count: {
+            meta: {
+                type: int,
+                title:count,
+                desc: 广告个数
+            },
+            data: 5
+        }
+	}
+}
+
+///////////////////////////////
+50
+
+{
+	meta: {
+		type: int,
+		title: count,
+		desc: hello
+	},
+	data: 50
+}
