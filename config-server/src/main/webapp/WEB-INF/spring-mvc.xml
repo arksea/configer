@@ -18,12 +18,12 @@
         <mvc:message-converters register-defaults="true">
             <!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
             <bean class="org.springframework.http.converter.StringHttpMessageConverter">
-                <constructor-arg configDoc="UTF-8" />
-                <property name="writeAcceptCharset" configDoc="false"/>
+                <constructor-arg value="UTF-8" />
+                <property name="writeAcceptCharset" value="false"/>
             </bean>
             <!-- 将Jackson2HttpMessageConverter的默认格式化输出设为true -->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-                <property name="prettyPrint" configDoc="true"/>
+                <property name="prettyPrint" value="true"/>
             </bean>
         </mvc:message-converters>
         <mvc:async-support default-timeout="10000"/>
@@ -38,9 +38,9 @@
      <!--将Controller抛出的异常转到特定View--> 
 <!--    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
          定义默认的异常处理页面，当该异常类型的注册时使用   
-        <property name="defaultErrorView" configDoc="error/500"></property>
+        <property name="defaultErrorView" value="error/500"></property>
          定义异常处理页面用来获取异常信息的变量名，默认名为exception   
-        <property name="exceptionAttribute" configDoc="exception"></property>
+        <property name="exceptionAttribute" value="exception"></property>
         <property name="exceptionMappings">  
             <props>  
                 <prop key="java.lang.Throwable">error/500</prop>

@@ -12,6 +12,7 @@ import scala.concurrent.duration.Duration;
 import java.util.List;
 
 /**
+ *
  * Created by xiaohaixing on 2017/7/12.
  */
 public class ConfigService {

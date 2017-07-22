@@ -1,6 +1,5 @@
 /.gradle
 /.idea
 /config-server/build
-/config-server/tomcat
 /service-config/build
 configer.iml

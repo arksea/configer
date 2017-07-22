@@ -13,13 +13,14 @@ http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd"
     
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-doc>
+        <param-value>
             classpath*:/application-context.xml
-        </param-doc>
+        </param-value>
     </context-param>
+
     <context-param>
         <param-name>spring.profiles.default</param-name>
-        <param-doc>production</param-doc>
+        <param-value>development</param-value>
     </context-param>
     
     <listener>
@@ -31,11 +32,11 @@ http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd"
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
         <init-param>
             <param-name>encoding</param-name>
-            <param-doc>UTF-8</param-doc>
+            <param-value>UTF-8</param-value>
         </init-param>
         <init-param>
             <param-name>forceEncoding</param-name>
-            <param-doc>true</param-doc>
+            <param-value>true</param-value>
         </init-param>
         <async-supported>true</async-supported>
     </filter>
@@ -51,7 +52,7 @@ http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd"
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-doc>/WEB-INF/spring-mvc.xml</param-doc>
+            <param-value>/WEB-INF/spring-mvc.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>

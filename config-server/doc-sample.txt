@@ -33,6 +33,7 @@
         }
         count: {
             type: int,
+            values: [1,2,3,4,5]  / {min: 1,max: 100}
             desc: 广告个数
         }
 	}

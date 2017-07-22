@@ -22,18 +22,12 @@
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingRandomAccessFile>
-        <Alarm name="alarm" level="warn" defaultAlarmSource="weather-api">
-            <AlarmServer host="10.79.186.127" port="9010" />
-            <AlarmServer host="10.79.186.48" port="9010" />
-            <ClientPool maxIdle="1" minIdle="0" maxTotal="3" testOnBorrow="true"/>
-        </Alarm>
     </Appenders>
     <Loggers>
         <Logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="fatal"/>
         <Logger name="org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver" level="fatal"/>
         <Root level="info">
             <AppenderRef ref="file"/>
-            <AppenderRef ref="alarm"/>
         </Root>
     </Loggers>
 </Configuration>
