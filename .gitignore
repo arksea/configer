@@ -3,3 +3,7 @@
 /config-server/build
 /service-config/build
 configer.iml
+*.log
+/config-server/tomcat/logs/*
+/config-server/tomcat/webapps/*.*
+/config-server/tomcat/webapps/*
