@@ -48,32 +48,13 @@ dependencies {
     providedCompile  'javax.servlet:javax.servlet-api:3.1.0'
 }
 
-//IDE中运行与调试的配置
-//def runMainClass = 'com.felink.base.jetty.QuickStartServer'
-
-//配置在IDE中运行及调试时的参数
-//task run(type: JavaExec, dependsOn: 'classes') {
-//    classpath = sourceSets.test.runtimeClasspath + sourceSets.main.runtimeClasspath
-//    main = runMainClass
-//    standardInput = System.in
-//    standardOutput = System.out
-//    jvmArgs = ['-Dspring.profiles.active="development,importData"']
-//}
-
-//task debug(type: JavaExec, dependsOn: 'classes') {
-//    classpath = sourceSets.test.runtimeClasspath + sourceSets.main.runtimeClasspath
-//    main = runMainClass
-//    standardInput = System.in
-//    standardOutput = System.out
-//    jvmArgs = ['-Dspring.profiles.active="development,importData"']
-//    debug = true
-//}
-
-//test.testLogging.showStandardStreams = true
-
 //拷贝部署文件到指定目录
 task publishDev <<{
     delete('tomcat/webapps/')
+    copy{
+        from 'src/main/angular/config-server/dist/'
+        into 'src/main/webapp/'
+    }
     copy{
         from 'build/libs/'
         into 'tomcat/webapps/'
@@ -84,7 +65,7 @@ publishDev.dependsOn(build)
 task startTomcat(type: Exec) {
     workingDir './tomcat/bin'
     commandLine 'cmd', '/c', 'startup.bat'
-    environment CATALINA_HOME: 'E:\\github\\configer\\config-server\\tomcat'
+    environment CATALINA_HOME: 'd:\\github\\configer\\config-server\\tomcat'
 }
 
 startTomcat.dependsOn(publishDev)

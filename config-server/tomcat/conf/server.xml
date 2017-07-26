@@ -35,7 +35,7 @@
 
       <Host name="localhost"  appBase="webapps"
             unpackWARs="true" autoDeploy="true">
-        <Context path="" docBase=""  reloadable="true" caseSensitive="false" debug="0"></Context>
+        <Context path="" docBase="config-server"  reloadable="true" caseSensitive="false" debug="0"></Context>
         <!--Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
                prefix="localhost_access_log" suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" /-->
