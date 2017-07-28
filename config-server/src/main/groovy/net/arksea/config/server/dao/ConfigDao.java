@@ -14,4 +14,5 @@ public interface ConfigDao extends Repository<Config,Long> {
     void save(Config cfg);
     Config getByNameAndProject(String name, Project project);
     List<Config> findByProject(Project project);
+    List<Config> findByProjectId(long id);
 }

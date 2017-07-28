@@ -7,3 +7,4 @@ configer.iml
 /config-server/tomcat/logs/*
 /config-server/tomcat/webapps/*.*
 /config-server/tomcat/webapps/*
+/config-server/src/main/webapp/*.*

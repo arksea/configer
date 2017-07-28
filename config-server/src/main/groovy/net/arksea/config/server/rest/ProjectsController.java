@@ -1,12 +1,11 @@
 package net.arksea.config.server.rest;
 
+import net.arksea.config.server.dao.ConfigDao;
 import net.arksea.config.server.dao.ProjectDao;
+import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -18,8 +17,16 @@ public class ProjectsController {
     private static final String MEDIA_TYPE = "application/json; charset=UTF-8";
     @Autowired
     ProjectDao projectDao;
+    @Autowired
+    ConfigDao configDao;
+
     @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public Iterable<Project> list() {
+    public Iterable<Project> listAllProjects() {
         return projectDao.findAll();
+    }
+
+    @RequestMapping(value="{prjId}", method = RequestMethod.GET, produces = MEDIA_TYPE)
+    public Iterable<Config> listConfigs(@PathVariable(name="prjId") long prjId) {
+        return configDao.findByProjectId(prjId);
     }
 }

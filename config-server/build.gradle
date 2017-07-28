@@ -65,7 +65,7 @@ publishDev.dependsOn(build)
 task startTomcat(type: Exec) {
     workingDir './tomcat/bin'
     commandLine 'cmd', '/c', 'startup.bat'
-    environment CATALINA_HOME: 'd:\\github\\configer\\config-server\\tomcat'
+    environment CATALINA_HOME: 'e:\\github\\configer\\config-server\\tomcat'
 }
 
 startTomcat.dependsOn(publishDev)
