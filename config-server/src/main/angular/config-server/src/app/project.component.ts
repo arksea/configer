@@ -1,8 +1,8 @@
 import { Component,OnInit } from '@angular/core';
 import { HttpClient }       from '@angular/common/http';
 import { environment }      from 'environments/environment'
-import { ConfigService }    from './config.service'
-import { Config,Project }   from './config.entity';
+import { ConfigerService }    from './configer.service'
+import { Config,Project }   from './configer.entity';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
@@ -14,7 +14,7 @@ export class ProjectComponent implements OnInit {
   project: Project = new Project();
 
   constructor(
-      private configService: ConfigService,
+      private configService: ConfigerService,
       private router: Router,
       private route: ActivatedRoute
   ) {}

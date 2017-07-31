@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectsController {
     private static final String MEDIA_TYPE = "application/json; charset=UTF-8";
     @Autowired
-    ProjectDao projectDao;
+    private ProjectDao projectDao;
     @Autowired
-    ConfigDao configDao;
+    private ConfigDao configDao;
 
     @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
     public Iterable<Project> listAllProjects() {

@@ -1,40 +1,40 @@
 --value--
 {
-   icon: http://abc/def/ghi.jpg,
-   ids: {
-   		a: aaa,
-   		b: bbb
+   "icon": "http://abc/def/ghi.jpg",
+   "ids": {
+   		"a": "aaa",
+   		"b": "bbb"
    	},
-   count: 5
+   "count": 5
 }
 
 --metadata--
 {
-	type: object,
-    desc: hello,
-	fields: {
-        icon: {
-            type: file,
-            desc: 广告图标
+	"type": "object",
+    "desc": "hello",
+	"fields": {
+        "icon": {
+            "type": "file",
+            "desc": "广告图标"
         },
-        ids: {
-            type: object,
-            desc: id list
-            fields: {
-            	a: {
-                   type: string,
-                   desc: a
+        "ids": {
+            "type": "object",
+            "desc": "id list"
+            "fields": {
+            	"a": {
+                   "type": "string",
+                   "desc": "a"
             	},
-            	b: {
-                   type: string,
-                   desc: b
+            	"b": {
+                   "type": "string",
+                   "desc": "b"
             	}
             }
         }
-        count: {
-            type: int,
-            values: [1,2,3,4,5]  / {min: 1,max: 100}
-            desc: 广告个数
+        "count": {
+            "type": "int",
+            "values": [1,2,3,4,5] | {min: 1,max: 100}
+            "desc": "广告个数"
         }
 	}
 }

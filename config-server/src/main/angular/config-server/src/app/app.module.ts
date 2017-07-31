@@ -7,7 +7,8 @@ import { HttpClientModule }     from '@angular/common/http';
 import { AppComponent }         from './app.component';
 import { ProjectListComponent } from './project-list.component'
 import { ProjectComponent }     from './project.component'
-import { ConfigService }        from './config.service'
+import { ConfigComponent }      from './config.component'
+import { ConfigerService }      from './configer.service'
 
 const appRoutes: Routes = [
   { path: '',   redirectTo: '/projects', pathMatch: 'full' },
@@ -19,7 +20,8 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     ProjectListComponent,
-    ProjectComponent
+    ProjectComponent,
+    ConfigComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +29,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     RouterModule.forRoot(appRoutes,{ enableTracing: true })
   ],
-  providers: [ConfigService],
+  providers: [ConfigerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
