@@ -50,14 +50,35 @@ dependencies {
 
 //拷贝部署文件到指定目录
 task publishDev <<{
-    delete('tomcat/webapps/')
-    copy{
-        from 'src/main/angular/config-server/dist/'
-        into 'src/main/webapp/'
+    //拷贝前先删除部署目录
+    delete('tomcat/webapps/config-server')
+    copy{ //拷贝本项目WEB相关文件
+        from 'src/main/webapp/'
+        into 'tomcat/webapps/config-server'
     }
-    copy{
-        from 'build/libs/'
-        into 'tomcat/webapps/'
+    copy{ //拷贝本项目WEB相关文件
+        from 'src/main/angular/config-server/dist'
+        into 'tomcat/webapps/config-server'
+    }
+    copy{ //拷贝依赖库
+        from configurations.runtime
+        into 'tomcat/webapps/config-server/WEB-INF/lib'
+    }
+    copy{ //拷贝类
+        from 'build/classes/groovy/main/'
+        into 'tomcat/webapps/config-server/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/main/'
+        into 'tomcat/webapps/config-server/WEB-INF/classes'
+    }
+    copy{ //拷贝资源
+        from 'build/resources/test/'
+        into 'tomcat/webapps/config-server/WEB-INF/classes'
+    }
+    copy{ //拷贝META-INF
+        from 'build/tmp/war/'
+        into 'tomcat/webapps/config-server/META-INF/'
     }
 }
 publishDev.dependsOn(build)

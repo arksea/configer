@@ -2,16 +2,15 @@
   <div class="panel-heading">
     <div class="row">
       <div class="col-md-6">
-        <h4 class="panel-title"># {{config.name}} - {{config.description}}</h4>
+        <h4 class="panel-title"># {{config.name}} - {{configDoc}}</h4>
       </div>
       <!--<div class="col-md-6 text-right"><span class="glyphicon glyphicon-chevron-down"></span></div>-->
       <div class="col-md-6" align="right">
-        <button type="button" class="btn btn-xs btn-default" [disabled]="editBtn" (click)="onEdit()">{{editBtnText}}</button>
+        <button type="button" class="btn btn-xs btn-default" (click)="onEdit()">{{editBtnText}}</button>
       </div>
     </div>
   </div>
   <div class="panel-body">
-    <textarea [readonly]="edit" name="describes" class="form-control" rows="10">{{config.doc.value}}</textarea>
+    <textarea [readonly]="edit" name="describes" class="form-control" rows="10" [(ngModel)]="config.doc.value"></textarea>
   </div>
 </div>
-

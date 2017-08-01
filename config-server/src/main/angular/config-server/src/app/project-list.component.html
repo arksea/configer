@@ -18,8 +18,7 @@
     <thead><tr><th>名称</th><th>描述</th></tr></thead>
     <tbody>
     <tr *ngFor="let prj of projects">
-      <!--<a routerLink="/crisis-center" routerLinkActive="active">Crisis Center</a>-->
-      <td><a href="/projects/{{prj.id}}">{{prj.name}}</a></td>
+      <td><a routerLink="/projects/{{prj.id}}" routerLinkActive="active">{{prj.name}}</a></td>
       <td>{{prj.description}}</td>
     </tr>
     </tbody>

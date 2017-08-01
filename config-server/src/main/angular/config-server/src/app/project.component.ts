@@ -7,7 +7,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'project',
-  templateUrl: './project.component.html',
+  templateUrl: './project.component.html'
 })
 export class ProjectComponent implements OnInit {
   configs: Config[];
