@@ -9,6 +9,7 @@ import { ConfigerService } from './configer.service';
 export class ConfigComponent implements OnInit {
   @Input()
   config: Config;
+  docLineCount: number;
 
   edit: string = "true";
   editBtnText: string = "修改";
@@ -16,8 +17,14 @@ export class ConfigComponent implements OnInit {
   constructor(
       private configService: ConfigerService
   ) {}
+
   ngOnInit(): void {
+      this.docLineCount = this.config.doc.value.split(/\n/).length
+      if (this.docLineCount > 30) {
+          this.docLineCount = 30;
+      }
   }
+
   onEdit() {
       if (this.edit=="") {
           this.edit = "true";

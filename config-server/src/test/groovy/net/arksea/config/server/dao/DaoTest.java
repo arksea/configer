@@ -48,9 +48,39 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         cfg1.setDescription("app init config at startup");
         ConfigDoc doc1 = new ConfigDoc();
         doc1.setValue("123");
-        doc1.setMetadata("456");
+        doc1.setMetadata("json");
         cfg1.setDoc(doc1);
         configDao.save(cfg1);
+
+        Config cfg2 = new Config();
+        cfg2.setProject(p);
+        cfg2.setName("config2");
+        cfg2.setDescription("main page config2");
+        ConfigDoc doc2 = new ConfigDoc();
+        doc2.setValue("123");
+        doc2.setMetadata("json");
+        cfg2.setDoc(doc2);
+        configDao.save(cfg2);
+
+        Config cfg3 = new Config();
+        cfg3.setProject(p);
+        cfg3.setName("config3");
+        cfg3.setDescription("main page config3");
+        ConfigDoc doc3 = new ConfigDoc();
+        doc3.setValue("123");
+        doc3.setMetadata("json");
+        cfg3.setDoc(doc3);
+        configDao.save(cfg3);
+
+        Config cfg4 = new Config();
+        cfg4.setProject(p);
+        cfg4.setName("config4");
+        cfg4.setDescription("main page config4");
+        ConfigDoc doc4 = new ConfigDoc();
+        doc4.setValue("123");
+        doc4.setMetadata("json");
+        cfg4.setDoc(doc4);
+        configDao.save(cfg4);
 
         Project p1 = projectDao.getByName("test-project");
         assertThat(p1.getName()).isEqualTo("test-project");
@@ -59,7 +89,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         assertThat(cfg.getName()).isEqualTo("appBootConfig");
         assertThat(cfg.getDescription()).isEqualTo("app init config at startup");
         assertThat(cfg.getDoc().getValue()).isEqualTo("123");
-        assertThat(cfg.getDoc().getMetadata()).isEqualTo("456");
+        assertThat(cfg.getDoc().getMetadata()).isEqualTo("json");
     }
     
 }

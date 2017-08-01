@@ -23,11 +23,11 @@ public class ConfigDocController {
     @RequestMapping(value="{docId}", method = RequestMethod.POST, produces = MEDIA_TYPE)
     public void saveConfigDoc(@RequestBody String configDoc,
                               @PathVariable(name="docId") long docId) {
-        logger.info("id={},doc={}",docId,configDoc);
+        logger.info("save config docId={},doc={},metadata={}",docId,configDoc);
         ConfigDoc doc = new ConfigDoc();
         doc.setId(docId);
         doc.setValue(configDoc);
-        doc.setMetadata("abc");
+        doc.setMetadata("json");
         configDocDao.save(doc);
     }
 }

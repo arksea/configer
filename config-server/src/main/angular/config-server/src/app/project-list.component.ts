@@ -2,7 +2,7 @@ import { Component,OnInit }   from '@angular/core';
 import { HttpClient }         from '@angular/common/http';
 import { RouterModule }       from '@angular/router'
 import { environment }        from 'environments/environment'
-import { ConfigerService }      from './configer.service'
+import { ConfigerService }    from './configer.service'
 import { Project }            from './configer.entity';
 
 @Component({
