@@ -25,6 +25,7 @@ public class ConfigCacheSource implements IDataSource<String,String> {
     ProjectDao projectDao;
     @Autowired
     ConfigDao configDao;
+    private static final long CACHE_DEFAULT_TIMEOUT = 300_000;
 
     @Override
     public Future<TimedData<String>> request(String key) {
@@ -33,7 +34,8 @@ public class ConfigCacheSource implements IDataSource<String,String> {
             if (strs.length == 2) {
                 Project prj = projectDao.getByName(strs[0]);
                 Config cfg = configDao.getByNameAndProject(strs[1], prj);
-                return new TimedData<>(0, cfg.getDoc().getValue());
+                long expiredTime = System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT;
+                return new TimedData<>(expiredTime, cfg.getDoc().getValue());
             } else {
                 throw new RuntimeException("Key格式错误: "+key);
             }

@@ -1,6 +1,8 @@
 package net.arksea.config;
 
+import net.arksea.acache.DataResult;
 import org.apache.commons.lang3.StringUtils;
+import scala.concurrent.Future;
 
 /**
  *
@@ -13,11 +15,12 @@ public abstract class AbstractConfig<T> {
     public AbstractConfig(String key, ConfigService service) {
         this.key = key;
         this.service = service;
-        service.get(key);
+        service.syncGet(key, 10000);
     }
 
     public T get() {
-        String value = service.get(key);
+        Future<DataResult<String,String>> future = service.get(key);
+
         if (StringUtils.isEmpty(value)) {
             throw new RuntimeException("读配置失败："+key);
         }
