@@ -8,7 +8,6 @@ String mavenArtifactId = name
 description = """配置服务客户端"""
 
 dependencies {
-    compile 'org.dom4j:dom4j:2.0.0'
     compile 'org.springframework:spring-core:4.2.2.RELEASE'
     compile 'org.springframework:spring-context:4.2.2.RELEASE'
     compile 'org.springframework:spring-context-support:4.2.2.RELEASE'

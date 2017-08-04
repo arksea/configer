@@ -9,5 +9,5 @@ import org.springframework.data.repository.CrudRepository;
  */
 
 public interface ProjectDao extends CrudRepository<Project,Long> {
-    Project getByName(String name);
+    Project getByNameAndProfile(String name,String profile);
 }

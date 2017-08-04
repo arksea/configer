@@ -20,15 +20,15 @@ dependencies {
     compile 'org.springframework:spring-context:4.3.9.RELEASE'
     compile 'org.springframework:spring-context-support:4.3.9.RELEASE'
     compile 'org.springframework:spring-webmvc:4.3.9.RELEASE'
-    compile 'org.springframework:spring-websocket:4.3.9.RELEASE'
+    //compile 'org.springframework:spring-websocket:4.3.9.RELEASE'
     compile 'org.springframework.data:spring-data-jpa:1.11.4.RELEASE'
     compile  'org.hibernate:hibernate-entitymanager:4.3.5.Final'
     compile  'org.hibernate:hibernate-validator:5.0.3.Final'
     compile 'commons-codec:commons-codec:1.9'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.0'
-    compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.6.0'
-    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.8'
-    compile 'com.google.guava:guava:17.0'
+    //compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.6.0'
+    //compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.8'
+    //compile 'com.google.guava:guava:17.0'
 
     compile 'org.assertj:assertj-core:1.6.1'
     compile 'redis.clients:jedis:2.8.1'
@@ -36,8 +36,7 @@ dependencies {
     
     runtime 'org.aspectj:aspectjweaver:1.7.4'
     runtime 'mysql:mysql-connector-java:5.1.22'
-    runtime 'javax.validation:validation-api:1.1.0.Final'
-    runtime 'com.googlecode.log4jdbc:log4jdbc:1.2'
+    //runtime 'javax.validation:validation-api:1.1.0.Final'
     runtime 'org.apache.tomcat:tomcat-dbcp:8.0.30'
     runtime 'commons-dbcp:commons-dbcp:1.4'
     runtime 'org.apache.commons:commons-pool2:2.2'
@@ -64,6 +63,7 @@ task publishDev <<{
         from configurations.runtime
         into 'tomcat/webapps/config-server/WEB-INF/lib'
     }
+    delete('tomcat/webapps/config-server/WEB-INF/lib/xml-apis-1.0.b2.jar')
     copy{ //拷贝类
         from 'build/classes/groovy/main/'
         into 'tomcat/webapps/config-server/WEB-INF/classes'

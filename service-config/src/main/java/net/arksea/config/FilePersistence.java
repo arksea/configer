@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,15 +54,22 @@ public class FilePersistence implements IConfigPersistence {
             StringBuilder value = new StringBuilder();
             for (String str : list) {
                 int n = str.indexOf("->");
-                if (n >= 0) {
+                if (n > 0) {
                     if (key != null) {
                         configMap.put(key, value.toString());
                         value.setLength(0);
                     }
                     key = str.substring(0, n).trim();
+                    String v = str.substring(n).trim();
+                    if (v.length() > 0) {
+                        value.append(v);
+                    }
                 } else {
-                    value.append(str).append('\n');
+                    value.append('\n').append(str);
                 }
+            }
+            if (key != null) {
+                configMap.put(key, value.toString());
             }
         } catch (IOException ex) {
             logger.warn("读取配置文件失败: {}", file.getPath(), ex);
@@ -71,13 +79,17 @@ public class FilePersistence implements IConfigPersistence {
     private synchronized void save() {
         try {
             StringBuilder sb = new StringBuilder();
-            for (Map.Entry<String, String> e : configMap.entrySet()) {
-                sb.append(e.getKey()).append(" ->\n").append(e.getValue());
-                if (!e.getValue().endsWith("\n")) {
+            List<String> keys = new LinkedList<String>();
+            keys.addAll(configMap.keySet());
+            java.util.Collections.sort(keys);
+            for (String key : keys) {
+                String value = configMap.get(key);
+                sb.append(key).append(" -> ").append(value);
+                if (!value.endsWith("\n")) {
                     sb.append("\n");
                 }
             }
-            Files.write(file.toPath(), sb.toString().getBytes("UTF-8"), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+            Files.write(file.toPath(), sb.toString().getBytes("UTF-8"), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         } catch (IOException ex) {
             logger.warn("保存配置文件失败: {}", file.getPath(), ex);
         }

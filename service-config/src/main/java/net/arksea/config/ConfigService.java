@@ -22,15 +22,15 @@ public class ConfigService {
     private static Logger logger = LogManager.getLogger(ConfigService.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static final long CACHE_DEFAULT_TIMEOUT = 300_000;
+    private static final long RETRY_DELAY = 30_000;
     private final ActorSystem system;
     private final int timeout;
     private final String project;
-    private CacheAsker<String, String> localArticleCache;
+    private final String profile;
+    private CacheAsker<ConfigKey, String> localArticleCache;
     private IConfigPersistence configPersistence;
     private final Map<String,TimedData<Object>> configMap = new ConcurrentHashMap<>();
-    private final String cacheKeyPre;
-    private final String storeKeyPre;
-    private final String profile;
+
 
     public ConfigService(final ActorSystem system,
                          final List<String> serverPaths,
@@ -40,10 +40,8 @@ public class ConfigService {
         this.system  = system;
         this.project = project;
         this.profile = profile;
-        this.cacheKeyPre = project+":"+profile+":";
-        this.storeKeyPre = profile+":";
         this.timeout = timeout;
-        String filePath = "./config/" + project + ".cfg";
+        String filePath = "./config/" + project + "." + profile + ".cfg";
         configPersistence = new FilePersistence(filePath);
         createLocalCache(serverPaths);
     }
@@ -52,7 +50,7 @@ public class ConfigService {
         return get(key, Map.class);
     }
 
-    public Integer getIngeter(String key) {
+    public Integer getInteger(String key) {
         return get(key, Integer.class);
     }
 
@@ -83,59 +81,58 @@ public class ConfigService {
     private <T> T get(String key, Class<T> clazz) {
         TimedData td = configMap.get(key);
         if (td == null) {
-            String cacheKey = cacheKeyPre + key;
-            String storeKey = storeKeyPre + key;
-            GetData<String,String> req = new GetData<>(cacheKey);
+            ConfigKey configKey = new ConfigKey(project, profile, key);
+            GetData<ConfigKey,String> req = new GetData<>(configKey);
             try { //配置初始值优先从配置服务缓存读取
-                DataResult<String,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
+                DataResult<ConfigKey,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
                 if (ret.data != null) {
                     T obj = objectMapper.readValue(ret.data, clazz);
                     configMap.put(key, new TimedData<>(ret.expiredTime, obj));
-                    configPersistence.update(storeKey, ret.data); //从服务读取的配置可以正确解析则更新本地的持久化数据
+                    configPersistence.update(key, ret.data); //从服务读取的配置可以正确解析则更新本地的持久化数据
                     return obj;
                 }
             } catch (Exception e) {
-                logger.warn("从服务取配置失败: {}", cacheKey, e);
+                logger.warn("从服务取配置失败: {}", configKey, e);
             }
             //从本地持久化数据读取
-            String value = configPersistence.read(storeKey);
+            String value = configPersistence.read(key);
             if (value == null) {
-                throw new RuntimeException("初始化配置失败: " + cacheKey);
+                throw new RuntimeException("初始化配置失败: " + configKey);
             } else {
                 try {
                     T obj = objectMapper.readValue(value, clazz);
                     configMap.put(key, new TimedData<>(System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT, obj));
                     return obj;
                 } catch (IOException ex) {
-                    throw new RuntimeException("配置格式错误key="+cacheKey+",value="+value, ex);
+                    throw new RuntimeException("配置格式错误key="+configKey+",value="+value, ex);
                 }
             }
         } else if (System.currentTimeMillis() > td.time) {
-            asyncUpdate(key);
+            asyncUpdate(key,td);
             return (T) td.data;
         } else {
             return (T) td.data;
         }
     }
 
-    private void asyncUpdate(String key) {
-        String cacheKey = cacheKeyPre +key;
-        String storeKey = storeKeyPre + key;
-        GetData<String,String> req = new GetData<>(cacheKey);
+    private <T> void asyncUpdate(String key,TimedData<T> old) {
+        ConfigKey configKey = new ConfigKey(project, profile, key);
+        GetData<ConfigKey,String> req = new GetData<>(configKey);
         localArticleCache.ask(req).onComplete(
-            new OnComplete<DataResult<String,String>> () {
+            new OnComplete<DataResult<ConfigKey,String>> () {
                 @Override
-                public void onComplete(Throwable failure, DataResult<String, String> success) throws Throwable {
+                public void onComplete(Throwable failure, DataResult<ConfigKey, String> success) throws Throwable {
                     if (failure == null) {
                         try {
                             Map map = objectMapper.readValue(success.data, Map.class);
-                            configMap.put(key, new TimedData<>(System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT, map));
-                            configPersistence.update(storeKey, success.data);
+                            configMap.put(key, new TimedData<>(success.expiredTime, map));
+                            configPersistence.update(key, success.data);
                         } catch (IOException ex) {
-                            logger.warn("配置格式错误key={},value={}", key, success.data, ex);
+                            logger.warn("配置格式错误key={},value={}", configKey, success.data, ex);
                         }
                     } else {
-                        logger.warn("更新配置失败: ", key , failure);
+                        configMap.put(key, new TimedData<>(old.time+RETRY_DELAY, old.data));
+                        logger.warn("更新配置失败: ", configKey , failure);
                     }
                 }
             }, system.dispatcher()
@@ -143,7 +140,7 @@ public class ConfigService {
     }
 
     private void createLocalCache(final List<String> serverPaths) {
-        ICacheConfig<String> cfg = new ICacheConfig<String>() {
+        ICacheConfig<ConfigKey> cfg = new ICacheConfig<ConfigKey>() {
             @Override
             public String getCacheName() {
                 return "localConfigCache";

@@ -5,6 +5,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import net.arksea.acache.CacheActor;
 import net.arksea.acache.ICacheConfig;
+import net.arksea.config.ConfigKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class CacheServerFactory {
 
     @Bean(name = "cacheServer")
     public ActorRef createCacheServer() {
-        ICacheConfig<String> cacheConfig = new ICacheConfig<String>() {
+        ICacheConfig<ConfigKey> cacheConfig = new ICacheConfig<ConfigKey>() {
             @Override
             public String getCacheName() {
                 return "configCache";

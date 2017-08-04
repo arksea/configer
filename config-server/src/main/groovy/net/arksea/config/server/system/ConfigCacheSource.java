@@ -4,12 +4,13 @@ import akka.actor.ActorSystem;
 import akka.dispatch.Futures;
 import net.arksea.acache.IDataSource;
 import net.arksea.acache.TimedData;
+import net.arksea.config.ConfigKey;
 import net.arksea.config.server.dao.ConfigDao;
 import net.arksea.config.server.dao.ProjectDao;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import scala.concurrent.Future;
 
@@ -18,27 +19,23 @@ import scala.concurrent.Future;
  * Created by Administrator on 2017/7/22.
  */
 @Component
-public class ConfigCacheSource implements IDataSource<String,String> {
+public class ConfigCacheSource implements IDataSource<ConfigKey,String> {
     @Autowired
     ActorSystem system;
     @Autowired
     ProjectDao projectDao;
     @Autowired
     ConfigDao configDao;
-    private static final long CACHE_DEFAULT_TIMEOUT = 300_000;
+    @Value("${config.cache.timeout}")
+    private long CACHE_DEFAULT_TIMEOUT;
 
     @Override
-    public Future<TimedData<String>> request(String key) {
+    public Future<TimedData<String>> request(ConfigKey key) {
         return Futures.future(() -> {
-            String[] strs = StringUtils.split(key,":", 2);
-            if (strs.length == 2) {
-                Project prj = projectDao.getByName(strs[0]);
-                Config cfg = configDao.getByNameAndProject(strs[1], prj);
-                long expiredTime = System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT;
-                return new TimedData<>(expiredTime, cfg.getDoc().getValue());
-            } else {
-                throw new RuntimeException("Key格式错误: "+key);
-            }
+            Project prj = projectDao.getByNameAndProfile(key.project, key.profile);
+            Config cfg = configDao.getByNameAndProject(key.config, prj);
+            long expiredTime = System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT;
+            return new TimedData<>(expiredTime, cfg.getDoc().getValue());
         },system.dispatcher());
     }
 }
