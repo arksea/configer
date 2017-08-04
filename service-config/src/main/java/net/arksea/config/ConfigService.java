@@ -20,89 +20,119 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConfigService {
     private static Logger logger = LogManager.getLogger(ConfigService.class);
-    public final ActorSystem system;
+    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final long CACHE_DEFAULT_TIMEOUT = 300_000;
+    private final ActorSystem system;
     private final int timeout;
     private final String project;
     private CacheAsker<String, String> localArticleCache;
     private IConfigPersistence configPersistence;
     private final Map<String,TimedData<Object>> configMap = new ConcurrentHashMap<>();
-    private static ObjectMapper objectMapper = new ObjectMapper();
-    private static final long CACHE_DEFAULT_TIMEOUT = 300_000;
+    private final String cacheKeyPre;
+    private final String storeKeyPre;
+    private final String profile;
 
-    public ConfigService(final ActorSystem system, final List<String> serverPaths, final String project, final int timeout) {
-        this.system = system;
+    public ConfigService(final ActorSystem system,
+                         final List<String> serverPaths,
+                         final String project,
+                         final String profile,
+                         final int timeout) {
+        this.system  = system;
         this.project = project;
+        this.profile = profile;
+        this.cacheKeyPre = project+":"+profile+":";
+        this.storeKeyPre = profile+":";
         this.timeout = timeout;
-        String filePath = "./config-persistence/" + project + ".cfg";
+        String filePath = "./config/" + project + ".cfg";
         configPersistence = new FilePersistence(filePath);
         createLocalCache(serverPaths);
     }
 
-    private GetData<String,String> makeGetRequest(String key) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(project).append(":").append(key);
-        return new GetData<>(sb.toString());
+    public Map getMap(String key) {
+        return get(key, Map.class);
     }
 
-    public Map getAsMap(String key) {
+    public Integer getIngeter(String key) {
+        return get(key, Integer.class);
+    }
+
+    public Long getLong(String key) {
+        return get(key, Long.class);
+    }
+
+    public Double getDouble(String key) {
+        return get(key, Double.class);
+    }
+
+    public Float getFloat(String key) {
+        return get(key, Float.class);
+    }
+
+    public String getString(String key) {
+        return get(key, String.class);
+    }
+
+    public Boolean getBoolean(String key) {
+        return get(key, Boolean.class);
+    }
+
+    public List getList(String key) {
+        return get(key, List.class);
+    }
+
+    private <T> T get(String key, Class<T> clazz) {
         TimedData td = configMap.get(key);
         if (td == null) {
-            String value = null;
+            String cacheKey = cacheKeyPre + key;
+            String storeKey = storeKeyPre + key;
+            GetData<String,String> req = new GetData<>(cacheKey);
             try { //配置初始值优先从配置服务缓存读取
-                DataResult<String,String> ret = Await.result(localArticleCache.ask(makeGetRequest(key)), Duration.create(timeout, "ms"));
-                if (ret.failed == null) {
-                    if (ret.data != null) {
-                        try {
-                            Map map = objectMapper.readValue(ret.data, Map.class);
-                            configMap.put(key, new TimedData<>(ret.expiredTime, map));
-                            configPersistence.update(key, ret.data); //从服务读取的配置可以正确解析则更新本地的持久化数据
-                            return map;
-                        } catch (IOException ex) {
-                            logger.warn("配置格式错误key={},value={}", key, ret.data, ex);
-                        }
-                    }
-                } else {
-                    logger.warn("从缓存取配置失败: {}", key, ret.failed);
+                DataResult<String,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
+                if (ret.data != null) {
+                    T obj = objectMapper.readValue(ret.data, clazz);
+                    configMap.put(key, new TimedData<>(ret.expiredTime, obj));
+                    configPersistence.update(storeKey, ret.data); //从服务读取的配置可以正确解析则更新本地的持久化数据
+                    return obj;
                 }
             } catch (Exception e) {
-                logger.warn("从缓存取配置失败: {}", key, e);
+                logger.warn("从服务取配置失败: {}", cacheKey, e);
             }
-            value = configPersistence.read(key); //从本地持久化数据读取
+            //从本地持久化数据读取
+            String value = configPersistence.read(storeKey);
             if (value == null) {
-                throw new RuntimeException("初始化配置失败: " + key);
+                throw new RuntimeException("初始化配置失败: " + cacheKey);
             } else {
                 try {
-                    Map map = objectMapper.readValue(value, Map.class);
-                    configMap.put(key, new TimedData<>(System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT, map));
-                    return map;
+                    T obj = objectMapper.readValue(value, clazz);
+                    configMap.put(key, new TimedData<>(System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT, obj));
+                    return obj;
                 } catch (IOException ex) {
-                    throw new RuntimeException("配置格式错误key="+key+",value="+value, ex);
+                    throw new RuntimeException("配置格式错误key="+cacheKey+",value="+value, ex);
                 }
             }
         } else if (System.currentTimeMillis() > td.time) {
             asyncUpdate(key);
-            return (Map) td.data;
+            return (T) td.data;
         } else {
-            return (Map) td.data;
+            return (T) td.data;
         }
     }
 
     private void asyncUpdate(String key) {
-        localArticleCache.ask(makeGetRequest(key)).onComplete(
+        String cacheKey = cacheKeyPre +key;
+        String storeKey = storeKeyPre + key;
+        GetData<String,String> req = new GetData<>(cacheKey);
+        localArticleCache.ask(req).onComplete(
             new OnComplete<DataResult<String,String>> () {
                 @Override
                 public void onComplete(Throwable failure, DataResult<String, String> success) throws Throwable {
                     if (failure == null) {
-                        if (success.failed == null) {
-                            try {
-                                Map map = objectMapper.readValue(success.data, Map.class);
-                                configMap.put(key, new TimedData<>(System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT, map));
-                                configPersistence.update(key, success.data);
-                            } catch (IOException ex) {
-                                logger.warn("配置格式错误key={},value={}", key, success.data, ex);
-                            }
-                        } else {
-                            logger.warn("更新配置失败: ", key , success.failed);
+                        try {
+                            Map map = objectMapper.readValue(success.data, Map.class);
+                            configMap.put(key, new TimedData<>(System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT, map));
+                            configPersistence.update(storeKey, success.data);
+                        } catch (IOException ex) {
+                            logger.warn("配置格式错误key={},value={}", key, success.data, ex);
                         }
                     } else {
                         logger.warn("更新配置失败: ", key , failure);
