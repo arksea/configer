@@ -9,7 +9,7 @@
     </Appenders>
     <Loggers>
         <Logger name="net.arksea.config" level="debug"/>
-        <Logger name="net.arksea.acache" level="trace"/>
+        <!--<Logger name="net.arksea.acache" level="trace"/>-->
         <Root level="info">
             <AppenderRef ref="console"/>
         </Root>

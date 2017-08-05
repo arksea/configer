@@ -6,26 +6,22 @@ import net.arksea.acache.*;
 import net.arksea.config.*;
 import static net.arksea.base.FutureUtils.completer;
 import java.time.*;
-ActorSystem sys
 ActorRef cacheActor
 ActorSelection cache
-
+ConfigService svc 
 try{
-    List<String> paths = Arrays.asList(
-            'akka.tcp://system@172.17.150.87:8805/user/configCacheServer'
-        );
-    sys = akka.actor.ActorSystem.create('system')
-    ConfigService svc = new ConfigService(sys, paths, 'weather-api', 'qa', 8000)
-    Thread.sleep(3000)
-    println '------------------------------------'
-    println svc.getMap('appBootConfig')
-    println svc.getInteger('config2')
-    println svc.getString('config3')
-    println svc.getFloat('config4')
-    println '------------------------------------'
+    svc = new ConfigService('weather-api', 'qa', ['172.17.150.87:8805'])
+    println '-------------------------------------------------------------------'
+    println 'appBootConfig -> ' + svc.getMap('appBootConfig')
+    println 'config2 -> ' + svc.getInteger('config2')
+    println 'config3 -> ' + svc.getString('config3')
+    println 'config4 -> ' + svc.getFloat('config4')
+    println '-------------------------------------------------------------------'
+    Thread.sleep(35000)
+    println 'appBootConfig -> ' + svc.getMap('appBootConfig')
 } catch (Exception ex) {
     print ex
 }
-Thread.sleep(3000)
-sys?.terminate()
+Thread.sleep(3500)
+svc?.system?.terminate()
 Thread.sleep(3000)

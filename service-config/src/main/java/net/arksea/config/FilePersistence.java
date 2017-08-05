@@ -60,7 +60,7 @@ public class FilePersistence implements IConfigPersistence {
                         value.setLength(0);
                     }
                     key = str.substring(0, n).trim();
-                    String v = str.substring(n).trim();
+                    String v = str.substring(n+2).trim();
                     if (v.length() > 0) {
                         value.append(v);
                     }
