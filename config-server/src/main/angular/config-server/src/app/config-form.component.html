@@ -1,0 +1,37 @@
+<div class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
+     [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        新建配置
+      </div>
+      <div class="row modal-body">
+          <div class="col-md-12 form-group">
+            <label class="control-label" for="configName">名称
+              <span class="text-danger">(长度3至30)</span>
+            </label>
+            <input type="text" id="configName" class="form-control" placeholder="以字母开头，由字母与下划线组成"
+                   [(ngModel)]="configName">
+          </div>
+          <div class="col-md-12 form-group">
+            <label class="control-label" for="configDescription">说明
+              <span class="text-danger">(长度0至128)</span>
+            </label>
+            <input type="text" id="configDescription" class="form-control" placeholder="建议在此注明配置的功能"
+                   [(ngModel)]="description">
+          </div>
+          <div class="col-md-12 form-group">
+            <label class="control-label">配置内容
+              <span class="text-danger">(必须是Json格式)</span>
+            </label>
+            <textarea class="form-control" rows="15" [(ngModel)]="value"></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="onSave()">保存</button>
+        <button type="button" class="btn btn-default" (click)="hide()">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+

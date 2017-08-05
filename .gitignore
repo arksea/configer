@@ -8,3 +8,4 @@ configer.iml
 /config-server/tomcat/webapps/*.*
 /config-server/tomcat/webapps/*
 /config-server/src/main/webapp/*.*
+/config-server/online

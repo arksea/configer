@@ -1,8 +1,9 @@
-import { Component,OnInit } from '@angular/core';
+import { Component,OnInit,ViewChild } from '@angular/core';
 import { HttpClient }       from '@angular/common/http';
 import { environment }      from 'environments/environment'
 import { ConfigerService }    from './configer.service'
 import { Config,Project }   from './configer.entity';
+import { ConfigFormComponent } from './config-form.component'
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
@@ -12,6 +13,8 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 export class ProjectComponent implements OnInit {
   configs: Config[];
   project: Project = new Project();
+  @ViewChild(ConfigFormComponent)
+  private configForm: ConfigFormComponent;
 
   constructor(
       private configService: ConfigerService,
@@ -25,6 +28,10 @@ export class ProjectComponent implements OnInit {
           this.configs = data;
           this.project = data[0].project;
       });
+  }
+
+  onCreateConfig() {
+      this.configForm.show();
   }
 }
 

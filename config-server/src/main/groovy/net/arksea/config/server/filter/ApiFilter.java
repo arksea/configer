@@ -5,8 +5,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * @author xiaohaixing
@@ -27,8 +29,15 @@ public class ApiFilter implements Filter {
         String profile = env.getProperty("spring.profiles.active");
         if (!"product".equals(profile)) { //测试状态下允许跨域访问，方便用ng server测试
             response.setHeader("Access-Control-Allow-Origin","*");
-            response.setHeader("Access-Control-Allow-Methods","POST,GET");
+            response.setHeader("Access-Control-Allow-Methods","*");
+            response.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
         }
+        HttpServletRequest req = (HttpServletRequest) request;
+        String reqid = req.getHeader("x-requestid");
+        if (reqid == null) {
+            reqid = UUID.randomUUID().toString();
+        }
+        req.setAttribute("x-requestid", reqid);
         chain.doFilter(request, resp);
     }
 

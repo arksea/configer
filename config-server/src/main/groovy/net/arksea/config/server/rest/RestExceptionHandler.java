@@ -145,7 +145,7 @@ public class RestExceptionHandler {
         } else {
             LOGGER.warn(alarmMsg, ex);
         }
-        final String reqid = (String) request.getAttribute("x-felink-requestid", WebRequest.SCOPE_REQUEST);
+        final String reqid = (String) request.getAttribute("x-requestid", WebRequest.SCOPE_REQUEST);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/json; charset=UTF-8"));
         String body = makeErrorResult(status.value(), ex, reqid);

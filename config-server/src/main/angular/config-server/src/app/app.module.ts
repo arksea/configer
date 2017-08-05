@@ -8,6 +8,7 @@ import { AppComponent }         from './app.component';
 import { ProjectListComponent } from './project-list.component'
 import { ProjectComponent }     from './project.component'
 import { ConfigComponent }      from './config.component'
+import { ConfigFormComponent }  from './config-form.component'
 import { ConfigerService }      from './configer.service'
 
 const appRoutes: Routes = [
@@ -21,7 +22,8 @@ const appRoutes: Routes = [
     AppComponent,
     ProjectListComponent,
     ProjectComponent,
-    ConfigComponent
+    ConfigComponent,
+    ConfigFormComponent
   ],
   imports: [
     BrowserModule,
