@@ -49,7 +49,7 @@ dependencies {
 
 task ngBuild(type: Exec) {
     workingDir './src/main/angular/config-server'
-    commandLine 'cmd', '/c', 'ng build'
+    commandLine 'cmd', '/c', 'ng build --env=prod'
 }
 
 //拷贝部署文件到指定目录
