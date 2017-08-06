@@ -1,0 +1,38 @@
+<div class="modal fade" tabindex="-1" [ngClass]="{'in': visibleAnimate}"
+     [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        新建项目
+      </div>
+      <div class="row modal-body">
+          <div class="col-md-12 form-group">
+            <label class="control-label" for="projectName">名称
+              <span class="text-danger">(长度3至30)</span>
+            </label>
+            <input type="text" id="projectName" class="form-control" placeholder="以字母开头，由字母与下划线组成"
+                   [(ngModel)]="projectName">
+          </div>
+        <div class="col-md-12 form-group">
+          <label class="control-label" for="projectProfile">Profile
+            <span class="text-danger">(长度3至30)</span>
+          </label>
+          <input type="text" id="projectProfile" class="form-control" placeholder="以字母开头，由字母与下划线组成"
+                 [(ngModel)]="profile">
+        </div>
+          <div class="col-md-12 form-group">
+            <label class="control-label" for="projectDescription">说明
+              <span class="text-danger">(长度0至128)</span>
+            </label>
+            <input type="text" id="projectDescription" class="form-control" placeholder="请注明项目的描述"
+                   [(ngModel)]="description">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="onSave()">保存</button>
+        <button type="button" class="btn btn-default" (click)="hide()">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+

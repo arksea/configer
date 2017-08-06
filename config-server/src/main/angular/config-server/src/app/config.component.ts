@@ -29,7 +29,8 @@ export class ConfigComponent implements OnInit {
       if (this.edit=="") {
           this.edit = "true";
           this.editBtnText = "修改";
-          this.configService.saveConfigDoc(this.config.doc.id, this.config.doc.value);
+          this.configService.updateConfigDescription(this.config.id, this.config.description);
+          this.configService.updateConfigDoc(this.config.id, this.config.doc.id, this.config.doc.value);
       } else {
           this.edit = "";
           this.editBtnText = "保存";

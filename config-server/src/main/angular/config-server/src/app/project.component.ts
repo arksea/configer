@@ -1,4 +1,4 @@
-import { Component,OnInit,ViewChild } from '@angular/core';
+import { Component,Input,OnInit,ViewChild } from '@angular/core';
 import { HttpClient }       from '@angular/common/http';
 import { environment }      from 'environments/environment'
 import { ConfigerService }    from './configer.service'
@@ -24,9 +24,13 @@ export class ProjectComponent implements OnInit {
 
   ngOnInit(): void {
       let id = parseInt(this.route.snapshot.paramMap.get('id'));
-      this.configService.getProjectConfigs(id).subscribe(data => {
+      this.configService.getProject(id)
+          .subscribe(data => {
+                this.project = data;
+            });
+      this.configService.getProjectConfigs(id)
+          .subscribe(data => {
           this.configs = data;
-          this.project = data[0].project;
       });
   }
 
@@ -34,4 +38,5 @@ export class ProjectComponent implements OnInit {
       this.configForm.show();
   }
 }
+
 

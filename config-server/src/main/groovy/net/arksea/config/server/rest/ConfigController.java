@@ -1,9 +1,6 @@
 package net.arksea.config.server.rest;
 
-import net.arksea.config.server.dao.ConfigDao;
-import net.arksea.config.server.dao.ConfigDocDao;
 import net.arksea.config.server.entity.Config;
-import net.arksea.config.server.entity.ConfigDoc;
 import net.arksea.config.server.service.ConfigerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,25 +18,22 @@ public class ConfigController {
     private Logger logger = LogManager.getLogger(ConfigController.class);
 
     @Autowired
-    private ConfigDocDao configDocDao;
-    @Autowired
-    private ConfigDao configDao;
-    @Autowired
     private ConfigerService configerService;
 
-    @RequestMapping(value="/doc/{docId}", method = RequestMethod.PUT, produces = MEDIA_TYPE)
-    public void saveConfigDoc(@RequestBody String configDoc,
+    @RequestMapping(value="/{configId}/description", method = RequestMethod.PUT, produces = MEDIA_TYPE)
+    public void updateConfigDesc(@RequestBody String configDesc,
+                                 @PathVariable(name="configId") long configId) {
+        configerService.updateConfigDescription(configId, configDesc);
+    }
+
+    @RequestMapping(value="/{configId}/docs/{docId}", method = RequestMethod.PUT, produces = MEDIA_TYPE)
+    public void updateConfigDoc(@RequestBody String configDoc,
                               @PathVariable(name="docId") long docId) {
-        logger.info("save config docId={},doc={},metadata={}",docId,configDoc);
-        ConfigDoc doc = new ConfigDoc();
-        doc.setId(docId);
-        doc.setValue(configDoc);
-        doc.setMetadata("json");
-        configDocDao.save(doc);
+        configerService.updateConfigDoc(docId, configDoc);
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)
-    public void insertConfig(@RequestBody Config config) {
+    public void createConfig(@RequestBody Config config) {
         configerService.createConfig(config);
     }
 }

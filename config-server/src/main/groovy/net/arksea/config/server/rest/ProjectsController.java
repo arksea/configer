@@ -6,6 +6,7 @@ import net.arksea.config.server.dao.ProjectDao;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.ConfigDoc;
 import net.arksea.config.server.entity.Project;
+import net.arksea.config.server.service.ConfigerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class ProjectsController {
     private ConfigDao configDao;
     @Autowired
     private ConfigDocDao configDocDao;
+    @Autowired
+    private ConfigerService configerService;
 
     @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
     public Iterable<Project> listAllProjects() {
@@ -35,9 +38,17 @@ public class ProjectsController {
     }
 
     @RequestMapping(value="{prjId}", method = RequestMethod.GET, produces = MEDIA_TYPE)
+    public Project getProject(@PathVariable(name="prjId") long prjId) {
+        return projectDao.findOne(prjId);
+    }
+
+    @RequestMapping(value="{prjId}/configs", method = RequestMethod.GET, produces = MEDIA_TYPE)
     public Iterable<Config> listConfigs(@PathVariable(name="prjId") long prjId) {
-        Iterable<Config> configs = configDao.findByProjectId(prjId);
-        configs.forEach(it -> logger.info(it.getName()));
-        return configs;
+        return configDao.findByProjectId(prjId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)
+    public void createProject(@RequestBody Project project) {
+        configerService.createProject(project);
     }
 }

@@ -55,30 +55,30 @@ task ngBuild(type: Exec) {
 //拷贝部署文件到指定目录
 task publishOnline <<{
     //拷贝前先删除部署目录
-    delete('online/config-server')
+    //delete('online/weather-configer/*')
     copy{ //拷贝本项目WEB相关文件
         from 'src/main/webapp/'
-        into 'online/config-server'
+        into 'online/weather-configer'
     }
     copy{ //拷贝本项目WEB相关文件
         from 'src/main/angular/config-server/dist'
-        into 'online/config-server'
+        into 'online/weather-configer'
     }
     copy{ //拷贝依赖库
         from configurations.runtime
-        into 'online/config-server/WEB-INF/lib'
+        into 'online/weather-configer/WEB-INF/lib'
     }
     copy{ //拷贝类
         from 'build/classes/groovy/main/'
-        into 'online/config-server/WEB-INF/classes'
+        into 'online/weather-configer/WEB-INF/classes'
     }
     copy{ //拷贝资源
         from 'build/resources/main/'
-        into 'online/config-server/WEB-INF/classes'
+        into 'online/weather-configer/WEB-INF/classes'
     }
     copy{ //拷贝META-INF
         from 'build/tmp/war/'
-        into 'online/config-server/META-INF/'
+        into 'online/weather-configer/META-INF/'
     }
 }
 publishOnline.dependsOn(build,ngBuild)

@@ -1,15 +1,16 @@
 import { BrowserModule }        from '@angular/platform-browser';
 import { NgModule }             from '@angular/core';
-import { FormsModule }          from '@angular/forms'
-import { RouterModule, Routes } from '@angular/router'
+import { FormsModule }          from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule }     from '@angular/common/http';
 
 import { AppComponent }         from './app.component';
-import { ProjectListComponent } from './project-list.component'
-import { ProjectComponent }     from './project.component'
-import { ConfigComponent }      from './config.component'
-import { ConfigFormComponent }  from './config-form.component'
-import { ConfigerService }      from './configer.service'
+import { ProjectListComponent } from './project-list.component';
+import { ProjectComponent }     from './project.component';
+import { ProjectFormComponent } from './project-form.component';
+import { ConfigFormComponent }  from './config-form.component';
+import { ConfigComponent }      from './config.component';
+import { ConfigerService }      from './configer.service';
 
 const appRoutes: Routes = [
   { path: '',   redirectTo: '/projects', pathMatch: 'full' },
@@ -22,8 +23,9 @@ const appRoutes: Routes = [
     AppComponent,
     ProjectListComponent,
     ProjectComponent,
+    ProjectFormComponent,
     ConfigComponent,
-    ConfigFormComponent
+    ConfigFormComponent,
   ],
   imports: [
     BrowserModule,

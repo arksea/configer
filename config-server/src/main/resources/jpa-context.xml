@@ -19,6 +19,7 @@
         <property name="jpaProperties">
             <props>
                 <!-- 命名规则 My_NAME->MyName -->
+                <prop key="hibernate.dialect">net.arksea.config.server.system.MySQL5InnoDBDialectUTF8</prop>
                 <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
                 <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
                 <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
