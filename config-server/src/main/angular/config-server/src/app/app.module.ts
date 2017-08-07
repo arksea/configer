@@ -3,6 +3,7 @@ import { NgModule }             from '@angular/core';
 import { FormsModule }          from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule }     from '@angular/common/http';
+import { LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 import { AppComponent }         from './app.component';
 import { ProjectListComponent } from './project-list.component';
@@ -13,7 +14,7 @@ import { ConfigComponent }      from './config.component';
 import { ConfigerService }      from './configer.service';
 
 const appRoutes: Routes = [
-  { path: '',   redirectTo: '/projects', pathMatch: 'full' },
+  { path: '',   redirectTo: 'projects', pathMatch: 'full' },
   { path: 'projects',     component: ProjectListComponent },
   { path: 'projects/:id', component: ProjectComponent}
 ]
@@ -25,15 +26,17 @@ const appRoutes: Routes = [
     ProjectComponent,
     ProjectFormComponent,
     ConfigComponent,
-    ConfigFormComponent,
+    ConfigFormComponent
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(appRoutes,{ enableTracing: true }),
     FormsModule,
-    HttpClientModule,
-    RouterModule.forRoot(appRoutes,{ enableTracing: true })
+    HttpClientModule
   ],
-  providers: [ConfigerService],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}, //自动在路由路径前添加#号，部署到Tomcat需要做此转换
+              ConfigerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

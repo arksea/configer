@@ -34,7 +34,7 @@ public class ConfigService {
     private IConfigPersistence configPersistence;
     private final Map<String,TimedData<Object>> configMap = new ConcurrentHashMap<>();
 
-    public ConfigService(final List<String> serverAddrs,final String project,final String profile) {
+    public ConfigService(final String project,final String profile, final List<String> serverAddrs) {
         this(project, profile, 8000, null, serverAddrs);
     }
 
