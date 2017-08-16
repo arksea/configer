@@ -96,6 +96,15 @@ public class ConfigService {
         return get(key, List.class);
     }
 
+    public <T> T get(String key, Class<T> clazz, T defaultValue) {
+        try {
+            return get(key, clazz);
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage(),ex);
+            return defaultValue;
+        }
+    }
+
     private <T> T get(String key, Class<T> clazz) {
         TimedData td = configMap.get(key);
         if (td == null) {
@@ -143,13 +152,13 @@ public class ConfigService {
                 public void onComplete(Throwable failure, DataResult<ConfigKey, String> success) throws Throwable {
                     if (failure == null) {
                         try {
-                            Map map = objectMapper.readValue(success.data, Map.class);
+                            T value = (T) objectMapper.readValue(success.data, old.data.getClass());
                             long expiredTime = success.expiredTime;
                             //防止意外的频繁访问服务
                             if (expiredTime < System.currentTimeMillis() + RETRY_DELAY) {
                                 expiredTime += RETRY_DELAY;
                             }
-                            configMap.put(key, new TimedData<>(expiredTime, map));
+                            configMap.put(key, new TimedData<>(expiredTime, value));
                             if (!old.data.equals(success.data)) {
                                 configPersistence.update(key, success.data);
                             }
