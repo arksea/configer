@@ -26,11 +26,13 @@ public class ApiFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) resp;
+        response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
         String profile = env.getProperty("spring.profiles.active");
-        if (!"product".equals(profile)) { //测试状态下允许跨域访问，方便用ng server测试
-            response.setHeader("Access-Control-Allow-Origin","*");
+        if ("product".equals(profile)) {
+            response.setHeader("Access-Control-Allow-Methods","GET, PUT");
+        } else  { //测试状态下允许所有方法跨域访问，方便用ng server测试
             response.setHeader("Access-Control-Allow-Methods","GET, HEAD, POST, PUT, DELETE, PATCH");
-            response.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
         }
         HttpServletRequest req = (HttpServletRequest) request;
         String reqid = req.getHeader("x-requestid");
