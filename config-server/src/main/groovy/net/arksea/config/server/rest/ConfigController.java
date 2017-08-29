@@ -1,5 +1,6 @@
 package net.arksea.config.server.rest;
 
+import net.arksea.config.server.dao.ConfigDao;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.service.ConfigerService;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,15 @@ public class ConfigController {
 
     @Autowired
     private ConfigerService configerService;
+
+    @Autowired
+    private ConfigDao configDao;
+
+    @RequestMapping(params={"name","projectId"},method = RequestMethod.GET, produces = MEDIA_TYPE)
+    public Config getConfig(@RequestParam(name="name") String name,
+                            @RequestParam(name="projectId") long projectId) {
+        return configDao.findByProjectIdAndName(projectId, name);
+    }
 
     @RequestMapping(value="/{configId}/description", method = RequestMethod.PUT, produces = MEDIA_TYPE)
     public void updateConfigDesc(@RequestBody String configDesc,

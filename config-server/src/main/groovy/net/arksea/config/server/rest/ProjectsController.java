@@ -37,8 +37,14 @@ public class ProjectsController {
         return projects;
     }
 
+    @RequestMapping(method = RequestMethod.GET, params={"name","profile"}, produces = MEDIA_TYPE)
+    public Project getProject(@RequestParam(name="name") String name,
+                              @RequestParam(name="profile") String profile) {
+        return projectDao.getByNameAndProfile(name, profile);
+    }
+
     @RequestMapping(value="{prjId}", method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public Project getProject(@PathVariable(name="prjId") long prjId) {
+    public Project getProjectById(@PathVariable(name="prjId") long prjId) {
         return projectDao.findOne(prjId);
     }
 
