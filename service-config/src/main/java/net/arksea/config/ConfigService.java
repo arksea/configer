@@ -109,6 +109,21 @@ public class ConfigService {
         TimedData td = configMap.get(key);
         if (td == null) {
             ConfigKey configKey = new ConfigKey(project, profile, key);
+            logger.warn("从服务读取配置: {}", configKey);
+            GetData<ConfigKey,String> req = new GetData<>(configKey);
+            try { //配置初始值优先从配置服务读取，防止应用启动后首次读取本地配置造成与配置服务的值不同
+                DataResult<ConfigKey,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
+                if (ret.data != null) {
+                    T obj = objectMapper.readValue(ret.data, clazz);
+                    configMap.put(key, new TimedData<>(ret.expiredTime, obj));
+                    configPersistence.update(key, ret.data); //从服务读取的配置可以正确解析则更新本地的持久化数据
+                    return obj;
+                } else {
+                    logger.warn("访问配置服务失败，没找到相关内容: "+configKey);
+                }
+            } catch (Exception e) {
+                logger.warn("访问配置服务失败，将尝试从本地文件读取: "+configKey, e);
+            }
             //从本地持久化数据读取
             String value = configPersistence.read(key);
             if (value != null) {
@@ -117,23 +132,11 @@ public class ConfigService {
                     configMap.put(key, new TimedData<>(System.currentTimeMillis() + RETRY_DELAY, obj));
                     return obj;
                 } catch (IOException ex) {
-                    logger.warn("本地保存的配置格式错误key={},value={}", configKey, value, ex);
+                    logger.error("配置文件格式错误，key={},value={}", configKey, value, ex);
+                    throw new RuntimeException("取配置信息失败：+"+configKey);
                 }
-            }
-            logger.warn("配置未持久化，将从服务读取: {}", configKey);
-            GetData<ConfigKey,String> req = new GetData<>(configKey);
-            try { //配置初始值优先从配置服务缓存读取
-                DataResult<ConfigKey,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
-                if (ret.data != null) {
-                    T obj = objectMapper.readValue(ret.data, clazz);
-                    configMap.put(key, new TimedData<>(ret.expiredTime, obj));
-                    configPersistence.update(key, ret.data); //从服务读取的配置可以正确解析则更新本地的持久化数据
-                    return obj;
-                } else {
-                    throw new RuntimeException("初始化配置失败, 服务没找到相关内容: "+configKey);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("初始化配置失败: "+configKey, e);
+            } else {
+                throw new RuntimeException("取配置信息失败：+"+configKey);
             }
         } else if (System.currentTimeMillis() > td.time) {
             asyncUpdate(key,td);

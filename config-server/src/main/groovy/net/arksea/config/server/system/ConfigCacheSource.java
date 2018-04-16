@@ -1,5 +1,6 @@
 package net.arksea.config.server.system;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.dispatch.Futures;
 import net.arksea.acache.IDataSource;
@@ -30,7 +31,7 @@ public class ConfigCacheSource implements IDataSource<ConfigKey,String> {
     private long CACHE_DEFAULT_TIMEOUT;
 
     @Override
-    public Future<TimedData<String>> request(ConfigKey key) {
+    public Future<TimedData<String>> request(ActorRef cacheActor, String cacheName, ConfigKey key) {
         return Futures.future(() -> {
             Project prj = projectDao.getByNameAndProfile(key.project, key.profile);
             Config cfg = configDao.getByNameAndProject(key.config, prj);
