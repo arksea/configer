@@ -28,6 +28,10 @@ public class CacheServerFactory {
             public String getCacheName() {
                 return "configCache";
             }
+            @Override
+            public boolean waitForRespond() {
+                return true;
+            }
         };
         Props props = CacheActor.props(cacheConfig, configCacheSource);
         return system.actorOf(props, "configCacheServer");
