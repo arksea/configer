@@ -9,3 +9,5 @@ configer.iml
 /config-server/tomcat/webapps/*
 /config-server/src/main/webapp/*.*
 /config-server/online
+/demo-client/build
+/demo-client/config

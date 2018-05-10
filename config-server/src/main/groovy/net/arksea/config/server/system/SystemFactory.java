@@ -13,9 +13,21 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SystemFactory {
+    Config config;
+    public SystemFactory() {
+        Config cfg = ConfigFactory.load();
+        config = cfg.getConfig("system").withFallback(cfg);
+
+    }
+
+    @Bean(name = "systemConfig")
+    Config createConfig() {
+
+        return config;
+    }
+
     @Bean(name = "system")
     public ActorSystem createSystem() {
-        Config config = ConfigFactory.load();
-        return ActorSystem.create("system",config.getConfig("system").withFallback(config));
+        return ActorSystem.create("system",config);
     }
 }

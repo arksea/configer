@@ -1,18 +1,20 @@
 package net.arksea.config;
 
+import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.dispatch.OnComplete;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.arksea.acache.*;
+import net.arksea.acache.dsf.CacheDsfAsker;
+import net.arksea.dsf.client.Client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,15 +36,15 @@ public class ConfigService {
     private IConfigPersistence configPersistence;
     private final Map<String,TimedData<Object>> configMap = new ConcurrentHashMap<>();
 
-    public ConfigService(final String project,final String profile, final List<String> serverAddrs) {
-        this(project, profile, 8000, null, serverAddrs);
+    public ConfigService(final Client dsfClient, final String project, final String profile) {
+        this(dsfClient, project, profile, 8000, null);
     }
 
-    public ConfigService(final String project,
+    public ConfigService(final Client dsfClient,
+                         final String project,
                          final String profile,
                          final int timeout,
-                         final ActorSystem system,
-                         final List<String> serverAddrs) {
+                         final ActorSystem system) {
         if (system == null) {
             Config cfg = ConfigFactory.parseResources("default-system.conf");
             this.system = akka.actor.ActorSystem.create("configServiceSystem", cfg);
@@ -54,14 +56,34 @@ public class ConfigService {
         this.timeout = timeout;
         String filePath = "./config/" + project + "." + profile + ".cfg";
         configPersistence = new FilePersistence(filePath);
-        List<String> serverPaths = new LinkedList<>();
-        StringBuilder sb = new StringBuilder();
-        for (String addr : serverAddrs) {
-            sb.append("akka.tcp://system@").append(addr).append("/user/configCacheServer");
-            serverPaths.add(sb.toString());
-            sb.setLength(0);
+        CacheDsfAsker<ConfigKey,String> remoteCacheAsker = new CacheDsfAsker<>(dsfClient,this.system.dispatcher(),timeout);
+        createLocalCache(remoteCacheAsker);
+    }
+
+
+    public ConfigService(final String serverAddr, final String project,final String profile) {
+        this(serverAddr, project, profile, 8000, null);
+    }
+
+    public ConfigService(final String serverAddr,
+                         final String project,
+                         final String profile,
+                         final int timeout,
+                         final ActorSystem system) {
+        if (system == null) {
+            Config cfg = ConfigFactory.parseResources("default-system.conf");
+            this.system = akka.actor.ActorSystem.create("configServiceSystem", cfg);
+        } else {
+            this.system = system;
         }
-        createLocalCache(serverPaths);
+        this.project = project;
+        this.profile = profile;
+        this.timeout = timeout;
+        String filePath = "./config/" + project + "." + profile + ".cfg";
+        configPersistence = new FilePersistence(filePath);
+        ActorSelection remoteCacheSel = this.system.actorSelection("akka.tcp://system@"+serverAddr+"/user/configCacheServer");
+        CacheAsker<ConfigKey,String> remoteCacheAsker = new CacheAsker<>(remoteCacheSel,this.system.dispatcher(),timeout);
+        createLocalCache(remoteCacheAsker);
     }
 
     public Map getMap(String key) {
@@ -136,7 +158,7 @@ public class ConfigService {
                     throw new RuntimeException("取配置信息失败：+"+configKey);
                 }
             } else {
-                throw new RuntimeException("取配置信息失败：+"+configKey);
+                throw new RuntimeException("取配置信息失败："+configKey);
             }
         } else if (System.currentTimeMillis() > td.time) {
             asyncUpdate(key,td);
@@ -177,13 +199,13 @@ public class ConfigService {
         );
     }
 
-    private void createLocalCache(final List<String> serverPaths) {
+    private void createLocalCache(ICacheAsker<ConfigKey, String> remoteCacheAsker) {
         ICacheConfig<ConfigKey> cfg = new ICacheConfig<ConfigKey>() {
             @Override
             public String getCacheName() {
                 return "localConfigCache";
             }
         };
-        localArticleCache = LocalCacheCreator.createLocalCache(system, cfg, serverPaths, timeout, timeout * 5);
+        localArticleCache = LocalCacheCreator.createLocalCache(system, cfg, remoteCacheAsker, timeout, timeout * 5);
     }
 }
