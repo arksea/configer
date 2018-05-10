@@ -131,7 +131,7 @@ public class ConfigService {
         TimedData td = configMap.get(key);
         if (td == null) {
             ConfigKey configKey = new ConfigKey(project, profile, key);
-            logger.warn("从服务读取配置: {}", configKey);
+            logger.info("从服务读取配置: {}", configKey);
             GetData<ConfigKey,String> req = new GetData<>(configKey);
             try { //配置初始值优先从配置服务读取，防止应用启动后首次读取本地配置造成与配置服务的值不同
                 DataResult<ConfigKey,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
