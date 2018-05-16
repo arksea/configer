@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     compile project (':service-config')
-    compile 'net.arksea:aregister-client:0.1-SNAPSHOT'
+    compile 'net.arksea:aregister-client:0.2-SNAPSHOT'
     compile 'org.springframework:spring-core:4.3.9.RELEASE'
     compile 'org.springframework:spring-context:4.3.9.RELEASE'
     compile 'org.springframework:spring-context-support:4.3.9.RELEASE'

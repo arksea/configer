@@ -6,6 +6,9 @@ import net.arksea.dsf.register.RegisterClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * Created by xiaohaixing on 2018/04/17.
@@ -21,7 +24,10 @@ public final class ClientMain {
         try {
             logger.info("Start DEMO Client");
             String configServiceName = "net.arksea.ConfigServer";
-            RegisterClient register = new RegisterClient("TestClient","10.79.186.111:8877");
+            List<String> registerAddrs = new LinkedList<>();
+            registerAddrs.add("10.79.186.111:8877");
+            registerAddrs.add("10.79.186.126:8877");
+            RegisterClient register = new RegisterClient("TestClient", registerAddrs);
             Client client = register.subscribe(configServiceName);
             ConfigService configService = new ConfigService(client, "weather-api", "QA", 5000, client.system);
             //Thread.sleep(1000);
