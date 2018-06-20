@@ -16,6 +16,7 @@ public interface ConfigDao extends CrudRepository<Config,Long> {
     Config getByNameAndProject(String name, Project project);
     List<Config> findByProject(Project project);
     List<Config> findByProjectId(long id);
+    Config findByProjectIdAndName(long id,String name);
 
     @Modifying
     @Query("update Config c set c.description = ?2 where c.id = ?1")

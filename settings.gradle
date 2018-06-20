@@ -1,3 +1,4 @@
 rootProject.name = 'configer'
 include 'config-server'
 include 'service-config'
+include 'demo-client'

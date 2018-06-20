@@ -450,7 +450,7 @@ elif [ "$1" = "stop" ] ; then
     fi
   fi
 
-  eval "\"$_RUNJAVA\"" $LOGGING_MANAGER $JAVA_OPTS \
+  eval "\"$_RUNJAVA\"" $LOGGING_MANAGER $CATALINA_OPTS \
     -Djava.endorsed.dirs="\"$JAVA_ENDORSED_DIRS\"" -classpath "\"$CLASSPATH\"" \
     -Dcatalina.base="\"$CATALINA_BASE\"" \
     -Dcatalina.home="\"$CATALINA_HOME\"" \
