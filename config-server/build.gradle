@@ -48,15 +48,21 @@ dependencies {
     providedCompile  'javax.servlet:javax.servlet-api:3.1.0'
 }
 
+task deleteOnline(type: Exec) {
+    commandLine 'cmd', '/c', 'del /Q .\\online\\weather-configer\\*.*'
+}
+
 task ngBuild(type: Exec) {
     workingDir './src/main/angular/config-server'
     commandLine 'cmd', '/c', 'ng build --env=prod'
 }
+ngBuild.dependsOn(deleteOnline)
 
 //拷贝部署文件到指定目录
 task publishOnline <<{
     //拷贝前先删除部署目录
-    //delete('online/weather-configer/*')
+    delete('online/weather-configer/WEB-INF')
+    delete('online/weather-configer/META-INF')
     copy{ //拷贝本项目WEB相关文件
         from 'src/main/webapp/'
         into 'online/weather-configer'
