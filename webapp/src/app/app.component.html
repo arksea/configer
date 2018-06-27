@@ -1,0 +1,19 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4">
+      <sf-form 
+        (onErrorChange)="logErrors($event.value)"
+        (onChange)="setValue($event.value)"
+        [schema]="schema"
+        [model]="model">
+      </sf-form>
+    </div>
+    <div class="col-md-4">
+      <pre>{{schema | json}}</pre>
+    </div>
+    <div class="col-md-4">
+      <h3>Model:</h3>
+      <pre>{{value | json}}</pre>
+    </div>
+  </div>
+</div>
