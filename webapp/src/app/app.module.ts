@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { SchemaFormModule, SchemaValidatorFactory, ZSchemaValidatorFactory } from 'ngx-schema-form';
+import { ClarityModule } from '@clr/angular';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -11,7 +13,9 @@ import { SchemaFormModule, SchemaValidatorFactory, ZSchemaValidatorFactory } fro
   imports: [
     BrowserModule,
     FormsModule,
-    SchemaFormModule
+    SchemaFormModule,
+    ClarityModule,
+    BrowserAnimationsModule
   ],
   providers: [
     {
