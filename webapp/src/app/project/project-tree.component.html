@@ -1,0 +1,15 @@
+<clr-tree-node *ngFor="let prj of treeRoot | async">
+    <clr-icon shape="folder"></clr-icon>
+    {{prj.title}}
+    <ng-template [(clrIfExpanded)]="prj.expanded">
+        <clr-tree-node *ngFor="let profile of prj.nodes">
+            <clr-icon shape="grid-view"></clr-icon>
+            <a routerLink="/projects/{{profile.value.id}}"
+                    class="clr-treenode-link"
+                    (click)="onClickOne(profile.value)"
+                    routerLinkActive="active">
+                {{profile.title}}
+            </a>
+        </clr-tree-node>
+    </ng-template>
+</clr-tree-node>
