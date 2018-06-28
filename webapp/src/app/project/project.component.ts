@@ -25,9 +25,8 @@ export class ProjectComponent implements OnInit {
     }
   }
 
-//   onCreateConfig() {
-//       this.configForm.show();
-//   }
+  onCreateConfig() {
+  }
 }
 
 

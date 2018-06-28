@@ -10,7 +10,6 @@ import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ConfigerRestAPI } from './configer.restapi';
-import { ProjectListComponent } from './project/project-list.component';
 import { ProjectService } from './project/project.service';
 import { ProjectTreeComponent } from './project/project-tree.component';
 import { ProjectComponent } from './project/project.component';
@@ -25,7 +24,6 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     ProjectComponent,
-    ProjectListComponent,
     ProjectTreeComponent,
     ConfigComponent
   ],

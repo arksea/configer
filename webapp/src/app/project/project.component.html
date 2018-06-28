@@ -1,9 +1,5 @@
-<div class="templatemo-content-container">
-  <div class="templatemo-content-widget white-bg">
-    {{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}} <button class="btn btn-sm btn-link" (click)="onCreateConfig()">
-      NEW
-    </button>
-    <app-config *ngFor="let cfg of configs | async" [config]="cfg"></app-config>
-    <!-- <config-form [project]="project"></config-form> -->
-  </div>
-</div>
+{{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}} <button class="btn btn-sm btn-link" (click)="onCreateConfig()">
+    <clr-icon shape="add-text"></clr-icon> Add Config
+</button>
+<app-config *ngFor="let cfg of configs | async" [config]="cfg"></app-config>
+<!-- <config-form [project]="project"></config-form> -->

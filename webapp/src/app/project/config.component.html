@@ -5,14 +5,28 @@
                 {{config.name}}
                 <p>{{config.description}}</p>
             </div>
-            <div class="card-block">
+            <div class="card-block" [hidden]="hideContent">
                 <div class="card-text">
                     <textarea style="border:0;overflow:hidden" [readonly]="true" class="form-control" rows="{{docLineCount}}">{{config.doc.value}}</textarea>
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-sm btn-link">Edit</button>
-                <button class="btn btn-sm btn-link">Delete</button>
+                <button class="btn btn-sm btn-link" (click)="onShow()">
+                    <clr-icon shape="eye"> </clr-icon>
+                    {{showBtnText}}
+                </button>
+                <button class="btn btn-sm btn-link">
+                    <clr-icon shape="note"></clr-icon>
+                    Edit
+                </button>
+                <button class="btn btn-sm btn-link">
+                    <clr-icon shape="ruler-pencil"></clr-icon>
+                    Schema
+                </button>
+                <button class="btn btn-sm btn-link">
+                    <clr-icon shape="trash"></clr-icon>
+                    Delete
+                </button>
             </div>
         </div>
     </div>

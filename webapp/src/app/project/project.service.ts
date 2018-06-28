@@ -13,7 +13,12 @@ export interface TreeNode {
 @Injectable()
 export class ProjectService {
     projectTreeRoot: Subject<TreeNode[]> = new BehaviorSubject<TreeNode[]>([]);
-    selectedProject: Subject<Project> = new BehaviorSubject<Project>(null);
+    selectedProject: Subject<Project> = new BehaviorSubject<Project>({
+        id: -1,
+        name: '',
+        profile: '',
+        description: ''
+    });
     selectedConfigs: Subject<Config[]> =  new BehaviorSubject<Config[]>([]);
 
     constructor(private api: ConfigerRestAPI) {
