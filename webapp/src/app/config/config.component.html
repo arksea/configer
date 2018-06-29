@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
             <div class="card-header">
                 {{config.name}}
@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-sm btn-link" (click)="onShow()">
+                <button class="btn btn-sm btn-link" (click)="onBtnShowClick()">
                     <clr-icon shape="eye"> </clr-icon>
                     {{showBtnText}}
                 </button>
@@ -19,7 +19,7 @@
                     <clr-icon shape="note"></clr-icon>
                     Edit
                 </button>
-                <button class="btn btn-sm btn-link">
+                <button class="btn btn-sm btn-link" (click)="onBtnSchemaClick()">
                     <clr-icon shape="ruler-pencil"></clr-icon>
                     Schema
                 </button>
@@ -31,3 +31,5 @@
         </div>
     </div>
 </div>
+
+<app-schema-form [config] = "config"></app-schema-form>

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ProjectService } from './project.service';
+import { ProjectService } from '../project/project.service';
 import { Config, Project } from '../configer.model';
 // import { ConfigFormComponent } from '../config-form.component';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';

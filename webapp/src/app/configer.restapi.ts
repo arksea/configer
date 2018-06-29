@@ -67,6 +67,12 @@ export class ConfigerRestAPI {
             configDoc, { headers: this.headers }).subscribe(data => { });
     }
 
+    public updateConfigSchema(cfgId: number, docId: number, configSchema: string): void {
+        console.log('cfgId=' + cfgId + ',docId=' + docId + ',schema=' + configSchema);
+        this.http.put(environment.apiUrl + '/api/v1/configs/' + cfgId + '/schema/' + docId,
+            configSchema, { headers: this.headers }).subscribe(data => { });
+    }
+
     public createConfig(config: Config): void {
         this.http.post(environment.apiUrl + '/api/v1/configs', config, { headers: this.headers })
             .subscribe(data => { });

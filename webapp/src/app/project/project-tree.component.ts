@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ProjectService, TreeNode } from './project.service';
+import { ProjectService, TreeNode } from '../project/project.service';
+import { ConfigService } from '../config/config.service';
 import { Project } from '../configer.model';
 
 
@@ -11,8 +12,9 @@ import { Project } from '../configer.model';
 export class ProjectTreeComponent implements OnInit {
     treeRoot: Subject<TreeNode[]> = null;
 
-    constructor(private service: ProjectService) {
-        this.treeRoot =  this.service.projectTreeRoot;
+    constructor(private svcPrj: ProjectService,
+                private svcCfg: ConfigService) {
+        this.treeRoot =  this.svcPrj.projectTreeRoot;
     }
 
     ngOnInit(): void {
@@ -24,11 +26,12 @@ export class ProjectTreeComponent implements OnInit {
     }
 
     updateProjectTree() {
-        this.service.updateProjectTree();
+        this.svcPrj.updateProjectTree();
     }
 
     onClickOne(prj: Project) {
-        this.service.selectProject(prj.id);
+        this.svcPrj.selectProject(prj.id);
+        this.svcCfg.selectProject(prj.id);
     }
 }
 
