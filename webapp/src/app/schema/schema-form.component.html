@@ -4,7 +4,7 @@
         <textarea class="form-control" rows="{{lineCount}}" [(ngModel)]="config.doc.metadata"></textarea>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="close()">Ok</button>
+        <button type="button" class="btn btn-outline" (click)="close()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveSchema()">Save</button>
     </div>
 </clr-modal>

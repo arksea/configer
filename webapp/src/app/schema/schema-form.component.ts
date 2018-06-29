@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Config } from '../configer.model';
+import { ConfigService } from '../config/config.service';
 
 @Component({
   selector: 'app-schema-form',
@@ -8,10 +9,9 @@ import { Config } from '../configer.model';
 export class SchemaFormComponent implements OnInit {
   @Input() config: Config;
   opened = false;
-  visibleAnimate = false;
   lineCount: number;
 
-  constructor() {
+  constructor(private service: ConfigService) {
   }
 
   ngOnInit(): void {
@@ -29,6 +29,10 @@ export class SchemaFormComponent implements OnInit {
 
   public close(): void {
     this.opened = false;
+  }
+
+  public saveSchema(): void {
+    this.service.updateSchema(this.config.id, this.config.doc.id, this.config.doc.metadata);
   }
 
 }

@@ -15,5 +15,9 @@ export class ConfigService {
             this.selectedConfigs.next(configs);
         });
     }
+
+    public updateSchema(cfgId: number, docId: number, schema: string): void {
+        this.api.updateConfigSchema(cfgId, docId, schema);
+    }
 }
 
