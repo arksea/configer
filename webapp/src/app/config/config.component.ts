@@ -2,6 +2,7 @@ import { Component, Input, ViewChild, OnInit } from '@angular/core';
 import { Config, Project } from '../configer.model';
 import { ConfigerRestAPI } from '../configer.restapi';
 import { SchemaFormComponent } from '../schema/schema-form.component';
+import { ConfigFormComponent } from './config-form.component';
 
 @Component({
   selector: 'app-config',
@@ -10,6 +11,7 @@ import { SchemaFormComponent } from '../schema/schema-form.component';
 export class ConfigComponent implements OnInit {
   @Input() config: Config;
   @ViewChild(SchemaFormComponent) dialogSchemaForm: SchemaFormComponent;
+  @ViewChild(ConfigFormComponent) dialogConfigForm: ConfigFormComponent;
   docLineCount: number;
   hideContent: boolean;
   showBtnText: string;
@@ -35,5 +37,9 @@ export class ConfigComponent implements OnInit {
 
   onBtnSchemaClick() {
     this.dialogSchemaForm.open();
+  }
+
+  onBtnEditClick() {
+    this.dialogConfigForm.open();
   }
 }

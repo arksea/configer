@@ -3,10 +3,10 @@ import { Config } from '../configer.model';
 import { ConfigService } from '../config/config.service';
 
 @Component({
-  selector: 'app-schema-form',
-  templateUrl: './schema-form.component.html'
+  selector: 'app-config-form',
+  templateUrl: './config-form.component.html'
 })
-export class SchemaFormComponent implements OnInit {
+export class ConfigFormComponent implements OnInit {
   @Input() config: Config;
   opened = false;
   lineCount: number;
@@ -15,7 +15,7 @@ export class SchemaFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.lineCount = this.config.doc.metadata.split(/\n/).length;
+    this.lineCount = this.config.doc.value.split(/\n/).length;
     if (this.lineCount > 25) {
       this.lineCount = 25;
     } else if (this.lineCount < 5) {
@@ -31,8 +31,7 @@ export class SchemaFormComponent implements OnInit {
     this.opened = false;
   }
 
-  public saveSchema(): void {
-    this.service.updateSchema(this.config.id, this.config.doc.id, this.config.doc.metadata);
+  public saveDoc(): void {
+    this.service.updateValue(this.config.id, this.config.doc.id, this.config.doc.value);
   }
-
 }

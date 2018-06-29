@@ -19,5 +19,9 @@ export class ConfigService {
     public updateSchema(cfgId: number, docId: number, schema: string): void {
         this.api.updateConfigSchema(cfgId, docId, schema);
     }
+
+    public updateValue(cfgId: number, docId: number, value: string): void {
+        this.api.updateConfigDoc(cfgId, docId, value);
+    }
 }
 

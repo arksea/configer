@@ -15,7 +15,7 @@
                     <clr-icon shape="eye"> </clr-icon>
                     {{showBtnText}}
                 </button>
-                <button class="btn btn-sm btn-link">
+                <button class="btn btn-sm btn-link" (click)="onBtnEditClick()">
                     <clr-icon shape="note"></clr-icon>
                     Edit
                 </button>
@@ -31,5 +31,5 @@
         </div>
     </div>
 </div>
-
+<app-config-form [config] = "config"></app-config-form>
 <app-schema-form [config] = "config"></app-schema-form>

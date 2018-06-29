@@ -16,6 +16,7 @@ import { ProjectTreeComponent } from './project/project-tree.component';
 import { ProjectComponent } from './project/project.component';
 import { ConfigService } from './config/config.service';
 import { ConfigComponent } from './config/config.component';
+import { ConfigFormComponent } from './config/config-form.component';
 import { SchemaFormComponent } from './schema/schema-form.component';
 
 const appRoutes: Routes = [
@@ -29,6 +30,7 @@ const appRoutes: Routes = [
     ProjectComponent,
     ProjectTreeComponent,
     ConfigComponent,
+    ConfigFormComponent,
     SchemaFormComponent
   ],
   imports: [
