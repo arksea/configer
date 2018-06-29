@@ -1,7 +1,7 @@
 <clr-modal [(clrModalOpen)]="opened">
     <h3 class="modal-title">Edit Config Schema</h3>
     <div class="modal-body">
-        <textarea class="form-control" rows="{{lineCount}}" [(ngModel)]="config.doc.value"></textarea>
+        <sf-form [schema]="schema"></sf-form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline" (click)="close()">Close</button>
