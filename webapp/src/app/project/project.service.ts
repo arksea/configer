@@ -12,9 +12,7 @@ export interface TreeNode {
     nodes: TreeNode[];
 }
 
-export interface ProjectMap {
-    [key: string]: Project;
-}
+type ProjectMap = Map<string, Project>;
 
 type ITreeOperation = (nodes: TreeNode[]) => TreeNode[];
 type IProjectMapOperation = (projects: ProjectMap) => ProjectMap;
@@ -22,26 +20,24 @@ type IProjectMapOperation = (projects: ProjectMap) => ProjectMap;
 @Injectable()
 export class ProjectService {
 
-    // updateProject --> updates --> projects --> projectTreeRoot
+    // updateProjects --> updates --> projects --> projectTreeRoot
 
     projects: Observable<ProjectMap>;
     projectTreeRoot: Subject<TreeNode[]> = new BehaviorSubject<TreeNode[]>([]);
     updates: Subject<any> = new Subject<any>();
-
     updateProjects: Subject<Project[]> = new Subject(); // 更新项目列表： 从服务端读取项目列表，并更新本地存储
 
     selectedProject: Subject<Project> = new BehaviorSubject<Project>({
         id: -1, name: '', profile: '', description: ''
     });
-    selectedConfigs: Subject<Config[]> = new BehaviorSubject<Config[]>([]);
 
     constructor(private api: ConfigerRestAPI) {
         // 定义更新项目列表操作：丢弃旧值，用新值替换（新值是数组，需要map成ProjectMap类型）
         this.updateProjects.pipe(
             map(function (prjs: Project[]): IProjectMapOperation {
                 return (prjMap: ProjectMap) => {
-                    const newMap: { [key: string]: Project } = {};
-                    prjs.forEach(it => prjMap[it.id] = it);
+                    const newMap: ProjectMap = new Map();
+                    prjs.forEach(it => newMap.set(it.id.toString(), it));
                     return newMap;
                 };
             })
@@ -50,8 +46,9 @@ export class ProjectService {
         // projects订阅所有的更新操作
         this.projects = this.updates.pipe(
             scan((prjMap: ProjectMap, op: IProjectMapOperation) => {
-                return op(prjMap);
-            }, {}),
+                const newMap = op(prjMap);
+                return newMap;
+            }, new Map()),
             publishReplay(1),
             refCount()
         );
@@ -59,8 +56,13 @@ export class ProjectService {
         // 生成项目的树状视图
         this.projects.pipe(
             map((prjMap: ProjectMap) => {
-                return _.values(prjMap);
-            }),
+                const list: Project[] = [];
+                prjMap.forEach((it, key) => {
+                    list.push(it);
+                });
+                return list;
+            })
+        ).pipe(
             map((prjs: Project[]) => {
                 const tree: Map<string, TreeNode> = new Map();
                 for (const prj of prjs) {
@@ -82,22 +84,25 @@ export class ProjectService {
                     };
                     prjNode.nodes.push(profileNode);
                 }
-                return _.sortBy(_.values(tree), (t: TreeNode) => t.title);
+                const list: TreeNode[] = [];
+                tree.forEach((it, key) => {
+                    list.push(it);
+                });
+                return _.sortBy(list, (t: TreeNode) => t.title);
             })
         ).subscribe(this.projectTreeRoot);
     }
 
     public updateProjectTree(): void {
-        this.api.getAllProjects().subscribe(this.updateProjects);
+        this.api.getAllProjects().subscribe(
+            it => this.updateProjects.next(it)
+        );
     }
 
     public selectProject(id: number): void {
-        this.api.getProject(id).subscribe(prj => {
-            this.selectedProject.next(prj);
-        });
-        this.api.getProjectConfigs(id).subscribe(configs => {
-            this.selectedConfigs.next(configs);
-        });
+        this.api.getProject(id).subscribe(
+            prj => this.selectedProject.next(prj)
+        );
     }
 }
 
