@@ -42,6 +42,12 @@ public class ConfigController {
         configerService.updateConfigDoc(docId, configDoc);
     }
 
+    @RequestMapping(value="/{configId}/schema/{docId}", method = RequestMethod.PUT, produces = MEDIA_TYPE)
+    public void updateConfigSchema(@RequestBody String configSchema,
+                                   @PathVariable(name="docId") long docId) {
+        configerService.updateConfigSchema(docId, configSchema);
+    }
+
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)
     public void createConfig(@RequestBody Config config) {
         configerService.createConfig(config);

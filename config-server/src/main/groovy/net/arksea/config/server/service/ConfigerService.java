@@ -47,4 +47,9 @@ public class ConfigerService {
         configDocDao.updateValue(docId, configDoc);
         logger.info("update config value docId={}, value={}",docId, configDoc);
     }
+
+    public void updateConfigSchema(long docId, String configSchema) {
+        configDocDao.updateSchema(docId, configSchema);
+        logger.info("update config metadata docId={}, schema={}",docId, configSchema);
+    }
 }
