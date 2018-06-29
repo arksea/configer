@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ProjectService } from '../project/project.service';
+import { ConfigService } from '../config/config.service';
 import { Config, Project } from '../configer.model';
 // import { ConfigFormComponent } from '../config-form.component';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
@@ -10,18 +11,20 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
   templateUrl: './project.component.html'
 })
 export class ProjectComponent implements OnInit {
-  configs: Subject<Config[]> = this.service.selectedConfigs;
-  project: Subject<Project> = this.service.selectedProject;
+  configs: Subject<Config[]> = this.svcCfg.selectedConfigs;
+  project: Subject<Project> = this.svcPrj.selectedProject;
 
   constructor(
-      private service: ProjectService,
+      private svcPrj: ProjectService,
+      private svcCfg: ConfigService,
       private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     const id: number = parseInt(this.route.snapshot.paramMap.get('id'), 10);
     if (id) {
-        this.service.selectProject(id);
+        this.svcPrj.selectProject(id);
+        this.svcCfg.selectProject(id);
     }
   }
 
