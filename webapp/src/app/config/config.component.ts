@@ -42,4 +42,8 @@ export class ConfigComponent implements OnInit {
   onBtnEditClick() {
     this.dialogConfigForm.open();
   }
+
+  getConfigObj() {
+    return JSON.parse(this.config.doc.value);
+  }
 }

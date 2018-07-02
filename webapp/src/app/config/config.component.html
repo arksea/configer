@@ -7,7 +7,7 @@
             </div>
             <div class="card-block" [hidden]="hideContent">
                 <div class="card-text">
-                    <textarea style="border:0;overflow:hidden" [readonly]="true" class="form-control" rows="{{docLineCount}}">{{config.doc.value}}</textarea>
+                    <textarea style="border:0;overflow:hidden" [readonly]="true" class="form-control" rows="{{docLineCount}}">{{getConfigObj() | json}}</textarea>
                 </div>
             </div>
             <div class="card-footer">
