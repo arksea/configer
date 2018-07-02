@@ -11,7 +11,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
   templateUrl: './project.component.html'
 })
 export class ProjectComponent implements OnInit {
-  configs: Subject<Config[]> = this.svcCfg.selectedConfigs;
+  configs: Subject<Config[]> = this.svcCfg.configList;
   project: Subject<Project> = this.svcPrj.selectedProject;
 
   constructor(

@@ -17,6 +17,8 @@ export class ConfigFormComponent implements OnInit {
   opened = false;
   lineCount: number;
   schema: any;
+  model: any;
+  value: any;
   constructor(private service: ConfigService, private registry: WidgetRegistry) {
   }
 
@@ -27,11 +29,12 @@ export class ConfigFormComponent implements OnInit {
     } else if (this.lineCount < 5) {
       this.lineCount = 5;
     }
-    this.schema = JSON.parse(this.config.doc.metadata);
     // this.registry.register('clrCheckbox', ClrCheckboxModule);
   }
 
   public open(): void {
+    this.schema = JSON.parse(this.config.doc.metadata);
+    this.model = JSON.parse(this.config.doc.value);
     this.opened = true;
   }
 
@@ -40,6 +43,18 @@ export class ConfigFormComponent implements OnInit {
   }
 
   public saveDoc(): void {
-    this.service.updateValue(this.config.id, this.config.doc.id, this.config.doc.value);
+    const json = JSON.stringify(this.value);
+    this.service.updateValue(this.config.id, this.config.doc.id, json);
+    this.opened = false;
+  }
+
+  public setValue(value: any): void {
+    this.value = value;
+  }
+
+  public logErrors(errors): void {
+    if (errors) {
+      console.debug('ERRORS', errors);
+    }
   }
 }
