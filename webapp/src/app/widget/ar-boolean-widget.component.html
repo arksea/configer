@@ -1,7 +1,9 @@
-<clr-checkbox
-    name="name"
-    id="id"
-    [formControl]="control"
->
-{{schema.title}} {{schema.description && schema.title ? ': ' : ''}} {{schema.description}}
-</clr-checkbox>
+<div class="widget form-group">
+    <label [attr.for]="id" class="horizontal control-label">
+        {{ schema.title }}
+    </label>
+
+    <clr-checkbox class="form-control" [name]="name" [id]="id" [formControl]="control">
+        {{schema.description}}
+    </clr-checkbox>
+</div>

@@ -15,7 +15,7 @@ export class SchemaFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.lineCount = this.config.doc.metadata.split(/\n/).length;
+    this.lineCount = this.config.doc.value.split(/\,|\n|}|{/).length;
     if (this.lineCount > 25) {
       this.lineCount = 25;
     } else if (this.lineCount < 5) {

@@ -22,7 +22,7 @@ export class ConfigComponent implements OnInit {
   ngOnInit(): void {
       this.hideContent = true;
       this.showBtnText = 'Show';
-      this.docLineCount = this.config.doc.value.split(/\n/).length + 5;
+      this.docLineCount = this.config.doc.value.split(/\,|\n|}|{/).length + 3;
       if (this.docLineCount > 30) {
         this.docLineCount = 30;
       } else if (this.docLineCount < 5) {
