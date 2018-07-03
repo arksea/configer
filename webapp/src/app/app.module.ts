@@ -4,7 +4,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,
+         ReactiveFormsModule  // widget要使用formControl必须导入此模块
+} from '@angular/forms';
 import { AppComponent } from './app.component';
 import { SchemaFormModule, SchemaValidatorFactory, ZSchemaValidatorFactory } from 'ngx-schema-form';
 import { ClarityModule } from '@clr/angular';
@@ -19,6 +21,8 @@ import { ConfigComponent } from './config/config.component';
 import { ConfigFormComponent } from './config/config-form.component';
 import { SchemaFormComponent } from './schema/schema-form.component';
 
+import { ArBooleanWidgetComponent } from './widget/ar-boolean-widget.component';
+import { ArWidgetRegistry } from './widget/ar-widget-registry';
 const appRoutes: Routes = [
   // { path: '',   redirectTo: 'projects', pathMatch: 'full' },
   { path: 'projects/:id', component: ProjectComponent}
@@ -31,8 +35,10 @@ const appRoutes: Routes = [
     ProjectTreeComponent,
     ConfigComponent,
     ConfigFormComponent,
-    SchemaFormComponent
+    SchemaFormComponent,
+    ArBooleanWidgetComponent
   ],
+  entryComponents: [ArBooleanWidgetComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -40,7 +46,8 @@ const appRoutes: Routes = [
     FormsModule,
     SchemaFormModule,
     ClarityModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ReactiveFormsModule
   ],
   providers: [
     ConfigerRestAPI,

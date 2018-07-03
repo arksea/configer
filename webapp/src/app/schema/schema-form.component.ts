@@ -33,6 +33,7 @@ export class SchemaFormComponent implements OnInit {
 
   public saveSchema(): void {
     this.service.updateSchema(this.config.id, this.config.doc.id, this.config.doc.metadata);
+    this.opened = false;
   }
 
 }

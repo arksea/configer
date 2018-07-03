@@ -6,11 +6,12 @@ import {
   Validator,
   DefaultWidgetRegistry,
 } from 'ngx-schema-form';
+import { ArWidgetRegistry } from '../widget/ar-widget-registry';
 
 @Component({
   selector: 'app-config-form',
   templateUrl: './config-form.component.html',
-  providers: [{ provide: WidgetRegistry, useClass: DefaultWidgetRegistry }]
+  providers: [{ provide: WidgetRegistry, useClass: ArWidgetRegistry }]
 })
 export class ConfigFormComponent implements OnInit {
   @Input() config: Config;
@@ -23,7 +24,7 @@ export class ConfigFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.lineCount = this.config.doc.value.split(/\n/).length;
+    this.lineCount = this.config.doc.value.split(/\n/).length + 5;
     if (this.lineCount > 25) {
       this.lineCount = 25;
     } else if (this.lineCount < 5) {
