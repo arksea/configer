@@ -2,6 +2,11 @@
     <label [attr.for]="id" class="horizontal control-label">
         {{ schema.title }}
     </label>
+
+    <span *ngIf="schema.description" class="formHelp">
+        {{schema.description}}
+    </span>
+
     <div *ngIf="schema.type!='array'" class="checkbox">
         <input [formControl]="control" [attr.name]="name" [indeterminate]="control.value !== false && control.value !== true ? true :null"
             type="checkbox" [attr.disabled]="schema.readOnly">
@@ -11,8 +16,7 @@
     <ng-container *ngIf="schema.type==='array'">
         <div *ngFor="let option of schema.items.oneOf; let i=index" class="checkbox">
             <input [attr.name]="name+i" [attr.id]="id+i" value="{{option.enum[0]}}" type="checkbox" [attr.disabled]="schema.readOnly"
-                   (change)="onCheck($event.target)"
-                   [attr.checked]="checked[option.enum[0]] ? true : null">
+                (change)="onCheck($event.target)" [attr.checked]="checked[option.enum[0]] ? true : null">
             <label [for]="id+i" class="horizontal control-label">{{option.description}}</label>
         </div>
     </ng-container>

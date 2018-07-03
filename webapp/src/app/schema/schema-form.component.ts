@@ -12,18 +12,20 @@ export class SchemaFormComponent implements OnInit {
   lineCount: number;
 
   constructor(private service: ConfigService) {
+    this.lineCount = 10;
   }
 
   ngOnInit(): void {
-    this.lineCount = this.config.doc.value.split(/\,|\n|}|{/).length;
-    if (this.lineCount > 25) {
-      this.lineCount = 25;
-    } else if (this.lineCount < 5) {
-      this.lineCount = 5;
-    }
   }
 
   public open(): void {
+    this.lineCount = this.config.doc.metadata.split(/\,|\n|\}|\{/).length;
+    if (this.lineCount > 25) {
+      this.lineCount = 25;
+    } else if (this.lineCount < 10) {
+      this.lineCount = 10;
+    }
+    console.info('=========' + this.lineCount);
     this.opened = true;
   }
 

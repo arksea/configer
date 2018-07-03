@@ -24,6 +24,8 @@ import { SchemaFormComponent } from './schema/schema-form.component';
 import { ArBooleanWidgetComponent } from './widget/ar-boolean-widget.component';
 import { ArRadioWidgetComponent } from './widget/ar-radio-widget.component';
 import { ArCheckboxWidgetComponent } from './widget/ar-checkbox-widget.component';
+import { ArSelectWidgetComponent } from './widget/ar-select-widget.component';
+import { ArArrayWidgetComponent } from './widget/ar-array-widget.component';
 
 const appRoutes: Routes = [
   // { path: '',   redirectTo: 'projects', pathMatch: 'full' },
@@ -38,14 +40,19 @@ const appRoutes: Routes = [
     ConfigComponent,
     ConfigFormComponent,
     SchemaFormComponent,
+
     ArBooleanWidgetComponent,
     ArRadioWidgetComponent,
-    ArCheckboxWidgetComponent
+    ArCheckboxWidgetComponent,
+    ArSelectWidgetComponent,
+    ArArrayWidgetComponent
   ],
   entryComponents: [
     ArBooleanWidgetComponent,
     ArRadioWidgetComponent,
-    ArCheckboxWidgetComponent
+    ArCheckboxWidgetComponent,
+    ArSelectWidgetComponent,
+    ArArrayWidgetComponent
   ],
   imports: [
     BrowserModule,
