@@ -7,7 +7,7 @@ import { ConfigService } from '../config/config.service';
   templateUrl: './config.component.html',
 })
 export class ConfigComponent implements OnInit {
-  config: Config;
+  config: Config = <Config>{ name: '' };
   opened = false;
   lineCount = 10;
   json = '';

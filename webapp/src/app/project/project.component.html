@@ -1,29 +1,52 @@
-{{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}} <button 
-    class="btn btn-sm btn-link" (click)="onCreateConfig()">
-        <clr-icon shape="add-text"></clr-icon> Add Config
+{{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}}
+<button class="btn btn-sm btn-link"
+    (click)="onCreateConfig()">
+    <clr-icon shape="add-text"></clr-icon> Add Config
 </button>
 
-<table class="table table-bordered">
+<table class="table table-bordered" width="100%">
+    <colgroup>
+        <col class="col-name">
+        <col class="col-desc">
+        <col class="col-btn">
+        <col class="col-btn">
+        <col class="col-btn">
+        <col class="col-btn">
+    </colgroup>
     <thead>
-    <tr>
-        <th class="td-text">ID</th>
-        <th class="td-text">Name</th>
-        <th class="td-text">Description</th>
-        <th>Json</th>
-        <th>Edit</th>
-        <th>Sche</th>
-        <th>Del</th>
-    </tr>
+        <tr>
+            <th class="td-text">Name</th>
+            <th class="td-text">Description</th>
+            <th>Json</th>
+            <th>Edit</th>
+            <th>Sche</th>
+            <th>Del</th>
+        </tr>
     </thead>
     <tbody>
         <tr *ngFor="let i of configs | async">
-            <td class="td-text">{{i.id}}</td>
             <td class="td-text">{{i.name}}</td>
             <td class="td-text">{{i.description}}</td>
-            <td><a (click)="onBtnJsonClick(i)"><clr-icon shape="eye"></clr-icon></a></td>
-            <td><a (click)="onBtnEditClick(i)"><clr-icon shape="note"></clr-icon></a></td>
-            <td><a (click)="onBtnSchemaClick(i)"><clr-icon shape="ruler-pencil"></clr-icon></a></td>
-            <td><a><clr-icon shape="trash"></clr-icon></a></td>
+            <td>
+                <a (click)="onBtnJsonClick(i)">
+                    <clr-icon shape="eye"></clr-icon>
+                </a>
+            </td>
+            <td>
+                <a (click)="onBtnEditClick(i)">
+                    <clr-icon shape="note"></clr-icon>
+                </a>
+            </td>
+            <td>
+                <a (click)="onBtnSchemaClick(i)">
+                    <clr-icon shape="ruler-pencil"></clr-icon>
+                </a>
+            </td>
+            <td>
+                <a>
+                    <clr-icon shape="trash"></clr-icon>
+                </a>
+            </td>
         </tr>
     </tbody>
 </table>
