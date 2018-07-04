@@ -1,49 +1,43 @@
-import { Component, Input, ViewChild, OnInit } from '@angular/core';
-import { Config, Project } from '../configer.model';
-import { ConfigerRestAPI } from '../configer.restapi';
-import { SchemaFormComponent } from '../schema/schema-form.component';
-import { ConfigFormComponent } from './config-form.component';
+import { Component, Input, OnInit } from '@angular/core';
+import { Config } from '../configer.model';
+import { ConfigService } from '../config/config.service';
 
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
 })
 export class ConfigComponent implements OnInit {
-  @Input() config: Config;
-  @ViewChild(SchemaFormComponent) dialogSchemaForm: SchemaFormComponent;
-  @ViewChild(ConfigFormComponent) dialogConfigForm: ConfigFormComponent;
-  docLineCount: number;
-  hideContent: boolean;
-  showBtnText: string;
+  config: Config;
+  opened = false;
+  lineCount = 10;
+  json = '';
 
-
-  constructor() {}
+  constructor(private service: ConfigService) {
+  }
 
   ngOnInit(): void {
-      this.hideContent = true;
-      this.showBtnText = 'Show';
-      this.docLineCount = this.config.doc.value.split(/\,|\n|\}|\{/).length + 5;
-      if (this.docLineCount > 25) {
-        this.docLineCount = 25;
-      } else if (this.docLineCount < 5) {
-        this.docLineCount = 5;
-      }
   }
 
-  onBtnShowClick() {
-    this.hideContent = !this.hideContent;
-    this.showBtnText = this.hideContent ? 'Show' : 'Hide';
+  public open(config: Config): void {
+    this.config = config;
+    this.lineCount = this.config.doc.value.split(/\,|\n|\}|\{/).length;
+    if (this.lineCount > 25) {
+      this.lineCount = 25;
+    } else if (this.lineCount < 5) {
+      this.lineCount = 5;
+    }
+    this.opened = true;
+    this.json = config.doc.value;
   }
 
-  onBtnSchemaClick() {
-    this.dialogSchemaForm.open();
+  public close(): void {
+    this.opened = false;
   }
 
-  onBtnEditClick() {
-    this.dialogConfigForm.open();
+  public saveJson(): void {
+    this.config.doc.value = this.json;
+    this.service.updateValue(this.config.id, this.config.doc.id, this.json);
+    this.opened = false;
   }
 
-  getConfigObj() {
-    return JSON.parse(this.config.doc.value);
-  }
 }

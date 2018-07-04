@@ -1,35 +1,10 @@
-<div class="row">
-    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-        <div class="card">
-            <div class="card-header">
-                {{config.name}}
-                <p>{{config.description}}</p>
-            </div>
-            <div class="card-block" [hidden]="hideContent">
-                <div class="card-text">
-                    <textarea [readonly]="true" class="form-control" [rows]="docLineCount">{{getConfigObj() | json}}</textarea>
-                </div>
-            </div>
-            <div class="card-footer">
-                <button class="btn btn-sm btn-link" (click)="onBtnShowClick()">
-                    <clr-icon shape="eye"> </clr-icon>
-                    {{showBtnText}}
-                </button>
-                <button class="btn btn-sm btn-link" (click)="onBtnEditClick()">
-                    <clr-icon shape="note"></clr-icon>
-                    Edit
-                </button>
-                <button class="btn btn-sm btn-link" (click)="onBtnSchemaClick()">
-                    <clr-icon shape="ruler-pencil"></clr-icon>
-                    Schema
-                </button>
-                <button class="btn btn-sm btn-link">
-                    <clr-icon shape="trash"></clr-icon>
-                    Delete
-                </button>
-            </div>
-        </div>
+<clr-modal [(clrModalOpen)]="opened" [clrModalSize]="'lg'">
+    <h3 class="modal-title">{{config.name}}</h3>
+    <div class="modal-body">
+        <textarea class="form-control" [rows]="lineCount" [(ngModel)]="json"></textarea>
     </div>
-</div>
-<app-config-form [config] = "config"></app-config-form>
-<app-schema-form [config] = "config"></app-schema-form>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveJson()">Save</button>
+    </div>
+</clr-modal>

@@ -16,7 +16,7 @@ export class ArArrayWidgetComponent extends ArrayLayoutWidget {
   }
 
   reset() {
-    this.formProperty.reset(null);
+    this.formProperty.reset([]);
   }
 
   trackByIndex(index: number, item: any) {

@@ -17,8 +17,8 @@ import { ProjectService } from './project/project.service';
 import { ProjectTreeComponent } from './project/project-tree.component';
 import { ProjectComponent } from './project/project.component';
 import { ConfigService } from './config/config.service';
-import { ConfigComponent } from './config/config.component';
 import { ConfigFormComponent } from './config/config-form.component';
+import { ConfigComponent } from './config/config.component';
 import { SchemaFormComponent } from './schema/schema-form.component';
 
 import { ArBooleanWidgetComponent } from './widget/ar-boolean-widget.component';

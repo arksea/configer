@@ -2,5 +2,32 @@
     class="btn btn-sm btn-link" (click)="onCreateConfig()">
         <clr-icon shape="add-text"></clr-icon> Add Config
 </button>
-<app-config *ngFor="let cfg of configs | async" [config]="cfg"></app-config>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th class="td-text">ID</th>
+        <th class="td-text">Name</th>
+        <th class="td-text">Description</th>
+        <th>Json</th>
+        <th>Edit</th>
+        <th>Sche</th>
+        <th>Del</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let i of configs | async">
+            <td class="td-text">{{i.id}}</td>
+            <td class="td-text">{{i.name}}</td>
+            <td class="td-text">{{i.description}}</td>
+            <td><a (click)="onBtnJsonClick(i)"><clr-icon shape="eye"></clr-icon></a></td>
+            <td><a (click)="onBtnEditClick(i)"><clr-icon shape="note"></clr-icon></a></td>
+            <td><a (click)="onBtnSchemaClick(i)"><clr-icon shape="ruler-pencil"></clr-icon></a></td>
+            <td><a><clr-icon shape="trash"></clr-icon></a></td>
+        </tr>
+    </tbody>
+</table>
+<app-config-form></app-config-form>
+<app-schema-form></app-schema-form>
+<app-config></app-config>
 <!-- <config-form [project]="project"></config-form> -->

@@ -6,7 +6,7 @@
 
     <div *ngFor="let itemProperty of formProperty.properties; let i=index; trackBy:trackByIndex">
         <div class="row">
-            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10" [attr.id]="id+i">
+            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                 <sf-form-element [formProperty]="itemProperty"></sf-form-element>
             </div>
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
@@ -18,10 +18,10 @@
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-6 col-xs-6"></div>
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
-            <button (click)="reset()" class="btn btn-sm array-add-button">Reset</button>
+            <button (click)="addItem()" class="btn btn-sm">Add</button>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
-            <button (click)="addItem()" class="btn btn-sm">AddOne</button>
+            <button (click)="reset()" class="btn btn-sm">Clear！</button>
         </div>
     </div>
 </div>

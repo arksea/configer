@@ -1,11 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Config } from '../configer.model';
 import { ConfigService } from '../config/config.service';
-import {
-  WidgetRegistry,
-  Validator,
-  DefaultWidgetRegistry,
-} from 'ngx-schema-form';
+import { WidgetRegistry } from 'ngx-schema-form';
 import { ArWidgetRegistry } from '../widget/ar-widget-registry';
 
 @Component({
@@ -13,27 +9,24 @@ import { ArWidgetRegistry } from '../widget/ar-widget-registry';
   templateUrl: './config-form.component.html',
   providers: [{ provide: WidgetRegistry, useClass: ArWidgetRegistry }]
 })
-export class ConfigFormComponent implements OnInit {
-  @Input() config: Config;
+export class ConfigFormComponent {
+  config: Config;
   opened = false;
-  lineCount: number;
+  lineCount = 5;
   schema: any;
   model: any;
   value: any;
   constructor(private service: ConfigService, private registry: WidgetRegistry) {
   }
 
-  ngOnInit(): void {
+  public open(config: Config): void {
+    this.config = config;
     this.lineCount = this.config.doc.value.split(/\n/).length + 5;
     if (this.lineCount > 25) {
       this.lineCount = 25;
     } else if (this.lineCount < 5) {
       this.lineCount = 5;
     }
-    // this.registry.register('clrCheckbox', ClrCheckboxModule);
-  }
-
-  public open(): void {
     this.schema = JSON.parse(this.config.doc.metadata);
     this.model = JSON.parse(this.config.doc.value);
     this.opened = true;
