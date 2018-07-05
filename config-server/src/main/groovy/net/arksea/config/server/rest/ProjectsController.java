@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  *
@@ -35,10 +36,8 @@ public class ProjectsController {
     private ConfigerService configerService;
 
     @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public Iterable<Project> listAllProjects() {
-        Iterable<Project> projects = projectDao.findAll();
-        projects.forEach(it -> logger.info(it.getName()));
-        return projects;
+    public List<Project> listAllProjects() {
+        return projectDao.getAllNotDeleted();
     }
 
     @RequestMapping(method = RequestMethod.GET, params={"name","profile"}, produces = MEDIA_TYPE)

@@ -1,9 +1,12 @@
 package net.arksea.config.server.dao;
 
+import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 
 /**
  *
@@ -16,4 +19,7 @@ public interface ProjectDao extends CrudRepository<Project,Long> {
     @Modifying
     @Query("update Project p set p.deleted = true where p.id = ?1")
     void deleteById(long id);
+
+    @Query("select p from Project p where p.deleted = false")
+    List<Project> getAllNotDeleted();
 }
