@@ -15,25 +15,6 @@ export class ConfigerRestAPI {
         this.headers.append('Content-Type', 'application/json; charset=UTF-8');
     }
 
-    private handleCatchedError(error, request: string) {
-        this.notify.openWidthDescription('Error', request + ' failed', error.message);
-        return new BehaviorSubject(error);
-    }
-
-    private handleResult(result, request: string) {
-        console.debug(request + ' : ' + result);
-        return new BehaviorSubject(result);
-    }
-
-    private handleRestResult(result, request: string) {
-        if (result.code === 0) {
-            console.debug(request + ' : ' + result);
-        } else {
-            this.notify.openWidthDescription('Error', request + ' failed', JSON.stringify(result));
-        }
-        return new BehaviorSubject(result);
-    }
-
     public getAllProjects(): Observable<Project[]> {
         const request = 'Request project list';
         return this.http.get(environment.apiUrl + '/api/v1/projects')
@@ -81,26 +62,70 @@ export class ConfigerRestAPI {
             configSchema, { headers: this.headers }).subscribe(data => { });
     }
 
-    public createConfig(config: Config):  Observable<RestResult<number>> {
+    public createConfig(config: Config):  Observable<RestResult<Config>> {
         const request = 'create new config';
         const url = environment.apiUrl + '/api/v1/configs';
-        return this.http.post(url, config, { headers: this.headers }).pipe(
-            tap(r => this.handleRestResult(r, request)),
-            catchError(r => this.handleCatchedError(r, request))
-        );
+        return this.httpPost(url, config, request);
     }
 
-    public createProject(project: Project): void {
-        this.http.post(environment.apiUrl + '/api/v1/projects', project, { headers: this.headers })
-            .subscribe(data => { });
+    public createProject(project: Project): Observable<RestResult<number>> {
+        const request = 'create new project';
+        const url = environment.apiUrl + '/api/v1/projects';
+        return this.httpPost(url, project, request);
     }
 
     public deleteConfig(cfgId: number): Observable<RestResult<string>> {
         const request = 'delete config';
         const url = environment.apiUrl + '/api/v1/configs/' + cfgId;
-        return this.http.delete(url, { headers: this.headers }).pipe(
-            tap(r => this.handleRestResult(r, request)),
-            catchError(r => this.handleCatchedError(r, request))
+        return this.httpDelete(url, request);
+    }
+
+    // -------------------------------------------------------------------
+
+    private httpPost(url: string, body: any, requestMessage: string) {
+        return this.http.post(url, body, { headers: this.headers }).pipe(
+            tap(r => this.handleRestResult(r, requestMessage)),
+            catchError(r => this.handleCatchedError(r, requestMessage))
         );
+    }
+
+    private httpPut(url: string, body: any, requestMessage: string) {
+        return this.http.put(url, body, { headers: this.headers }).pipe(
+            tap(r => this.handleRestResult(r, requestMessage)),
+            catchError(r => this.handleCatchedError(r, requestMessage))
+        );
+    }
+
+    private httpGet(url: string, requestMessage: string) {
+        return this.http.get(url, { headers: this.headers }).pipe(
+            tap(r => this.handleRestResult(r, requestMessage)),
+            catchError(r => this.handleCatchedError(r, requestMessage))
+        );
+    }
+
+    private httpDelete(url: string, requestMessage: string) {
+        return this.http.delete(url, { headers: this.headers }).pipe(
+            tap(r => this.handleRestResult(r, requestMessage)),
+            catchError(r => this.handleCatchedError(r, requestMessage))
+        );
+    }
+
+    private handleCatchedError(error, request: string) {
+        this.notify.openWidthDescription('Error', request + ' failed', error.message);
+        return new BehaviorSubject(error);
+    }
+
+    private handleResult(result, request: string) {
+        console.debug(request + ' : ' + result);
+        return new BehaviorSubject(result);
+    }
+
+    private handleRestResult(result, request: string) {
+        if (result.code === 0) {
+            console.debug(request + ' : ' + result);
+        } else {
+            this.notify.openWidthDescription('Error', request + ' failed', JSON.stringify(result));
+        }
+        return new BehaviorSubject(result);
     }
 }

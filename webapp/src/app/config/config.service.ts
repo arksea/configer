@@ -139,9 +139,8 @@ export class ConfigService {
     public createConfig(config: Config): void {
         this.api.createConfig(config).subscribe(
             result => {
-                if (result.code === 0 && result.result > 0) {
-                    config.id = result.result;
-                    this.addConfig.next({cfgId: result.result, config: config});
+                if (result.code === 0) {
+                    this.addConfig.next({cfgId: result.result.id, config: result.result});
                 }
             }
         );

@@ -11,6 +11,7 @@ import { Project } from '../configer.model';
 })
 export class ProjectTreeComponent implements OnInit {
     treeRoot: Subject<TreeNode[]> = null;
+    selectedProjectId = -1;
 
     constructor(private svcPrj: ProjectService,
                 private svcCfg: ConfigService) {
@@ -30,8 +31,13 @@ export class ProjectTreeComponent implements OnInit {
     }
 
     onClickOne(prj: Project) {
+        this.selectedProjectId = prj.id;
         this.svcPrj.selectProject(prj.id);
         this.svcCfg.selectProject(prj.id);
+    }
+
+    onClickDelBtn(prjId: number) {
+        console.error('delete project: ' + prjId);
     }
 }
 
