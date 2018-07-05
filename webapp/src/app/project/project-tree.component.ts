@@ -1,8 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ProjectService, TreeNode } from '../project/project.service';
 import { ConfigService } from '../config/config.service';
 import { Project } from '../configer.model';
+import { ProjectNewFormComponent } from './project-new-form.component';
 
 
 @Component({
@@ -12,6 +13,7 @@ import { Project } from '../configer.model';
 export class ProjectTreeComponent implements OnInit {
     treeRoot: Subject<TreeNode[]> = null;
     selectedProjectId = -1;
+    @ViewChild(ProjectNewFormComponent) dialogProjectNewForm: ProjectNewFormComponent;
 
     constructor(private svcPrj: ProjectService,
                 private svcCfg: ConfigService) {
@@ -36,7 +38,11 @@ export class ProjectTreeComponent implements OnInit {
         this.svcCfg.selectProject(prj.id);
     }
 
-    onClickDelBtn(prjId: number) {
+    onClickProjectAddBtn() {
+        this.dialogProjectNewForm.open();
+    }
+
+    onClickProjectDelBtn(prjId: number) {
         console.error('delete project: ' + prjId);
     }
 }

@@ -44,9 +44,10 @@ public class ConfigerService {
         return cfg1;
     }
 
-    public void createProject(Project prj) {
+    public long createProject(Project prj) {
         Project prj1 = projectDao.save(prj);
         logger.info("create project name={}, profile={}, desc={}",prj1.getName(),prj1.getProfile(), prj1.getDescription());
+        return prj1.getId();
     }
 
     public void updateConfigDescription(long cfgId, String desc) {

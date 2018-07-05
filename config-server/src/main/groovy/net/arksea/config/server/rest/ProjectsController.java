@@ -7,10 +7,14 @@ import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.ConfigDoc;
 import net.arksea.config.server.entity.Project;
 import net.arksea.config.server.service.ConfigerService;
+import net.arksea.restapi.RestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -54,7 +58,11 @@ public class ProjectsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)
-    public void createProject(@RequestBody Project project) {
-        configerService.createProject(project);
+    public DeferredResult<String> createProject(@RequestBody Project project, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        long prjId = configerService.createProject(project);
+        result.setResult(RestUtils.createJsonResult(0, prjId, reqid));
+        return result;
     }
 }

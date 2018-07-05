@@ -3,11 +3,11 @@
             <button class="btn" (click)="onClickRefreshBtn()">
                 <clr-icon shape="refresh"></clr-icon>
             </button>
-            <button class="btn">
+            <button class="btn" (click)="onClickProjectAddBtn()">
                 <clr-icon shape="add"></clr-icon>
                 New
             </button>
-            <button *ngIf="selectedProjectId > 0" class="btn" (click)="onClickDelBtn(selectedProjectId)">
+            <button *ngIf="selectedProjectId > 0" class="btn" (click)="onClickProjectDelBtn(selectedProjectId)">
                 <clr-icon shape="trash"></clr-icon>
                 Del
             </button>
@@ -28,3 +28,4 @@
         </clr-tree-node>
     </ng-template>
 </clr-tree-node>
+<app-project-new-form></app-project-new-form>

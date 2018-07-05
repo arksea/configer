@@ -16,6 +16,10 @@ type ProjectMap = Map<string, Project>;
 
 type ITreeOperation = (nodes: TreeNode[]) => TreeNode[];
 type IProjectMapOperation = (projects: ProjectMap) => ProjectMap;
+interface AddProject {
+    prjId: number;
+    project: Project;
+}
 
 @Injectable()
 export class ProjectService {
@@ -24,6 +28,7 @@ export class ProjectService {
 
     projects: Observable<ProjectMap>;
     projectTreeRoot: Subject<TreeNode[]> = new BehaviorSubject<TreeNode[]>([]);
+    addProject: Subject<AddProject> = new Subject();
     updates: Subject<any> = new Subject<any>();
     updateProjects: Subject<Project[]> = new Subject(); // 更新项目列表： 从服务端读取项目列表，并更新本地存储
 
@@ -32,6 +37,15 @@ export class ProjectService {
     });
 
     constructor(private api: ConfigerRestAPI) {
+        this.addProject.pipe(
+            map(function (add: AddProject): IProjectMapOperation {
+                return (prjMap: ProjectMap) => {
+                    prjMap.set(add.prjId.toString(), add.project);
+                    return prjMap;
+                };
+            })
+        ).subscribe(this.updates);
+
         // 定义更新项目列表操作：丢弃旧值，用新值替换（新值是数组，需要map成ProjectMap类型）
         this.updateProjects.pipe(
             map(function (prjs: Project[]): IProjectMapOperation {
@@ -102,6 +116,17 @@ export class ProjectService {
     public selectProject(id: number): void {
         this.api.getProject(id).subscribe(
             prj => this.selectedProject.next(prj)
+        );
+    }
+
+    public createProject(prj: Project): void {
+        this.api.createProject(prj).subscribe(
+            result => {
+                if (result.code === 0 && result.result > 0) {
+                    prj.id = result.result;
+                    this.addProject.next({prjId: result.result, project: prj});
+                }
+            }
         );
     }
 }
