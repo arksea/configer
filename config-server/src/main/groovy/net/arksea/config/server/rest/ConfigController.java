@@ -3,10 +3,14 @@ package net.arksea.config.server.rest;
 import net.arksea.config.server.dao.ConfigDao;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.service.ConfigerService;
+import net.arksea.restapi.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -49,7 +53,11 @@ public class ConfigController {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)
-    public void createConfig(@RequestBody Config config) {
-        configerService.createConfig(config);
+    public DeferredResult<String> createConfig(@RequestBody Config config, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        long id = configerService.createConfig(config);
+        result.setResult(RestUtils.createResult(0, id, reqid));
+        return result;
     }
 }

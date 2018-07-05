@@ -7,18 +7,21 @@ import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { FormsModule,
          ReactiveFormsModule  // widget要使用formControl必须导入此模块
 } from '@angular/forms';
-import { AppComponent } from './app.component';
+
 import { SchemaFormModule, SchemaValidatorFactory, ZSchemaValidatorFactory } from 'ngx-schema-form';
 import { ClarityModule } from '@clr/angular';
 
-
+import { AppComponent } from './app.component';
+import { AppNotifyDialogComponent } from './app-notify-dialog.component';
+import { AppNotifyDialogService } from './app-notify-dialog.service';
 import { ConfigerRestAPI } from './configer.restapi';
 import { ProjectService } from './project/project.service';
 import { ProjectTreeComponent } from './project/project-tree.component';
 import { ProjectComponent } from './project/project.component';
 import { ConfigService } from './config/config.service';
 import { ConfigFormComponent } from './config/config-form.component';
-import { ConfigComponent } from './config/config.component';
+import { ConfigAddFormComponent } from './config/config-add-form.component';
+import { ConfigValueFormComponent } from './config/config-value-form.component';
 import { SchemaFormComponent } from './schema/schema-form.component';
 
 import { ArBooleanWidgetComponent } from './widget/ar-boolean-widget.component';
@@ -35,10 +38,12 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
+    AppNotifyDialogComponent,
     ProjectComponent,
     ProjectTreeComponent,
-    ConfigComponent,
+    ConfigValueFormComponent,
     ConfigFormComponent,
+    ConfigAddFormComponent,
     SchemaFormComponent,
 
     ArBooleanWidgetComponent,
@@ -68,6 +73,7 @@ const appRoutes: Routes = [
     ConfigerRestAPI,
     ProjectService,
     ConfigService,
+    AppNotifyDialogService,
     { provide: SchemaValidatorFactory, useClass: ZSchemaValidatorFactory },
     { provide: LocationStrategy, useClass: HashLocationStrategy } // 自动在路由路径前添加#号，部署到Tomcat需要做此转换
   ],

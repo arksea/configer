@@ -1,3 +1,10 @@
+export interface RestResult<T> {
+    code: number;
+    result?: T;
+    error?: string;
+    reqid: string;
+  }
+
 export class Project {
     id: number;
     name: string;
@@ -18,4 +25,3 @@ export class Config {
     description: string;
     doc: ConfigDoc;
 }
-

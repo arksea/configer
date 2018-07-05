@@ -1,6 +1,6 @@
 {{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}}
 <button class="btn btn-sm btn-link"
-    (click)="onCreateConfig()">
+    (click)="onBtnConfigAddClick()">
     <clr-icon shape="add-text"></clr-icon> Add Config
 </button>
 
@@ -33,7 +33,7 @@
                 </a>
             </td>
             <td>
-                <a (click)="onBtnEditClick(i)">
+                <a [attr.disabled]="i.doc.metadata == 'json'" (click)="onBtnEditClick(i)">
                     <clr-icon shape="note"></clr-icon>
                 </a>
             </td>
@@ -52,5 +52,6 @@
 </table>
 <app-config-form></app-config-form>
 <app-schema-form></app-schema-form>
-<app-config></app-config>
+<app-config-value-form></app-config-value-form>
+<app-config-add-form [project]="project | async"></app-config-add-form>
 <!-- <config-form [project]="project"></config-form> -->

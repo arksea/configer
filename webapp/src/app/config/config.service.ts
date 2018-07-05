@@ -11,6 +11,10 @@ interface UpdateConfigField {
     cfgId: number;
     fieldValue: any;
 }
+interface AddConfig {
+    cfgId: number;
+    config: Config;
+}
 
 @Injectable()
 export class ConfigService {
@@ -24,11 +28,21 @@ export class ConfigService {
     updateConfigDoc: Subject<UpdateConfigField> = new Subject();
     updateConfigSchema: Subject<UpdateConfigField> = new Subject();
     updateConfigDesc: Subject<UpdateConfigField> = new Subject();
+    addConfig: Subject<AddConfig> = new Subject();
     updates: Subject<any> = new Subject<any>();
     configMap: Observable<ConfigMap>;
     configList: Subject<Config[]> = new BehaviorSubject<Config[]>([]);
 
     constructor(private api: ConfigerRestAPI) {
+        this.addConfig.pipe(
+            map(function (add: AddConfig): IConfigMapOperation {
+                return (cfgMap: ConfigMap) => {
+                    cfgMap.set(add.cfgId.toString(), add.config);
+                    return cfgMap;
+                };
+            })
+        ).subscribe(this.updates);
+
         this.updateConfigs.pipe(
             map(function (cfgs: Config[]): IConfigMapOperation {
                 return (cfgMap: ConfigMap) => {
@@ -110,5 +124,15 @@ export class ConfigService {
     public updateDesc(cfgId: number, desc: string): void {
         this.api.updateConfigDescription(cfgId, desc);
         this.updateConfigDesc.next({cfgId: cfgId, fieldValue: desc});
+    }
+
+    public createConfig(config: Config): void {
+        this.api.createConfig(config).subscribe(
+            result => {
+                if (result.code === 0 && result.result > 0) {
+                    this.addConfig.next({cfgId: result.result, config: config});
+                }
+            }
+        );
     }
 }

@@ -28,9 +28,10 @@ public class ConfigerService {
     @Autowired
     private ProjectDao projectDao;
 
-    public void createConfig(Config cfg) {
+    public long createConfig(Config cfg) {
         Config cfg1 = configDao.save(cfg);
         logger.info("create config {}:{}:{}",cfg1.getProject().getName(),cfg1.getProject().getProfile(),cfg1.getName());
+        return cfg1.getId();
     }
 
     public void createProject(Project prj) {

@@ -5,8 +5,8 @@ import { ConfigService } from '../config/config.service';
 import { Config, Project } from '../configer.model';
 import { SchemaFormComponent } from '../schema/schema-form.component';
 import { ConfigFormComponent } from '../config/config-form.component';
-import { ConfigComponent } from '../config/config.component';
-// import { ConfigFormComponent } from '../config-form.component';
+import { ConfigValueFormComponent } from '../config/config-value-form.component';
+import { ConfigAddFormComponent } from '../config/config-add-form.component';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
@@ -17,7 +17,8 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 export class ProjectComponent implements OnInit {
   @ViewChild(SchemaFormComponent) dialogSchemaForm: SchemaFormComponent;
   @ViewChild(ConfigFormComponent) dialogConfigForm: ConfigFormComponent;
-  @ViewChild(ConfigComponent) dialogConfig: ConfigComponent;
+  @ViewChild(ConfigValueFormComponent) dialogConfigValueForm: ConfigValueFormComponent;
+  @ViewChild(ConfigAddFormComponent) dialogConfigAddForm: ConfigAddFormComponent;
   configs: Subject<Config[]> = this.svcCfg.configList;
   project: Subject<Project> = this.svcPrj.selectedProject;
 
@@ -35,9 +36,6 @@ export class ProjectComponent implements OnInit {
     }
   }
 
-  onCreateConfig() {
-  }
-
   onBtnEditClick(config: Config) {
     this.dialogConfigForm.open(config);
   }
@@ -47,7 +45,11 @@ export class ProjectComponent implements OnInit {
   }
 
   onBtnJsonClick(config: Config) {
-    this.dialogConfig.open(config);
+    this.dialogConfigValueForm.open(config);
+  }
+
+  onBtnConfigAddClick() {
+    this.dialogConfigAddForm.open();
   }
 }
 

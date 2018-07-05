@@ -3,26 +3,35 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-import { Project, Config } from './configer.model';
-
+import { Project, Config, RestResult } from './configer.model';
+import { AppNotifyDialogService } from './app-notify-dialog.service';
 
 @Injectable()
 export class ConfigerRestAPI {
     headers: HttpHeaders;
 
-    public constructor(private http: HttpClient) {
+    public constructor(private http: HttpClient, private notify: AppNotifyDialogService ) {
         this.headers = new HttpHeaders();
         this.headers.append('Content-Type', 'application/json; charset=UTF-8');
     }
 
     private handleCatchedError(error, request: string) {
-        const msg = request + ' failed: ' + error.message;
-        console.error(msg);
+        console.error(request + ' failed, ' + error.message);
+        this.notify.openWidthDescription('Error', request + ' failed', error.message);
         return new BehaviorSubject(error);
     }
 
     private handleResult(result, request: string) {
         console.debug(request + ' : ' + result);
+        return new BehaviorSubject(result);
+    }
+
+    private handleRestResult(result, request: string) {
+        if (result.code === 0) {
+            console.debug(request + ' : ' + result);
+        } else {
+            console.error(request + ' failed, ' + result);
+        }
         return new BehaviorSubject(result);
     }
 
@@ -73,10 +82,15 @@ export class ConfigerRestAPI {
             configSchema, { headers: this.headers }).subscribe(data => { });
     }
 
-    public createConfig(config: Config): void {
-        this.http.post(environment.apiUrl + '/api/v1/configs', config, { headers: this.headers })
-            .subscribe(data => { });
+    public createConfig(config: Config):  Observable<RestResult<number>> {
+        const request = 'create new config';
+        const url = environment.apiUrl + '/api/v1/configs';
+        return this.http.post(url, config, { headers: this.headers }).pipe(
+            tap(r => this.handleRestResult(r, request)),
+            catchError(r => this.handleCatchedError(r, request))
+        );
     }
+
     public createProject(project: Project): void {
         this.http.post(environment.apiUrl + '/api/v1/projects', project, { headers: this.headers })
             .subscribe(data => { });

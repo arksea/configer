@@ -3,10 +3,10 @@ import { Config } from '../configer.model';
 import { ConfigService } from '../config/config.service';
 
 @Component({
-  selector: 'app-config',
-  templateUrl: './config.component.html',
+  selector: 'app-config-value-form',
+  templateUrl: './config-value-form.component.html',
 })
-export class ConfigComponent implements OnInit {
+export class ConfigValueFormComponent implements OnInit {
   config: Config = <Config>{ name: '' };
   opened = false;
   lineCount = 10;

@@ -1,0 +1,26 @@
+<clr-modal [(clrModalOpen)]="opened">
+    <h3 class="modal-title">Add Config</h3>
+    <div class="modal-body">
+        <form>
+            <section class="form-block">
+                <div class="form-group">
+                    <label for="configName">名称
+                        <span class="text-danger">(长度3至30)</span>
+                    </label>
+                    <input type="text" id="configName" name="configName" placeholder="namespace.configName" [(ngModel)]="configName" size='38'>
+                </div>
+                <div class="form-group">
+                    <label for="configDescription">说明
+                        <span class="text-danger">(长度0至128)</span>
+                    </label>
+                    <!-- <input type="text" name="configDescription" placeholder="请注明配置功能" [(ngModel)]="description" size='30'> -->
+                    <textarea rows="3" id="configDescription"  name="configDescription" [(ngModel)]="description"></textarea>
+                </div>
+            </section>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="onSave()">Save</button>
+    </div>
+</clr-modal>
