@@ -7,7 +7,7 @@
                 <clr-icon shape="add"></clr-icon>
                 New
             </button>
-            <button *ngIf="selectedProjectId > 0" class="btn" (click)="onClickProjectDelBtn(selectedProjectId)">
+            <button *ngIf="selectedProject != null" class="btn" (click)="onClickProjectDelBtn(selectedProject)">
                 <clr-icon shape="trash"></clr-icon>
                 Del
             </button>

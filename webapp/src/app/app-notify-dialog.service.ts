@@ -4,7 +4,7 @@ import { Subject, Observable } from 'rxjs';
 export interface NotifyEvent {
     title: string;
     message: string;
-    description: string;
+    description: any;
     confirm: boolean;
     selection: Subject<boolean>;
 }

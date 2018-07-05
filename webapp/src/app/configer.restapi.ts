@@ -80,6 +80,12 @@ export class ConfigerRestAPI {
         return this.httpDelete(url, request);
     }
 
+    public deleteProject(prjId: number): Observable<RestResult<string>> {
+        const request = 'delete config';
+        const url = environment.apiUrl + '/api/v1/projects/' + prjId;
+        return this.httpDelete(url, request);
+    }
+
     // -------------------------------------------------------------------
 
     private httpPost(url: string, body: any, requestMessage: string) {
@@ -111,7 +117,7 @@ export class ConfigerRestAPI {
     }
 
     private handleCatchedError(error, request: string) {
-        this.notify.openWidthDescription('Error', request + ' failed', error.message);
+        this.notify.openWidthDescription('Error', request + ' failed', error);
         return new BehaviorSubject(error);
     }
 
@@ -124,7 +130,7 @@ export class ConfigerRestAPI {
         if (result.code === 0) {
             console.debug(request + ' : ' + result);
         } else {
-            this.notify.openWidthDescription('Error', request + ' failed', JSON.stringify(result));
+            this.notify.openWidthDescription('Error', request + ' failed', result);
         }
         return new BehaviorSubject(result);
     }

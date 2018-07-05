@@ -69,4 +69,9 @@ public class ConfigerService {
         configDao.deleteById(id);
         logger.info("delete config, Id={}",id);
     }
+
+    public void deleteProject(long id) {
+        projectDao.deleteById(id);
+        logger.info("delete project, Id={}",id);
+    }
 }

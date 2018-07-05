@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { AppNotifyDialogComponent } from './app-notify-dialog.component';
-import { }
 import {
   WidgetRegistry,
   Validator,

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, Observable, ObjectUnsubscribedError } from 'rxjs';
 import { ConfigerRestAPI } from '../configer.restapi';
-import { Project, Config } from '../configer.model';
+import { Project } from '../configer.model';
 import { scan, map, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -13,8 +13,6 @@ export interface TreeNode {
 }
 
 type ProjectMap = Map<string, Project>;
-
-type ITreeOperation = (nodes: TreeNode[]) => TreeNode[];
 type IProjectMapOperation = (projects: ProjectMap) => ProjectMap;
 interface AddProject {
     prjId: number;
@@ -29,6 +27,7 @@ export class ProjectService {
     projects: Observable<ProjectMap>;
     projectTreeRoot: Subject<TreeNode[]> = new BehaviorSubject<TreeNode[]>([]);
     addProject: Subject<AddProject> = new Subject();
+    delProject: Subject<number> = new Subject();
     updates: Subject<any> = new Subject<any>();
     updateProjects: Subject<Project[]> = new Subject(); // 更新项目列表： 从服务端读取项目列表，并更新本地存储
 
@@ -41,6 +40,15 @@ export class ProjectService {
             map(function (add: AddProject): IProjectMapOperation {
                 return (prjMap: ProjectMap) => {
                     prjMap.set(add.prjId.toString(), add.project);
+                    return prjMap;
+                };
+            })
+        ).subscribe(this.updates);
+
+        this.delProject.pipe(
+            map(function (prjId: number): IProjectMapOperation {
+                return (prjMap: ProjectMap) => {
+                    prjMap.delete(prjId.toString());
                     return prjMap;
                 };
             })
@@ -125,6 +133,16 @@ export class ProjectService {
                 if (result.code === 0 && result.result > 0) {
                     prj.id = result.result;
                     this.addProject.next({prjId: result.result, project: prj});
+                }
+            }
+        );
+    }
+
+    public deleteProject(prjId: number): void {
+        this.api.deleteProject(prjId).subscribe(
+            result => {
+                if (result.code === 0 && result.result === 'succeed') {
+                    this.delProject.next(prjId);
                 }
             }
         );

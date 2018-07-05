@@ -4,7 +4,7 @@ import { ProjectService, TreeNode } from '../project/project.service';
 import { ConfigService } from '../config/config.service';
 import { Project } from '../configer.model';
 import { ProjectNewFormComponent } from './project-new-form.component';
-
+import { AppNotifyDialogService } from '../app-notify-dialog.service';
 
 @Component({
   selector: 'app-project-tree',
@@ -12,11 +12,12 @@ import { ProjectNewFormComponent } from './project-new-form.component';
 })
 export class ProjectTreeComponent implements OnInit {
     treeRoot: Subject<TreeNode[]> = null;
-    selectedProjectId = -1;
+    selectedProject = null;
     @ViewChild(ProjectNewFormComponent) dialogProjectNewForm: ProjectNewFormComponent;
 
     constructor(private svcPrj: ProjectService,
-                private svcCfg: ConfigService) {
+                private svcCfg: ConfigService,
+                private notify: AppNotifyDialogService) {
         this.treeRoot =  this.svcPrj.projectTreeRoot;
     }
 
@@ -33,7 +34,7 @@ export class ProjectTreeComponent implements OnInit {
     }
 
     onClickOne(prj: Project) {
-        this.selectedProjectId = prj.id;
+        this.selectedProject = prj;
         this.svcPrj.selectProject(prj.id);
         this.svcCfg.selectProject(prj.id);
     }
@@ -42,8 +43,13 @@ export class ProjectTreeComponent implements OnInit {
         this.dialogProjectNewForm.open();
     }
 
-    onClickProjectDelBtn(prjId: number) {
-        console.error('delete project: ' + prjId);
+    onClickProjectDelBtn(prj: Project) {
+        this.notify.openWidthConfirm('Warning', 'Make sure that you want to delete the project?', prj.name).subscribe(
+            del => {
+            if (del) {
+                this.svcPrj.deleteProject(prj.id);
+            }
+            }
+        );
     }
 }
-

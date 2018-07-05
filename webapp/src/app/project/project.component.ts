@@ -7,7 +7,7 @@ import { SchemaFormComponent } from '../schema/schema-form.component';
 import { ConfigFormComponent } from '../config/config-form.component';
 import { ConfigValueFormComponent } from '../config/config-value-form.component';
 import { ConfigAddFormComponent } from '../config/config-add-form.component';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import {  ActivatedRoute } from '@angular/router';
 import { AppNotifyDialogService } from '../app-notify-dialog.service';
 
 @Component({

@@ -65,4 +65,13 @@ public class ProjectsController {
         result.setResult(RestUtils.createJsonResult(0, prjId, reqid));
         return result;
     }
+
+    @RequestMapping(value="/{projectId}", method = RequestMethod.DELETE, produces = MEDIA_TYPE)
+    public DeferredResult<String> deleteProject(@PathVariable(name="projectId") long projectId, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        configerService.deleteProject(projectId);
+        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        return result;
+    }
 }
