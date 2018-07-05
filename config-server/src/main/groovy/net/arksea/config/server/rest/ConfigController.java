@@ -60,4 +60,13 @@ public class ConfigController {
         result.setResult(RestUtils.createResult(0, id, reqid));
         return result;
     }
+
+    @RequestMapping(value="/{configId}", method = RequestMethod.DELETE, produces = MEDIA_TYPE)
+    public DeferredResult<String> deleteConfig(@PathVariable(name="configId") long configId, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        configerService.deleteConfig(configId);
+        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        return result;
+    }
 }

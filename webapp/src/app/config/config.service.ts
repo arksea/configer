@@ -29,6 +29,7 @@ export class ConfigService {
     updateConfigSchema: Subject<UpdateConfigField> = new Subject();
     updateConfigDesc: Subject<UpdateConfigField> = new Subject();
     addConfig: Subject<AddConfig> = new Subject();
+    delConfig: Subject<number> = new Subject();
     updates: Subject<any> = new Subject<any>();
     configMap: Observable<ConfigMap>;
     configList: Subject<Config[]> = new BehaviorSubject<Config[]>([]);
@@ -38,6 +39,15 @@ export class ConfigService {
             map(function (add: AddConfig): IConfigMapOperation {
                 return (cfgMap: ConfigMap) => {
                     cfgMap.set(add.cfgId.toString(), add.config);
+                    return cfgMap;
+                };
+            })
+        ).subscribe(this.updates);
+
+        this.delConfig.pipe(
+            map(function (cfgId: number): IConfigMapOperation {
+                return (cfgMap: ConfigMap) => {
+                    cfgMap.delete(cfgId.toString());
                     return cfgMap;
                 };
             })
@@ -130,7 +140,18 @@ export class ConfigService {
         this.api.createConfig(config).subscribe(
             result => {
                 if (result.code === 0 && result.result > 0) {
+                    config.id = result.result;
                     this.addConfig.next({cfgId: result.result, config: config});
+                }
+            }
+        );
+    }
+
+    public deleteConfig(cfgId: number): void {
+        this.api.deleteConfig(cfgId).subscribe(
+            result => {
+                if (result.code === 0 && result.result === 'succeed') {
+                    this.delConfig.next(cfgId);
                 }
             }
         );

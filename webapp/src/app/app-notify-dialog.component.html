@@ -1,10 +1,11 @@
 <clr-modal [(clrModalOpen)]="opened">
-    <h3 class="modal-title">{{title}}</h3>
+    <h3 class="modal-title">{{notifyEvent.title}}</h3>
     <div class="modal-body">
-        <p>{{message}}</p>
-        <p>{{description}}</p>
+        <p>{{notifyEvent.message}}</p>
+        <p>{{notifyEvent.description}}</p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline" (click)="close()">Close</button>
+        <button *ngIf="notifyEvent.confirm" type="button" class="btn btn-outline" (click)="close(false)">Cancle</button>
+        <button type="button" class="btn btn-outline" (click)="close(true)">OK</button>
     </div>
 </clr-modal>

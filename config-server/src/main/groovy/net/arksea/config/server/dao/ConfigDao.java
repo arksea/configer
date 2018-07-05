@@ -14,11 +14,16 @@ import java.util.List;
  */
 public interface ConfigDao extends CrudRepository<Config,Long> {
     Config getByNameAndProject(String name, Project project);
-    List<Config> findByProject(Project project);
-    List<Config> findByProjectId(long id);
     Config findByProjectIdAndName(long id,String name);
 
     @Modifying
     @Query("update Config c set c.description = ?2 where c.id = ?1")
     void updateDescription(long id, String description);
+
+    @Query("select c from Config c where c.project.id = ?1 and c.deleted = false")
+    List<Config> findByProjectId(long id);
+
+    @Modifying
+    @Query("update Config c set c.deleted = true where c.id = ?1")
+    void deleteById(long id);
 }

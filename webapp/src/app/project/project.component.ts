@@ -8,6 +8,7 @@ import { ConfigFormComponent } from '../config/config-form.component';
 import { ConfigValueFormComponent } from '../config/config-value-form.component';
 import { ConfigAddFormComponent } from '../config/config-add-form.component';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { AppNotifyDialogService } from '../app-notify-dialog.service';
 
 @Component({
   selector: 'app-project',
@@ -23,16 +24,17 @@ export class ProjectComponent implements OnInit {
   project: Subject<Project> = this.svcPrj.selectedProject;
 
   constructor(
-      private svcPrj: ProjectService,
-      private svcCfg: ConfigService,
-      private route: ActivatedRoute
-  ) {}
+    private svcPrj: ProjectService,
+    private svcCfg: ConfigService,
+    private route: ActivatedRoute,
+    private notify: AppNotifyDialogService
+  ) { }
 
   ngOnInit(): void {
     const id: number = parseInt(this.route.snapshot.paramMap.get('id'), 10);
     if (id) {
-        this.svcPrj.selectProject(id);
-        this.svcCfg.selectProject(id);
+      this.svcPrj.selectProject(id);
+      this.svcCfg.selectProject(id);
     }
   }
 
@@ -50,6 +52,16 @@ export class ProjectComponent implements OnInit {
 
   onBtnConfigAddClick() {
     this.dialogConfigAddForm.open();
+  }
+
+  onBtnConfigDelClick(config: Config) {
+    this.notify.openWidthConfirm('Warning', 'Make sure that you want to delete?', config.name).subscribe(
+      del => {
+        if (del) {
+          this.svcCfg.deleteConfig(config.id);
+        }
+      }
+    );
   }
 }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Project, Config, RestResult } from './configer.model';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 
@@ -16,7 +16,6 @@ export class ConfigerRestAPI {
     }
 
     private handleCatchedError(error, request: string) {
-        console.error(request + ' failed, ' + error.message);
         this.notify.openWidthDescription('Error', request + ' failed', error.message);
         return new BehaviorSubject(error);
     }
@@ -30,7 +29,7 @@ export class ConfigerRestAPI {
         if (result.code === 0) {
             console.debug(request + ' : ' + result);
         } else {
-            console.error(request + ' failed, ' + result);
+            this.notify.openWidthDescription('Error', request + ' failed', JSON.stringify(result));
         }
         return new BehaviorSubject(result);
     }
@@ -94,5 +93,14 @@ export class ConfigerRestAPI {
     public createProject(project: Project): void {
         this.http.post(environment.apiUrl + '/api/v1/projects', project, { headers: this.headers })
             .subscribe(data => { });
+    }
+
+    public deleteConfig(cfgId: number): Observable<RestResult<string>> {
+        const request = 'delete config';
+        const url = environment.apiUrl + '/api/v1/configs/' + cfgId;
+        return this.http.delete(url, { headers: this.headers }).pipe(
+            tap(r => this.handleRestResult(r, request)),
+            catchError(r => this.handleCatchedError(r, request))
+        );
     }
 }

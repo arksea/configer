@@ -1,5 +1,6 @@
 import { Component, Injectable } from '@angular/core';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
+import { NotifyEvent } from './app-notify-dialog.service';
 
 @Component({
   selector: 'app-notify-dialog',
@@ -8,26 +9,31 @@ import { AppNotifyDialogService } from './app-notify-dialog.service';
 export class AppNotifyDialogComponent {
 
   public opened = false;
-  public title = 'Notify';
-  public message = '';
-  public description = '';
+  public notifyEvent: NotifyEvent;
 
   constructor(private service: AppNotifyDialogService) {
+      this.notifyEvent = {
+        title: '',
+        message: '',
+        description: '',
+        confirm: false,
+        selection: null
+      };
       service.notify.subscribe(
-          event => {
-              this.title = event.title;
-              this.message = event.message;
-              this.description = event.description;
-              this.open();
+          e => {
+              this.open(e);
           }
       );
   }
 
-  public open(): void {
+  public open(e: NotifyEvent): void {
+    this.notifyEvent = e;
     this.opened = true;
   }
 
-  public close(): void {
+  public close(selection: boolean): void {
     this.opened = false;
+    this.notifyEvent.selection.next(selection);
+    this.notifyEvent.selection.complete();
   }
 }

@@ -12,6 +12,7 @@ public class Project extends IdEntity {
     private String name;
     private String profile;
     private String description;
+    private boolean deleted;
 
     @Column(length = 128, nullable = false)
     public String getName() {
@@ -39,4 +40,14 @@ public class Project extends IdEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
 }
