@@ -3,10 +3,14 @@ package net.arksea.config.server.rest;
 import net.arksea.config.server.dao.ConfigDao;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.service.ConfigerService;
+import net.arksea.restapi.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -42,8 +46,27 @@ public class ConfigController {
         configerService.updateConfigDoc(docId, configDoc);
     }
 
+    @RequestMapping(value="/{configId}/schema/{docId}", method = RequestMethod.PUT, produces = MEDIA_TYPE)
+    public void updateConfigSchema(@RequestBody String configSchema,
+                                   @PathVariable(name="docId") long docId) {
+        configerService.updateConfigSchema(docId, configSchema);
+    }
+
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)
-    public void createConfig(@RequestBody Config config) {
-        configerService.createConfig(config);
+    public DeferredResult<String> createConfig(@RequestBody Config config, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Config cfg1 = configerService.createConfig(config);
+        result.setResult(RestUtils.createJsonResult(0, cfg1, reqid));
+        return result;
+    }
+
+    @RequestMapping(value="/{configId}", method = RequestMethod.DELETE, produces = MEDIA_TYPE)
+    public DeferredResult<String> deleteConfig(@PathVariable(name="configId") long configId, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        configerService.deleteConfig(configId);
+        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        return result;
     }
 }

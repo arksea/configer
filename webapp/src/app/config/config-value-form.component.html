@@ -1,0 +1,10 @@
+<clr-modal [(clrModalOpen)]="opened" [clrModalSize]="'lg'">
+    <h3 class="modal-title">{{config.name}}</h3>
+    <div class="modal-body">
+        <textarea class="form-control" [rows]="lineCount" [(ngModel)]="json"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveJson()">Save</button>
+    </div>
+</clr-modal>

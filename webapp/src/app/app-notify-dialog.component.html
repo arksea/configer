@@ -1,0 +1,11 @@
+<clr-modal [(clrModalOpen)]="opened">
+    <h3 class="modal-title">{{notifyEvent.title}}</h3>
+    <div class="modal-body">
+        <p>{{notifyEvent.message}}</p>
+        <pre *ngIf="notifyEvent.description!=null">{{notifyEvent.description | json}}</pre>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="notifyEvent.confirm" type="button" class="btn btn-outline" (click)="close(false)">Cancle</button>
+        <button type="button" class="btn btn-outline" (click)="close(true)">OK</button>
+    </div>
+</clr-modal>

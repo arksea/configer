@@ -30,16 +30,16 @@ public class ApiFilter implements Filter {
         response.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
         String profile = env.getProperty("spring.profiles.active");
         if ("product".equals(profile)) {
-            response.setHeader("Access-Control-Allow-Methods","GET, PUT");
+            response.setHeader("Access-Control-Allow-Methods","GET");
         } else  { //测试状态下允许所有方法跨域访问，方便用ng server测试
             response.setHeader("Access-Control-Allow-Methods","GET, HEAD, POST, PUT, DELETE, PATCH");
         }
         HttpServletRequest req = (HttpServletRequest) request;
-        String reqid = req.getHeader("x-requestid");
+        String reqid = req.getHeader("restapi-requestid");
         if (reqid == null) {
             reqid = UUID.randomUUID().toString();
         }
-        req.setAttribute("x-requestid", reqid);
+        req.setAttribute("restapi-requestid", reqid);
         chain.doFilter(request, resp);
     }
 

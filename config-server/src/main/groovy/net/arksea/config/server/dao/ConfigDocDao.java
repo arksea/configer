@@ -18,4 +18,8 @@ public interface ConfigDocDao extends Repository<ConfigDoc,Long> {
     @Modifying
     @Query("update ConfigDoc c set c.value = ?2 where c.id = ?1")
     void updateValue(long id, String value);
+
+    @Modifying
+    @Query("update ConfigDoc c set c.metadata = ?2 where c.id = ?1")
+    void updateSchema(long id, String schema);
 }

@@ -7,10 +7,15 @@ import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.ConfigDoc;
 import net.arksea.config.server.entity.Project;
 import net.arksea.config.server.service.ConfigerService;
+import net.arksea.restapi.RestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  *
@@ -31,10 +36,8 @@ public class ProjectsController {
     private ConfigerService configerService;
 
     @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public Iterable<Project> listAllProjects() {
-        Iterable<Project> projects = projectDao.findAll();
-        projects.forEach(it -> logger.info(it.getName()));
-        return projects;
+    public List<Project> listAllProjects() {
+        return projectDao.getAllNotDeleted();
     }
 
     @RequestMapping(method = RequestMethod.GET, params={"name","profile"}, produces = MEDIA_TYPE)
@@ -54,7 +57,20 @@ public class ProjectsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)
-    public void createProject(@RequestBody Project project) {
-        configerService.createProject(project);
+    public DeferredResult<String> createProject(@RequestBody Project project, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        long prjId = configerService.createProject(project);
+        result.setResult(RestUtils.createJsonResult(0, prjId, reqid));
+        return result;
+    }
+
+    @RequestMapping(value="/{projectId}", method = RequestMethod.DELETE, produces = MEDIA_TYPE)
+    public DeferredResult<String> deleteProject(@PathVariable(name="projectId") long projectId, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        configerService.deleteProject(projectId);
+        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        return result;
     }
 }
