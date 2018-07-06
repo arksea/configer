@@ -10,7 +10,7 @@ export class ConfigValueFormComponent implements OnInit {
   config: Config = <Config>{ name: '' };
   opened = false;
   lineCount = 10;
-  json = '';
+  json = '""';
 
   constructor(private service: ConfigService) {
   }
@@ -20,7 +20,7 @@ export class ConfigValueFormComponent implements OnInit {
 
   public open(config: Config): void {
     this.config = config;
-    this.lineCount = this.config.doc.value.split(/\,|\n|\}|\{/).length;
+    this.lineCount = this.config.doc.value.split(/[\[\]\,\n\{\}]/).length * 1.2;
     if (this.lineCount > 25) {
       this.lineCount = 25;
     } else if (this.lineCount < 5) {
@@ -38,6 +38,10 @@ export class ConfigValueFormComponent implements OnInit {
     this.config.doc.value = this.json;
     this.service.updateValue(this.config.id, this.config.doc.id, this.json);
     this.opened = false;
+  }
+
+  public getJsonObject() {
+     return JSON.parse(this.json);
   }
 
 }

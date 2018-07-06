@@ -4,7 +4,8 @@ import { ConfigService } from '../config/config.service';
 
 @Component({
   selector: 'app-schema-form',
-  templateUrl: './schema-form.component.html'
+  templateUrl: './schema-form.component.html',
+  styles: ['.sample {font-size: 65%; text-align:right;}']
 })
 export class SchemaFormComponent implements OnInit {
   config: Config;
