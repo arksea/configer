@@ -6,7 +6,11 @@
     客户端 《──┬─ 客户端本地缓存《──┬── Configer服务缓存《── 数据库
               └─ 客户端本地文件《──┘
 ```
-- Json Schema定义配置值表单
- - 支持服务集群
+ - 通过Json Schema定制配置值表单
+
+   ![image](./docs/images/readme-edit-config.png)
+   ![image](./docs/images/readme-edit-schema.png)
+
+ - 支持多台服务集群
  
 
