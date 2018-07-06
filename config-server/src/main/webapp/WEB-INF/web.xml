@@ -20,7 +20,7 @@ http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd"
 
     <context-param>
         <param-name>spring.profiles.default</param-name>
-        <param-value>development</param-value>
+        <param-value>production</param-value>
     </context-param>
     
     <listener>

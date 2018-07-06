@@ -33,7 +33,7 @@
                 </a>
             </td>
             <td>
-                <a [attr.disabled]="i.doc.metadata == 'json'" (click)="onBtnEditClick(i)">
+                <a *ngIf="i.doc.metadata !== 'json'" (click)="onBtnEditClick(i)">
                     <clr-icon shape="note"></clr-icon>
                 </a>
             </td>

@@ -52,6 +52,9 @@ public class SystemFactory {
     @Bean(name = "serverProfile")
     public String createServerProfile() {
         String active = this.env.getProperty("spring.profiles.active");
+        if (active == null) {
+            return "online";
+        }
         switch (active) {
             case "functional-test":
             case "unit-test":

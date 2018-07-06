@@ -1,5 +1,10 @@
 <clr-modal [(clrModalOpen)]="opened" [clrModalSize]="'lg'">
-    <h3 class="modal-title">Edit Config Schema</h3>
+    <div class="modal-title row">
+        <div class="col-lg-10">Edit Config Schema</div>
+        <a class="sample col-lg-2" target="_Blank"
+           href="http://makinacorpus.github.io/ngx-schema-form/dist/ngx-schema-form/">sample</a>
+    </div>
+    
     <div class="modal-body">
         <textarea class="form-control" [rows]="lineCount" [(ngModel)]="schema"></textarea>
     </div>

@@ -56,8 +56,8 @@ task deleteOnline(type: Exec) {
 }
 
 task ngBuild(type: Exec) {
-    workingDir './src/main/angular/config-server'
-    commandLine 'cmd', '/c', 'ng build --env=prod'
+    workingDir '../webapp'
+    commandLine 'cmd', '/c', 'ng build --prod'
 }
 ngBuild.dependsOn(deleteOnline)
 
@@ -71,7 +71,7 @@ task publishOnline <<{
         into 'online/weather-configer'
     }
     copy{ //拷贝本项目WEB相关文件
-        from 'src/main/angular/config-server/dist'
+        from '../webapp/dist/webapp'
         into 'online/weather-configer'
     }
     copy{ //拷贝依赖库
