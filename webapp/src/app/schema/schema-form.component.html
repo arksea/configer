@@ -1,0 +1,15 @@
+<clr-modal [(clrModalOpen)]="opened" [clrModalSize]="'lg'">
+    <div class="modal-title row">
+        <div class="col-lg-10">Edit Config Schema</div>
+        <a class="sample col-lg-2" target="_Blank"
+           href="http://makinacorpus.github.io/ngx-schema-form/dist/ngx-schema-form/">sample</a>
+    </div>
+    
+    <div class="modal-body">
+        <textarea class="form-control" [rows]="lineCount" [(ngModel)]="schema"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveSchema()">Save</button>
+    </div>
+</clr-modal>

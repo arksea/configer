@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
@@ -28,6 +29,8 @@ public class SystemFactory {
     ActorSystem system;
     @Autowired
     RegisterClient registerClient;
+    @Autowired
+    private Environment env;
 
     public SystemFactory() {
         Config cfg = ConfigFactory.load();
@@ -37,7 +40,6 @@ public class SystemFactory {
 
     @Bean(name = "systemConfig")
     Config createConfig() {
-
         return config;
     }
 
@@ -45,6 +47,23 @@ public class SystemFactory {
     public ActorSystem createSystem() {
         system = ActorSystem.create("system",config);
         return system;
+    }
+
+    @Bean(name = "serverProfile")
+    public String createServerProfile() {
+        String active = this.env.getProperty("spring.profiles.active");
+        if (active == null) {
+            return "online";
+        }
+        switch (active) {
+            case "functional-test":
+            case "unit-test":
+                return "QA";
+            case "development":
+                return "DEV";
+            default:
+                return "online";
+        }
     }
 
     @PreDestroy

@@ -1,0 +1,57 @@
+{{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}}
+<button class="btn btn-sm btn-link"
+    (click)="onBtnConfigAddClick()">
+    <clr-icon shape="add-text"></clr-icon> Add Config
+</button>
+
+<table class="table table-bordered" width="100%">
+    <colgroup>
+        <col class="col-name">
+        <col class="col-desc">
+        <col class="col-btn">
+        <col class="col-btn">
+        <col class="col-btn">
+        <col class="col-btn">
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="td-text">Name</th>
+            <th class="td-text">Description</th>
+            <th>Json</th>
+            <th>Edit</th>
+            <th>Sche</th>
+            <th>Del</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let i of configs | async">
+            <td class="td-text">{{i.name}}</td>
+            <td class="td-text">{{i.description}}</td>
+            <td>
+                <a (click)="onBtnJsonClick(i)">
+                    <clr-icon shape="eye"></clr-icon>
+                </a>
+            </td>
+            <td>
+                <a *ngIf="i.doc.metadata !== 'json'" (click)="onBtnEditClick(i)">
+                    <clr-icon shape="note"></clr-icon>
+                </a>
+            </td>
+            <td>
+                <a (click)="onBtnSchemaClick(i)">
+                    <clr-icon shape="ruler-pencil"></clr-icon>
+                </a>
+            </td>
+            <td>
+                <a (click)="onBtnConfigDelClick(i)">
+                    <clr-icon shape="trash"></clr-icon>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<app-config-form></app-config-form>
+<app-schema-form></app-schema-form>
+<app-config-value-form></app-config-value-form>
+<app-config-add-form [project]="project | async"></app-config-add-form>
+<!-- <config-form [project]="project"></config-form> -->

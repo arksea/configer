@@ -1,0 +1,9 @@
+<div class="widget form-group">
+    <label>{{schema.title}}</label>
+    <span *ngIf="schema.description" class="formHelp">{{schema.description}}</span>
+    <div *ngFor="let option of schema.oneOf; let i=index" class="radio">
+        <input [formControl]="control" [attr.name]="name+i" [attr.id]="id+i" value="{{option.enum[0]}}" type="radio" [attr.disabled]="schema.readOnly">
+        <label [attr.for]="id+i" class="horizontal control-label">{{option.description}}</label>
+    </div>
+    <input *ngIf="schema.readOnly" [attr.name]="name" type="hidden" [formControl]="control">
+</div>

@@ -15,6 +15,7 @@ public class Config extends IdEntity {
     private String name;
     private String description;
     private ConfigDoc doc;
+    private boolean deleted;
 
     @ManyToOne
     @JoinColumn(name="project_id",nullable = false)
@@ -53,6 +54,15 @@ public class Config extends IdEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

@@ -1,0 +1,9 @@
+<div class="widget form-group">
+    <label [attr.for]="id" class="horizontal control-label">
+        {{ schema.title }}
+    </label>
+
+    <clr-checkbox class="form-control" [name]="name" [id]="id" [formControl]="control">
+        {{schema.description}}
+    </clr-checkbox>
+</div>

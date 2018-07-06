@@ -1,0 +1,27 @@
+<div class="widget">
+    <label class="horizontal control-label">
+        {{ schema.title }}
+    </label>
+    <span *ngIf="schema.description" class="formHelp">{{schema.description}}</span>
+
+    <div *ngFor="let itemProperty of formProperty.properties; let i=index; trackBy:trackByIndex">
+        <div class="row">
+            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                <sf-form-element [formProperty]="itemProperty"></sf-form-element>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <button id="remove" (click)="removeItem(i)" class="btn btn-sm">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-6 col-xs-6"></div>
+        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+            <button (click)="addItem()" class="btn btn-sm">Add</button>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+            <button (click)="reset()" class="btn btn-sm">Clear！</button>
+        </div>
+    </div>
+</div>

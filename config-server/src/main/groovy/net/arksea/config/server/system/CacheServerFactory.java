@@ -36,6 +36,9 @@ public class CacheServerFactory {
     @Resource(name="systemConfig")
     Config systemConfig;
 
+    @Resource(name="serverProfile")
+    String serverProfile;
+
     @Bean(name = "cacheServer")
     public ActorRef createCacheServer() throws UnknownHostException {
         ICacheConfig<ConfigKey> cacheConfig = new ICacheConfig<ConfigKey>() {
@@ -51,7 +54,11 @@ public class CacheServerFactory {
         Props props = CacheActor.props(cacheConfig, configCacheSource);
         ActorRef actorRef = system.actorOf(props, "configCacheServer");
         int bindPort = systemConfig.getInt("akka.remote.netty.tcp.port");
-        registerClient.register(serviceRegisterName, bindPort, actorRef, system);
+        String regname = serviceRegisterName;
+        if (!serverProfile.equals("online")) {
+            regname = serviceRegisterName + "-" + serverProfile;
+        }
+        registerClient.register(regname, bindPort, actorRef, system);
         return actorRef;
     }
 }
