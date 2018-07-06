@@ -13,4 +13,6 @@
 
  - 支持多台服务集群
  
+   ![image](./docs/images/readme-reg-sub.png)
+ 
 
