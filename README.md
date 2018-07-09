@@ -29,7 +29,8 @@ public static void main() {
     ConfigService configService = new ConfigService("172.17.150.87:8806", "net.arksea.TestProject", "online");
     
     String value = configService.getString("app.init.configer1");
-    logger.info(value);
+    int num = configService.getInteger("app.init.config2");
+    List list = configService.getList("app.init.config3");
 
 }
 ```
@@ -43,7 +44,8 @@ public static void main() {
     ConfigService configService = new ConfigService(client, "net.arksea.TestProject", "online", 3000, client.system);
     
     String value = configService.getString("app.init.configer1");
-    logger.info(value);
+    int num = configService.getInteger("app.init.config2");
+    List list = configService.getList("app.init.config3");
 
 }
 ```
