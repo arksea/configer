@@ -14,6 +14,9 @@ import java.util.List;
  */
 @Component
 public class RegisterFactory {
+    @Value("${config.enableRegisterService}")
+    boolean enableRegisterService;
+
     @Value("${dsf.registerAddr1}")
     String dsfRegisterAddr1;
 
@@ -25,9 +28,14 @@ public class RegisterFactory {
 
     @Bean
     RegisterClient create() {
-        List<String> addrs = new LinkedList<>();
-        addrs.add(dsfRegisterAddr1);
-        addrs.add(dsfRegisterAddr2);
-        return new RegisterClient(dsfClientName, addrs);
+        if (enableRegisterService) {
+            List<String> addrs = new LinkedList<>();
+            addrs.add(dsfRegisterAddr1);
+            addrs.add(dsfRegisterAddr2);
+            return new RegisterClient(dsfClientName, addrs);
+
+        } else {
+            return null;
+        }
     }
 }

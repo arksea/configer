@@ -76,7 +76,9 @@ public class SystemFactory {
         } catch (Exception e) {
             logger.warn("Stop config server system timeout", e);
         }
-        registerClient.stopAndWait(10);
+        if (registerClient != null) {
+            registerClient.stopAndWait(10);
+        }
     }
 }
 

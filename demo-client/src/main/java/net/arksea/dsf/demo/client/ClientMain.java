@@ -21,26 +21,42 @@ public final class ClientMain {
      * @param args command line args
      */
     public static void main(final String[] args) {
+        test();
+    }
+
+    public static void test() {
         try {
             logger.info("Start DEMO Client");
-            String configServiceName = "net.arksea.ConfigServer";
-            List<String> registerAddrs = new LinkedList<>();
-            registerAddrs.add("10.79.186.111:8877");
-            registerAddrs.add("10.79.186.126:8877");
-            RegisterClient register = new RegisterClient("TestClient", registerAddrs);
-            Client client = register.subscribe(configServiceName);
-            ConfigService configService = new ConfigService(client, "weather-api", "QA", 5000, client.system);
-            //Thread.sleep(1000);
-            for (int i=0; i<1000000; ++i) {
-                try {
-                    String value = configService.getString("weather-data.service.addr");
-                    logger.info(value);
-                } catch (Exception ex) {
-                    logger.warn("read config failed", ex);
-                }
-                Thread.sleep(10000);
+            ConfigService configService = new ConfigService("172.17.150.87:8806", "net.arksea.TestProject", "online");
+            try {
+                String value = configService.getString("app.init.configer1");
+                logger.info(value);
+            } catch (Exception ex) {
+                logger.warn("read config failed", ex);
             }
-            Thread.sleep(10000);
+            Thread.sleep(3000);
+            configService.system.terminate().value();
+        } catch (Exception ex) {
+            logger.error("Start DEMO Client failed", ex);
+        }
+    }
+
+    public static void testEnableRegister() {
+        try {
+            logger.info("Start DEMO Client");
+            List<String> registerAddrs = new LinkedList<>();
+            registerAddrs.add("127.0.0.1:6501");
+            registerAddrs.add("127.0.0.1:6502");
+            RegisterClient register = new RegisterClient("configer-demo-client", registerAddrs);
+            Client client = register.subscribe("net.arksea.ConfigServer-DEV");
+            ConfigService configService = new ConfigService(client, "net.arksea.TestProject", "online", 5000, client.system);
+            try {
+                String value = configService.getString("app.init.configer1");
+                logger.info(value);
+            } catch (Exception ex) {
+                logger.warn("read config failed", ex);
+            }
+            Thread.sleep(3000);
             register.stop().value();
             client.system.terminate().value();
         } catch (Exception ex) {

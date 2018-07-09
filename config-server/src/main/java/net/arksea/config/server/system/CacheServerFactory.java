@@ -58,7 +58,9 @@ public class CacheServerFactory {
         if (!serverProfile.equals("online")) {
             regname = serviceRegisterName + "-" + serverProfile;
         }
-        registerClient.register(regname, bindPort, actorRef, system);
+        if (registerClient != null) {
+            registerClient.register(regname, bindPort, actorRef, system);
+        }
         return actorRef;
     }
 }
