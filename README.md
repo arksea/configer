@@ -1,5 +1,8 @@
 # configer
 通用配置服务
+
+  ![image](./docs/images/readme-main.png)
+  
 ## 特性
  - 缓存与数据流
 ```
