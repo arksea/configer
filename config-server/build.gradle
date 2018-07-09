@@ -1,18 +1,6 @@
 apply plugin: 'war'
-apply plugin: 'groovy'
 
 description = """Config Server"""
-
-[compileJava, compileTestJava, compileGroovy, compileTestGroovy]*.options*.encoding = 'UTF-8'
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-repositories {
-    mavenLocal()
-    maven { url "http://172.17.149.8:8081/nexus/content/groups/public/" }
-    maven { url "http://repo.maven.apache.org/maven2" }
-}
 
 dependencies {
     compile project (':service-config')
@@ -24,35 +12,24 @@ dependencies {
     compile 'org.springframework:spring-context:4.3.9.RELEASE'
     compile 'org.springframework:spring-context-support:4.3.9.RELEASE'
     compile 'org.springframework:spring-webmvc:4.3.9.RELEASE'
-    //compile 'org.springframework:spring-websocket:4.3.9.RELEASE'
     compile 'org.springframework.data:spring-data-jpa:1.11.4.RELEASE'
     compile  'org.hibernate:hibernate-entitymanager:4.3.5.Final'
     compile  'org.hibernate:hibernate-validator:5.0.3.Final'
     compile 'commons-codec:commons-codec:1.9'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.0'
-    //compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.6.0'
-    //compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.8'
-    //compile 'com.google.guava:guava:17.0'
 
-    compile 'org.assertj:assertj-core:1.6.1'
-    compile 'redis.clients:jedis:2.8.1'
-    compile 'org.codehaus.groovy:groovy-all:2.4.4'
-    
-    runtime 'org.aspectj:aspectjweaver:1.7.4'
     runtime 'mysql:mysql-connector-java:5.1.22'
-    //runtime 'javax.validation:validation-api:1.1.0.Final'
     runtime 'org.apache.tomcat:tomcat-dbcp:8.0.30'
     runtime 'commons-dbcp:commons-dbcp:1.4'
     runtime 'org.apache.commons:commons-pool2:2.2'
 
-//    testCompile 'com.felink:felink-base-test:1.0-SNAPSHOT'
     testCompile 'junit:junit:4.11'
     testCompile 'org.springframework:spring-test:4.2.2.RELEASE'
     providedCompile  'javax.servlet:javax.servlet-api:3.1.0'
 }
 
 task deleteOnline(type: Exec) {
-    commandLine 'cmd', '/c', 'del /Q .\\online\\weather-configer\\*.*'
+    commandLine 'cmd', '/c', 'del /Q .\\publish\\config-server\\*.*'
 }
 
 task ngBuild(type: Exec) {
@@ -64,31 +41,31 @@ ngBuild.dependsOn(deleteOnline)
 //拷贝部署文件到指定目录
 task publishOnline <<{
     //拷贝前先删除部署目录
-    delete('online/weather-configer/WEB-INF')
-    delete('online/weather-configer/META-INF')
+    delete('publish/config-server/WEB-INF')
+    delete('publish/config-server/META-INF')
     copy{ //拷贝本项目WEB相关文件
         from 'src/main/webapp/'
-        into 'online/weather-configer'
+        into 'publish/config-server'
     }
     copy{ //拷贝本项目WEB相关文件
         from '../webapp/dist/webapp'
-        into 'online/weather-configer'
+        into 'publish/config-server'
     }
     copy{ //拷贝依赖库
         from configurations.runtime
-        into 'online/weather-configer/WEB-INF/lib'
+        into 'publish/config-server/WEB-INF/lib'
     }
     copy{ //拷贝类
-        from 'build/classes/groovy/main/'
-        into 'online/weather-configer/WEB-INF/classes'
+        from 'build/classes/java/main/'
+        into 'publish/config-server/WEB-INF/classes'
     }
     copy{ //拷贝资源
         from 'build/resources/main/'
-        into 'online/weather-configer/WEB-INF/classes'
+        into 'publish/config-server/WEB-INF/classes'
     }
     copy{ //拷贝META-INF
         from 'build/tmp/war/'
-        into 'online/weather-configer/META-INF/'
+        into 'publish/config-server/META-INF/'
     }
 }
 publishOnline.dependsOn(build,ngBuild)
@@ -102,7 +79,7 @@ task publishDev <<{
         into 'tomcat/webapps/config-server'
     }
     copy{ //拷贝本项目WEB相关文件
-        from 'src/main/angular/config-server/dist'
+        from '../webapp/dist/webapp'
         into 'tomcat/webapps/config-server'
     }
     copy{ //拷贝依赖库
@@ -111,7 +88,7 @@ task publishDev <<{
     }
     delete('tomcat/webapps/config-server/WEB-INF/lib/xml-apis-1.0.b2.jar')
     copy{ //拷贝类
-        from 'build/classes/groovy/main/'
+        from 'build/classes/java/main/'
         into 'tomcat/webapps/config-server/WEB-INF/classes'
     }
     copy{ //拷贝资源
