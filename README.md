@@ -1,5 +1,5 @@
 # configer
-通用配置服务
+通用配置服务主页面
 
   ![image](./docs/images/readme-main.png)
   
@@ -15,11 +15,11 @@
   | ---- | ---- |
   |![image](./docs/images/readme-edit-config.png) | ![image](./docs/images/readme-edit-schema.png)|
 
- - 支持多台服务集群
+ - 支持服务集群
  
    ![image](./docs/images/readme-reg-sub.png)
 
-## 客户端使用实例
+## 客户端实例
 
  - 指定配置服务地址
 
@@ -49,3 +49,28 @@ public static void main() {
 
 }
 ```
+
+## 安装
+
+ - 拷贝config-server/publish下的部署文件到tomcat/webapp
+ - 配置tomcat/conf/server.xml
+ - 修改WEB-INF\classes\application.properties文件Mysql数据库配置
+
+## 集群
+  服务集群的支持请参考隔壁的服务发现项目 [aregister](https://github.com/arksea/aregister)
+
+  修改application.properties配置文件
+  
+  ```groovy
+  
+    #是否向aregister注册服务器注册服务
+    config.enableRegisterService=false
+    #服务的注册名
+    config.serviceRegisterName=net.arksea.ConfigServer
+    
+    #aregister注册服务器地址
+    dsf.registerAddr1=127.0.0.1:6501
+    dsf.registerAddr2=127.0.0.1:6502
+    #访问注册服务时使用的名字，仅用于识别，可自行取名
+    dsf.clientName=config-server
+  ```
