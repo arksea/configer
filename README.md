@@ -18,5 +18,32 @@
  - 支持多台服务集群
  
    ![image](./docs/images/readme-reg-sub.png)
- 
 
+## 客户端使用实例
+
+ - 指定配置服务地址
+
+```
+public static void main() {
+
+    ConfigService configService = new ConfigService("172.17.150.87:8806", "net.arksea.TestProject", "online");
+    
+    String value = configService.getString("app.init.configer1");
+    logger.info(value);
+
+}
+```
+
+ - 使用服务发现
+ 
+```
+public static void main() {
+    
+    Client client = registerClient.subscribe("net.arksea.ConfigServer");
+    ConfigService configService = new ConfigService(client, "net.arksea.TestProject", "online", 3000, client.system);
+    
+    String value = configService.getString("app.init.configer1");
+    logger.info(value);
+
+}
+```
