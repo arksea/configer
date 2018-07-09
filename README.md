@@ -11,8 +11,9 @@
 ```
  - 通过Json Schema定制配置值表单
 
-   ![image](./docs/images/readme-edit-config.png)
-   ![image](./docs/images/readme-edit-schema.png)
+  | 表单 | Schema |
+  | ---- | ---- |
+  |![image](./docs/images/readme-edit-config.png) | ![image](./docs/images/readme-edit-schema.png)|
 
  - 支持多台服务集群
  
