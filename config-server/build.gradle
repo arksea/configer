@@ -29,7 +29,7 @@ dependencies {
 }
 
 task deleteOnline(type: Exec) {
-    commandLine 'cmd', '/c', 'del /Q .\\online\\weather-configer\\*.*'
+    commandLine 'cmd', '/c', 'del /Q .\\publish\\config-server\\*.*'
 }
 
 task ngBuild(type: Exec) {
@@ -41,31 +41,31 @@ ngBuild.dependsOn(deleteOnline)
 //拷贝部署文件到指定目录
 task publishOnline <<{
     //拷贝前先删除部署目录
-    delete('online/weather-configer/WEB-INF')
-    delete('online/weather-configer/META-INF')
+    delete('publish/config-server/WEB-INF')
+    delete('publish/config-server/META-INF')
     copy{ //拷贝本项目WEB相关文件
         from 'src/main/webapp/'
-        into 'online/weather-configer'
+        into 'publish/config-server'
     }
     copy{ //拷贝本项目WEB相关文件
         from '../webapp/dist/webapp'
-        into 'online/weather-configer'
+        into 'publish/config-server'
     }
     copy{ //拷贝依赖库
         from configurations.runtime
-        into 'online/weather-configer/WEB-INF/lib'
+        into 'publish/config-server/WEB-INF/lib'
     }
     copy{ //拷贝类
         from 'build/classes/java/main/'
-        into 'online/weather-configer/WEB-INF/classes'
+        into 'publish/config-server/WEB-INF/classes'
     }
     copy{ //拷贝资源
         from 'build/resources/main/'
-        into 'online/weather-configer/WEB-INF/classes'
+        into 'publish/config-server/WEB-INF/classes'
     }
     copy{ //拷贝META-INF
         from 'build/tmp/war/'
-        into 'online/weather-configer/META-INF/'
+        into 'publish/config-server/META-INF/'
     }
 }
 publishOnline.dependsOn(build,ngBuild)
