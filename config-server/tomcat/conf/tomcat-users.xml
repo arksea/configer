@@ -19,6 +19,5 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
               version="1.0">
-  <user username="admin" password="unicorn@Felink" roles="manager-gui" />
-  <user username="configer" password="Configer@Felink" roles="configer" />
+  <user username="configer" password="Configer" roles="configer" />
 </tomcat-users>
