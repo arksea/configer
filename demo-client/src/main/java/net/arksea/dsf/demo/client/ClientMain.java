@@ -35,7 +35,6 @@ public final class ClientMain {
                 logger.warn("read config failed", ex);
             }
             Thread.sleep(3000);
-            configService.system.terminate().value();
         } catch (Exception ex) {
             logger.error("Start DEMO Client failed", ex);
         }
@@ -57,8 +56,6 @@ public final class ClientMain {
                 logger.warn("read config failed", ex);
             }
             Thread.sleep(3000);
-            register.stop().value();
-            client.system.terminate().value();
         } catch (Exception ex) {
             logger.error("Start DEMO Client failed", ex);
         }
