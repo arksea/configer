@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConfigService {
     private static Logger logger = LogManager.getLogger(ConfigService.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
-    private static final long CACHE_DEFAULT_TIMEOUT = 300_000;
     private static final long RETRY_DELAY = 30_000;
     public  final ActorSystem system;
     public  final String project;
@@ -37,7 +36,14 @@ public class ConfigService {
     private final Map<String,TimedData<Object>> configMap = new ConcurrentHashMap<>();
 
     public ConfigService(final Client dsfClient, final String project, final String profile) {
-        this(dsfClient, project, profile, 8000, null);
+        this(dsfClient, project, profile, 5000, dsfClient.system);
+    }
+
+    public ConfigService(final Client dsfClient,
+                         final String project,
+                         final String profile,
+                         final int timeout) {
+        this(dsfClient, project, profile, timeout, dsfClient.system);
     }
 
     public ConfigService(final Client dsfClient,
@@ -62,7 +68,14 @@ public class ConfigService {
 
 
     public ConfigService(final String serverAddr, final String project,final String profile) {
-        this(serverAddr, project, profile, 8000, null);
+        this(serverAddr, project, profile, 5000, null);
+    }
+
+    public ConfigService(final String serverAddr,
+                         final String project,
+                         final String profile,
+                         final int timeout) {
+        this(serverAddr, project, profile, timeout, null);
     }
 
     public ConfigService(final String serverAddr,
