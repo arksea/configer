@@ -6,7 +6,7 @@
 ### 特性
  - 缓存与数据流
 ```
-    客户端 《──┬─ 客户端本地缓存《──┬── Configer服务缓存《── 数据库
+    客户端 《──┬─ 客户端本地缓存《──┬── Configer服务缓存《── 数据库 《── Web修改工具
               └─ 客户端本地文件《──┘
 ```
  - 通过Json Schema定制配置值表单
@@ -26,7 +26,8 @@
 ```
 public static void main() {
 
-    ConfigService configService = new ConfigService("172.17.150.87:8806", "net.arksea.TestProject", "online");
+    ConfigService configService = new ConfigService("172.17.150.87:8806", 
+        "net.arksea.TestProject", "online", 3000);
     
     String value = configService.getString("app.init.configer1");
     int num = configService.getInteger("app.init.config2");
@@ -41,7 +42,8 @@ public static void main() {
 public static void main() {
     
     Client client = registerClient.subscribe("net.arksea.ConfigServer");
-    ConfigService configService = new ConfigService(client, "net.arksea.TestProject", "online", 3000, client.system);
+    ConfigService configService = new ConfigService(client, 
+        "net.arksea.TestProject", "online", 3000);
     
     String value = configService.getString("app.init.configer1");
     int num = configService.getInteger("app.init.config2");
