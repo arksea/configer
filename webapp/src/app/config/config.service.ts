@@ -116,31 +116,34 @@ export class ConfigService {
     }
 
     public selectProject(id: number): void {
-        this.api.getProjectConfigs(id).subscribe(configs => {
-            this.updateConfigs.next(configs);
-        });
+        this.api.getProjectConfigs(id).subscribe(
+            ret => {
+                if (ret.code === 0) {
+                    this.updateConfigs.next(ret.result);
+                }
+            });
     }
 
     public updateSchema(cfgId: number, docId: number, schema: string): void {
         this.api.updateConfigSchema(cfgId, docId, schema);
-        this.updateConfigSchema.next({cfgId: cfgId, fieldValue: schema});
+        this.updateConfigSchema.next({ cfgId: cfgId, fieldValue: schema });
     }
 
     public updateValue(cfgId: number, docId: number, value: string): void {
         this.api.updateConfigDoc(cfgId, docId, value);
-        this.updateConfigDoc.next({cfgId: cfgId, fieldValue: value});
+        this.updateConfigDoc.next({ cfgId: cfgId, fieldValue: value });
     }
 
     public updateDesc(cfgId: number, desc: string): void {
         this.api.updateConfigDescription(cfgId, desc);
-        this.updateConfigDesc.next({cfgId: cfgId, fieldValue: desc});
+        this.updateConfigDesc.next({ cfgId: cfgId, fieldValue: desc });
     }
 
     public createConfig(config: Config): void {
         this.api.createConfig(config).subscribe(
             result => {
                 if (result.code === 0) {
-                    this.addConfig.next({cfgId: result.result.id, config: result.result});
+                    this.addConfig.next({ cfgId: result.result.id, config: result.result });
                 }
             }
         );

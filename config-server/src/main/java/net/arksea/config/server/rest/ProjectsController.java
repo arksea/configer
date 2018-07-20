@@ -4,7 +4,6 @@ import net.arksea.config.server.dao.ConfigDao;
 import net.arksea.config.server.dao.ConfigDocDao;
 import net.arksea.config.server.dao.ProjectDao;
 import net.arksea.config.server.entity.Config;
-import net.arksea.config.server.entity.ConfigDoc;
 import net.arksea.config.server.entity.Project;
 import net.arksea.config.server.service.ConfigerService;
 import net.arksea.restapi.RestUtils;
@@ -36,24 +35,43 @@ public class ProjectsController {
     private ConfigerService configerService;
 
     @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public List<Project> listAllProjects() {
-        return projectDao.getAllNotDeleted();
+    public DeferredResult<String> listAllProjects(final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        List<Project> projects = projectDao.getAllNotDeleted();
+        result.setResult(RestUtils.createResult(0, projects, reqid));
+        return result;
     }
 
     @RequestMapping(method = RequestMethod.GET, params={"name","profile"}, produces = MEDIA_TYPE)
-    public Project getProject(@RequestParam(name="name") String name,
-                              @RequestParam(name="profile") String profile) {
-        return projectDao.getByNameAndProfile(name, profile);
+    public DeferredResult<String> getProject(@RequestParam(name="name") String name,
+                                              @RequestParam(name="profile") String profile,
+                                              final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Project prj = projectDao.getByNameAndProfile(name, profile);
+        result.setResult(RestUtils.createResult(0, prj, reqid));
+        return result;
     }
 
     @RequestMapping(value="{prjId}", method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public Project getProjectById(@PathVariable(name="prjId") long prjId) {
-        return projectDao.findOne(prjId);
+    public DeferredResult<String> getProjectById(@PathVariable(name="prjId") long prjId,
+                                  final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Project prj = projectDao.findOne(prjId);
+        result.setResult(RestUtils.createResult(0, prj, reqid));
+        return result;
     }
 
     @RequestMapping(value="{prjId}/configs", method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public Iterable<Config> listConfigs(@PathVariable(name="prjId") long prjId) {
-        return configDao.findByProjectId(prjId);
+    public DeferredResult<String> listConfigs(@PathVariable(name="prjId") long prjId,
+                                              final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Iterable<Config> configs = configDao.findByProjectId(prjId);
+        result.setResult(RestUtils.createResult(0, configs, reqid));
+        return result;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)

@@ -29,27 +29,47 @@ public class ConfigController {
     private ConfigDao configDao;
 
     @RequestMapping(params={"name","projectId"},method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public Config getConfig(@RequestParam(name="name") String name,
-                            @RequestParam(name="projectId") long projectId) {
-        return configDao.findByProjectIdAndName(projectId, name);
+    public DeferredResult<String> getConfig(@RequestParam(name="name") String name,
+                            @RequestParam(name="projectId") long projectId,
+                            final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Config cfg = configDao.findByProjectIdAndName(projectId, name);
+        result.setResult(RestUtils.createResult(0, cfg, reqid));
+        return result;
     }
 
     @RequestMapping(value="/{configId}/description", method = RequestMethod.PUT, produces = MEDIA_TYPE)
-    public void updateConfigDesc(@RequestBody String configDesc,
-                                 @PathVariable(name="configId") long configId) {
+    public DeferredResult<String> updateConfigDesc(@RequestBody String configDesc,
+                                                   @PathVariable(name="configId") long configId,
+                                                   final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
         configerService.updateConfigDescription(configId, configDesc);
+        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        return result;
     }
 
     @RequestMapping(value="/{configId}/docs/{docId}", method = RequestMethod.PUT, produces = MEDIA_TYPE)
-    public void updateConfigDoc(@RequestBody String configDoc,
-                              @PathVariable(name="docId") long docId) {
+    public DeferredResult<String> updateConfigDoc(@RequestBody String configDoc,
+                                                  @PathVariable(name="docId") long docId,
+                                                  final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
         configerService.updateConfigDoc(docId, configDoc);
+        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        return result;
     }
 
     @RequestMapping(value="/{configId}/schema/{docId}", method = RequestMethod.PUT, produces = MEDIA_TYPE)
-    public void updateConfigSchema(@RequestBody String configSchema,
-                                   @PathVariable(name="docId") long docId) {
+    public DeferredResult<String> updateConfigSchema(@RequestBody String configSchema,
+                                   @PathVariable(name="docId") long docId,
+                                   final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
         configerService.updateConfigSchema(docId, configSchema);
+        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        return result;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MEDIA_TYPE)

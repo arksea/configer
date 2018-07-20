@@ -117,13 +117,21 @@ export class ProjectService {
 
     public updateProjectTree(): void {
         this.api.getAllProjects().subscribe(
-            it => this.updateProjects.next(it)
+            result => {
+                if (result.code === 0) {
+                    this.updateProjects.next(result.result);
+                }
+            }
         );
     }
 
     public selectProject(id: number): void {
         this.api.getProject(id).subscribe(
-            prj => this.selectedProject.next(prj)
+            ret => {
+                if (ret.code === 0) {
+                    this.selectedProject.next(ret.result);
+                }
+            }
         );
     }
 

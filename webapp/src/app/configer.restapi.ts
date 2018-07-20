@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Project, Config, RestResult } from './configer.model';
+import { Project, Config, RestResult, LoginInfo } from './configer.model';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 
 @Injectable()
@@ -15,51 +15,42 @@ export class ConfigerRestAPI {
         this.headers.append('Content-Type', 'application/json; charset=UTF-8');
     }
 
-    public getAllProjects(): Observable<Project[]> {
+    public getAllProjects(): Observable<RestResult<Project[]>> {
         const request = 'Request project list';
-        return this.http.get(environment.apiUrl + '/api/v1/projects')
-            .pipe(
-                tap((r: Project[]) => this.handleResult(r, request)),
-                catchError(r => this.handleCatchedError(r, request))
-            );
+        const url = environment.apiUrl + '/api/v1/projects';
+        return this.httpGet(url, request);
     }
 
-    public getProject(prjId: number): Observable<Project> {
+    public getProject(prjId: number): Observable<RestResult<Project>> {
         const request = 'Request project prjId=' + prjId;
-        return this.http.get(environment.apiUrl + '/api/v1/projects/' + prjId)
-            .pipe(
-                tap((r: Project) => this.handleResult(r, request)),
-                catchError(r => this.handleCatchedError(r, request))
-            );
+        return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId, request);
     }
 
-    public getProjectConfigs(prjId: number): Observable<Config[]> {
+    public getProjectConfigs(prjId: number): Observable<RestResult<Config[]>> {
         const request = 'Request project configs prjId=' + prjId;
-        return this.http.get(environment.apiUrl + '/api/v1/projects/' + prjId + '/configs')
-            .pipe(
-                tap((r: Config[]) => this.handleResult(r, request)),
-                catchError(r => this.handleCatchedError(r, request))
-            );
+        return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId + '/configs', request);
     }
 
     public updateConfigDescription(cfgId: number, configDesc: string): void {
-        console.log('cfgId=' + cfgId + ',desc' + configDesc);
-        this.http.put(environment.apiUrl + '/api/v1/configs/' + cfgId + '/description',
-            configDesc, { headers: this.headers }).subscribe(data => {
-                // todo: 错误处理
-            });
+        const request = 'update config description';
+        console.log(request + ': cfgId=' + cfgId + ',desc' + configDesc);
+        const url = environment.apiUrl + '/api/v1/configs/' + cfgId + '/description';
+        this.httpPut(url, configDesc, request)
+            .subscribe(data => {});
     }
 
     public updateConfigDoc(cfgId: number, docId: number, configDoc: string): void {
-        console.log('cfgId=' + cfgId + ',docId=' + docId + ',doc=' + configDoc);
-        this.http.put(environment.apiUrl + '/api/v1/configs/' + cfgId + '/docs/' + docId,
-            configDoc, { headers: this.headers }).subscribe(data => { });
+        const request = 'update config doc';
+        console.log(request + ': cfgId=' + cfgId + ',docId=' + docId + ',doc=' + configDoc);
+        const url = environment.apiUrl + '/api/v1/configs/' + cfgId + '/docs/' + docId;
+        this.httpPut(url, configDoc, request).subscribe(data => {});
     }
 
     public updateConfigSchema(cfgId: number, docId: number, configSchema: string): void {
-        console.log('cfgId=' + cfgId + ',docId=' + docId + ',schema=' + configSchema);
-        this.http.put(environment.apiUrl + '/api/v1/configs/' + cfgId + '/schema/' + docId,
-            configSchema, { headers: this.headers }).subscribe(data => { });
+        const request = 'update config schema';
+        console.log(request + ': cfgId=' + cfgId + ',docId=' + docId + ',schema=' + configSchema);
+        const url = environment.apiUrl + '/api/v1/configs/' + cfgId + '/schema/' + docId;
+        this.httpPut(url, configSchema, request).subscribe(data => { });
     }
 
     public createConfig(config: Config):  Observable<RestResult<Config>> {
@@ -87,30 +78,45 @@ export class ConfigerRestAPI {
     }
 
     // -------------------------------------------------------------------
+    // account
+    public userLogin(info: LoginInfo): Observable<RestResult<string>> {
+        const request = 'user login';
+        const url = environment.apiUrl + '/api/v1/login';
+        return this.httpPost(url, info , request);
+    }
+
+    // -------------------------------------------------------------------
+    // http mathods
+    private httpPostWithOptions(url: string, body: any, requestMessage: string, options: object) {
+        return this.http.post(url, body, options).pipe(
+            tap(r => this.handleRestResult(r, requestMessage)),
+            catchError(r => this.handleCatchedError(r, requestMessage))
+        );
+    }
 
     private httpPost(url: string, body: any, requestMessage: string) {
-        return this.http.post(url, body, { headers: this.headers }).pipe(
+        return this.http.post(url, body, { headers: this.headers, withCredentials: true }).pipe(
             tap(r => this.handleRestResult(r, requestMessage)),
             catchError(r => this.handleCatchedError(r, requestMessage))
         );
     }
 
     private httpPut(url: string, body: any, requestMessage: string) {
-        return this.http.put(url, body, { headers: this.headers }).pipe(
+        return this.http.put(url, body, { headers: this.headers, withCredentials: true }).pipe(
             tap(r => this.handleRestResult(r, requestMessage)),
             catchError(r => this.handleCatchedError(r, requestMessage))
         );
     }
 
     private httpGet(url: string, requestMessage: string) {
-        return this.http.get(url, { headers: this.headers }).pipe(
+        return this.http.get(url, { headers: this.headers, withCredentials: true }).pipe(
             tap(r => this.handleRestResult(r, requestMessage)),
             catchError(r => this.handleCatchedError(r, requestMessage))
         );
     }
 
     private httpDelete(url: string, requestMessage: string) {
-        return this.http.delete(url, { headers: this.headers }).pipe(
+        return this.http.delete(url, { headers: this.headers, withCredentials: true }).pipe(
             tap(r => this.handleRestResult(r, requestMessage)),
             catchError(r => this.handleCatchedError(r, requestMessage))
         );
