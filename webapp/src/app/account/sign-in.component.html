@@ -1,0 +1,53 @@
+<div class="login-wrapper">
+    <form class="login" (submit)="login($event, username.value, password.value)">
+        <section class="title">
+            <h3 class="welcome">Welcome to</h3>
+            Arksea Config Server
+            <h5 class="hint">Use your Account to sign in or create one now</h5>
+        </section>
+        <div class="login-group">
+            <input class="username" #username type="text" id="login_username" placeholder="Username">
+            <input class="password" #password type="password" id="login_password" placeholder="Password">
+            <div class="checkbox">
+                <input type="checkbox" id="rememberme">
+                <label for="rememberme">
+                    Remember me
+                </label>
+            </div>
+            <div class="error active">
+                Invalid user name or password
+            </div>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+            <a href="javascript://" class="signup">Sign up</a>
+        </div>
+    </form>
+</div>
+<!-- 
+<div class="row">
+    <div class="col-lg-3 col-md-2 col-sm-0 col-xs-0"></div>
+    <div class="col-lg-5 col-md-8 col-sm-12 col-xs-12">
+      <form role="form" (submit)="login($event, username.value, password.value)">
+        <section class="form-block">
+          <div class="card">
+            <div class="card-header">
+              Welcome to Arksea Config Server
+            </div>
+            <div class="card-block">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" #username class="form-control" id="username" placeholder="Username">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" #password class="form-control" id="password" placeholder="Password">
+              </div>
+              <button type="submit" class="btn btn-default">Login</button>
+              <a [routerLink]="['/signup']">Click here to Signup</a>
+            </div>
+          </div>
+        </section>
+      </form>
+    </div>
+    <div class="col-lg-4 col-md-2 col-sm-0 col-xs-12"></div>
+  </div>
+   -->

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ProjectService } from '../project/project.service';
 import { ConfigService } from '../config/config.service';
@@ -7,7 +7,6 @@ import { SchemaFormComponent } from '../schema/schema-form.component';
 import { ConfigFormComponent } from '../config/config-form.component';
 import { ConfigValueFormComponent } from '../config/config-value-form.component';
 import { ConfigAddFormComponent } from '../config/config-add-form.component';
-import {  ActivatedRoute } from '@angular/router';
 import { AppNotifyDialogService } from '../app-notify-dialog.service';
 
 @Component({
@@ -16,6 +15,7 @@ import { AppNotifyDialogService } from '../app-notify-dialog.service';
   templateUrl: './project.component.html'
 })
 export class ProjectComponent implements OnInit {
+  @Input() projectId: number;
   @ViewChild(SchemaFormComponent) dialogSchemaForm: SchemaFormComponent;
   @ViewChild(ConfigFormComponent) dialogConfigForm: ConfigFormComponent;
   @ViewChild(ConfigValueFormComponent) dialogConfigValueForm: ConfigValueFormComponent;
@@ -26,15 +26,13 @@ export class ProjectComponent implements OnInit {
   constructor(
     private svcPrj: ProjectService,
     private svcCfg: ConfigService,
-    private route: ActivatedRoute,
     private notify: AppNotifyDialogService
   ) { }
 
   ngOnInit(): void {
-    const id: number = parseInt(this.route.snapshot.paramMap.get('id'), 10);
-    if (id) {
-      this.svcPrj.selectProject(id);
-      this.svcCfg.selectProject(id);
+    if (this.projectId) {
+      this.svcPrj.selectProject(this.projectId);
+      this.svcCfg.selectProject(this.projectId);
     }
   }
 

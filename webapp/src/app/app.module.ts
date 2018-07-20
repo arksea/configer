@@ -12,9 +12,13 @@ import { SchemaFormModule, SchemaValidatorFactory, ZSchemaValidatorFactory } fro
 import { ClarityModule } from '@clr/angular';
 
 import { AppComponent } from './app.component';
+import { AppHeaderComponent } from './app-header.component';
 import { AppNotifyDialogComponent } from './app-notify-dialog.component';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
+import { AccountService } from './account/account.service';
+import { SignInComponent } from './account/sign-in.component';
 import { ConfigerRestAPI } from './configer.restapi';
+import { ProjectContainerComponent } from './project/projects-container.component';
 import { ProjectService } from './project/project.service';
 import { ProjectTreeComponent } from './project/project-tree.component';
 import { ProjectComponent } from './project/project.component';
@@ -32,14 +36,19 @@ import { ArSelectWidgetComponent } from './widget/ar-select-widget.component';
 import { ArArrayWidgetComponent } from './widget/ar-array-widget.component';
 
 const appRoutes: Routes = [
-  // { path: '',   redirectTo: 'projects', pathMatch: 'full' },
-  { path: 'projects/:id', component: ProjectComponent}
+  { path: '',   redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login',   component: SignInComponent },
+  { path: 'projects', component: ProjectContainerComponent},
+  { path: 'projects/:id', component: ProjectContainerComponent}
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
+    AppHeaderComponent,
     AppNotifyDialogComponent,
+    SignInComponent,
+    ProjectContainerComponent,
     ProjectComponent,
     ProjectTreeComponent,
     ProjectNewFormComponent,
@@ -72,6 +81,7 @@ const appRoutes: Routes = [
     ReactiveFormsModule
   ],
   providers: [
+    AccountService,
     ConfigerRestAPI,
     ProjectService,
     ConfigService,
