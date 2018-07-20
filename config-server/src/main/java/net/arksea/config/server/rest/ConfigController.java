@@ -57,7 +57,7 @@ public class ConfigController {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
         Config cfg1 = configerService.createConfig(config);
-        result.setResult(RestUtils.createJsonResult(0, cfg1, reqid));
+        result.setResult(RestUtils.createResult(0, cfg1, reqid));
         return result;
     }
 

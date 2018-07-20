@@ -61,7 +61,7 @@ public class ProjectsController {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
         long prjId = configerService.createProject(project);
-        result.setResult(RestUtils.createJsonResult(0, prjId, reqid));
+        result.setResult(RestUtils.createResult(0, prjId, reqid));
         return result;
     }
 
