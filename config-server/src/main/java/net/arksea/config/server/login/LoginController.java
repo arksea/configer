@@ -42,7 +42,7 @@ public class LoginController {
             c.setMaxAge(tokenService.getCookieExpiry());
             c.setHttpOnly(true);
             httpResponse.addCookie(c);
-            result.setResult(RestUtils.createResult(0, token.getRight(), reqid));
+            result.setResult(RestUtils.createResult(0, "succeed", reqid));
         } else {
             Cookie c1 = new Cookie(tokenService.getCookieName(), null);
             c1.setMaxAge(0);
@@ -53,12 +53,14 @@ public class LoginController {
     }
 
     @RequestMapping(value="verify/{name}", method = RequestMethod.POST, produces = MEDIA_TYPE)
-    public String verifyToken(@RequestBody String token,
-                              final HttpServletRequest httpRequest) {
+    public DeferredResult<String> verifyToken(@RequestBody String token, final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
         if (tokenService.verify(token)) {
-            return RestUtils.createResult(0, "succeed");
+            result.setResult(RestUtils.createResult(0, "succeed", reqid));
         } else {
-            return RestUtils.createResult(1, "failed");
+            result.setResult(RestUtils.createResult(1, "failed", reqid));
         }
+        return result;
     }
 }

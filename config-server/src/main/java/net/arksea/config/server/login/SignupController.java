@@ -43,12 +43,14 @@ public class SignupController {
                 c.setMaxAge(tokenService.getCookieExpiry());
                 c.setHttpOnly(true);
                 httpResponse.addCookie(c);
-                result.setResult(RestUtils.createResult(0, token.getRight(), reqid));
+                result.setResult(RestUtils.createResult(0, "succeed", reqid));
+                break;
             default:
                 Cookie c1 = new Cookie(tokenService.getCookieName(), null);
                 c1.setMaxAge(0);
                 httpResponse.addCookie(c1);
                 result.setResult(RestUtils.createError(code.getValue(), "signup failed", reqid));
+                break;
         }
         return result;
     }
