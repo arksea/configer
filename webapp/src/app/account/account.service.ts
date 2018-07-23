@@ -15,7 +15,7 @@ export class AccountService {
            if (response.code === 0) {
               this.router.navigate(['/projects']);
            } else {
-              this.notify.openWidthConfirm('Warning', 'Login failed', response.error);
+              this.notify.openWidthConfirm('Warning', 'Login failed', 'Invalid user name or password');
            }
 
          });

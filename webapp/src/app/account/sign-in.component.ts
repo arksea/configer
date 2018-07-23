@@ -5,6 +5,7 @@ import { AccountService } from './account.service';
 
 @Component({
   selector: 'app-sign-in',
+  styleUrls: ['./sign-in.component.css'],
   templateUrl: './sign-in.component.html'
 })
 export class SignInComponent implements OnInit {
