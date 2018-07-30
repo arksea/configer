@@ -4,11 +4,11 @@ import { SignupInfo, LoginInfo } from '../configer.model';
 import { AccountService } from './account.service';
 
 @Component({
-  selector: 'app-sign-in',
-  styleUrls: ['./sign-in.component.css'],
-  templateUrl: './sign-in.component.html'
+  selector: 'app-sign-up',
+  styleUrls: ['./sign-up.component.css'],
+  templateUrl: './sign-up.component.html'
 })
-export class SignInComponent implements OnInit {
+export class SignUpComponent implements OnInit {
 
     constructor(public router: Router, private accountService: AccountService) {
     }
@@ -16,11 +16,12 @@ export class SignInComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    login(event, name, password) {
+    signup(event, name, email, password, password2) {
       event.preventDefault();
-      const body = new LoginInfo();
+      const body = new SignupInfo();
       body.name = name;
+      body.email = email;
       body.password = password;
-      this.accountService.login(body);
+      this.accountService.signup(body);
     }
 }

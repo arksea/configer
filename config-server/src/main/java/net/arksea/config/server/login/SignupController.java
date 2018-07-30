@@ -45,10 +45,16 @@ public class SignupController {
                 httpResponse.addCookie(c);
                 result.setResult(RestUtils.createResult(0, "succeed", reqid));
                 break;
-            default:
+            case USERNAME_EXISTS:
                 Cookie c1 = new Cookie(tokenService.getCookieName(), null);
                 c1.setMaxAge(0);
                 httpResponse.addCookie(c1);
+                result.setResult(RestUtils.createError(code.getValue(), "user name exists", reqid));
+                break;
+            default:
+                Cookie c2 = new Cookie(tokenService.getCookieName(), null);
+                c2.setMaxAge(0);
+                httpResponse.addCookie(c2);
                 result.setResult(RestUtils.createError(code.getValue(), "signup failed", reqid));
                 break;
         }

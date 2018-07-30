@@ -43,7 +43,8 @@ public class LoginService {
         }
     }
 
-    public boolean login(LoginInfo info) {
+    public LoginStatus login(LoginInfo info) {
+        LoginStatus status;
         try {
             List<User> rows = userDao.findByName(info.getName());
             if (rows.size() > 0) {
@@ -51,12 +52,15 @@ public class LoginService {
                 String pwdhash = hashPassword(info.getPassword(), u.getSalt());
                 boolean succeed = slowEquals(pwdhash.getBytes(), u.getPassword().getBytes());
                 logger.info("User login, userName={}, succeed={}", u.getName(), succeed);
-                return succeed;
+                status = succeed ? LoginStatus.SUCCEED : LoginStatus.INVALID;
+            } else {
+                status = LoginStatus.INVALID;
             }
         } catch (Exception ex) {
             logger.warn("User login failed, userName={}", info.getName(), ex);
+            status = LoginStatus.FAILED;
         }
-        return false;
+        return status;
     }
 
     /**

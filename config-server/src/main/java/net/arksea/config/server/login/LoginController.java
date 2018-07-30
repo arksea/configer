@@ -36,18 +36,28 @@ public class LoginController {
                                         final HttpServletResponse httpResponse) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        if (loginService.login(body)) {
-            Pair<String,Long> token = tokenService.create(body.getName());
-            Cookie c = new Cookie(tokenService.getCookieName(), token.getLeft());
-            c.setMaxAge(tokenService.getCookieExpiry());
-            c.setHttpOnly(true);
-            httpResponse.addCookie(c);
-            result.setResult(RestUtils.createResult(0, "succeed", reqid));
-        } else {
-            Cookie c1 = new Cookie(tokenService.getCookieName(), null);
-            c1.setMaxAge(0);
-            httpResponse.addCookie(c1);
-            result.setResult(RestUtils.createError(1, "login failed", reqid));
+        LoginStatus status = loginService.login(body);
+        switch (status) {
+            case SUCCEED:
+                Pair<String,Long> token = tokenService.create(body.getName());
+                Cookie c = new Cookie(tokenService.getCookieName(), token.getLeft());
+                c.setMaxAge(tokenService.getCookieExpiry());
+                c.setHttpOnly(true);
+                httpResponse.addCookie(c);
+                result.setResult(RestUtils.createResult(0, "Succeed", reqid));
+                break;
+            case FAILED:
+                Cookie c1 = new Cookie(tokenService.getCookieName(), null);
+                c1.setMaxAge(0);
+                httpResponse.addCookie(c1);
+                result.setResult(RestUtils.createError(status.getValue(), "Login failed, please try again later", reqid));
+                break;
+            case INVALID:
+                Cookie c2 = new Cookie(tokenService.getCookieName(), null);
+                c2.setMaxAge(0);
+                httpResponse.addCookie(c2);
+                result.setResult(RestUtils.createError(status.getValue(), "Invalid user name or password", reqid));
+                break;
         }
         return result;
     }

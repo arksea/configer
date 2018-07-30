@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Project, Config, RestResult, LoginInfo } from './configer.model';
+import { Project, Config, RestResult, LoginInfo, SignupInfo } from './configer.model';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 
 @Injectable()
@@ -82,6 +82,12 @@ export class ConfigerRestAPI {
     public userLogin(info: LoginInfo): Observable<RestResult<string>> {
         const request = 'user login';
         const url = environment.apiUrl + '/api/v1/login';
+        return this.httpPost(url, info , request);
+    }
+
+    public userSignup(info: SignupInfo): Observable<RestResult<string>> {
+        const request = 'user login';
+        const url = environment.apiUrl + '/api/v1/signup';
         return this.httpPost(url, info , request);
     }
 

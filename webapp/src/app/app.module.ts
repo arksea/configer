@@ -17,6 +17,7 @@ import { AppNotifyDialogComponent } from './app-notify-dialog.component';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 import { AccountService } from './account/account.service';
 import { SignInComponent } from './account/sign-in.component';
+import { SignUpComponent } from './account/sign-up.component';
 import { ConfigerRestAPI } from './configer.restapi';
 import { ProjectContainerComponent } from './project/projects-container.component';
 import { ProjectService } from './project/project.service';
@@ -38,6 +39,7 @@ import { ArArrayWidgetComponent } from './widget/ar-array-widget.component';
 const appRoutes: Routes = [
   { path: '',   redirectTo: 'login', pathMatch: 'full' },
   { path: 'login',   component: SignInComponent },
+  { path: 'signup',   component: SignUpComponent },
   { path: 'projects', component: ProjectContainerComponent},
   { path: 'projects/:id', component: ProjectContainerComponent}
 ];
@@ -48,6 +50,7 @@ const appRoutes: Routes = [
     AppHeaderComponent,
     AppNotifyDialogComponent,
     SignInComponent,
+    SignUpComponent,
     ProjectContainerComponent,
     ProjectComponent,
     ProjectTreeComponent,

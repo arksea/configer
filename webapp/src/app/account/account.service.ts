@@ -15,9 +15,21 @@ export class AccountService {
            if (response.code === 0) {
               this.router.navigate(['/projects']);
            } else {
-              this.notify.openWidthConfirm('Warning', 'Login failed', 'Invalid user name or password');
+              this.notify.openWidthTitle('Warning', response.error);
            }
 
+         });
+    }
+
+    public signup(info: SignupInfo): void {
+      this.api.userSignup(info).subscribe(
+         response => {
+           if (response.code === 0) {
+              this.router.navigate(['/projects']);
+              this.notify.openWidthTitle('Notify', 'Signup succeed');
+           } else {
+              this.notify.openWidthTitle('Warning', response.error);
+           }
          });
     }
 }
