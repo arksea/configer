@@ -45,7 +45,8 @@ public class ConfigController {
                                                    final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        configerService.updateConfigDescription(configId, configDesc);
+        String userName = (String)httpRequest.getAttribute("jwt-user-name");
+        configerService.updateConfigDescription(configId, configDesc, userName);
         result.setResult(RestUtils.createResult(0, "succeed", reqid));
         return result;
     }
@@ -56,7 +57,8 @@ public class ConfigController {
                                                   final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        configerService.updateConfigDoc(docId, configDoc);
+        String userName = (String)httpRequest.getAttribute("jwt-user-name");
+        configerService.updateConfigDoc(docId, configDoc, userName);
         result.setResult(RestUtils.createResult(0, "succeed", reqid));
         return result;
     }
@@ -67,7 +69,8 @@ public class ConfigController {
                                    final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        configerService.updateConfigSchema(docId, configSchema);
+        String userName = (String)httpRequest.getAttribute("jwt-user-name");
+        configerService.updateConfigSchema(docId, configSchema, userName);
         result.setResult(RestUtils.createResult(0, "succeed", reqid));
         return result;
     }
@@ -76,7 +79,8 @@ public class ConfigController {
     public DeferredResult<String> createConfig(@RequestBody Config config, final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        Config cfg1 = configerService.createConfig(config);
+        String userName = (String)httpRequest.getAttribute("jwt-user-name");
+        Config cfg1 = configerService.createConfig(config, userName);
         result.setResult(RestUtils.createResult(0, cfg1, reqid));
         return result;
     }
@@ -85,7 +89,8 @@ public class ConfigController {
     public DeferredResult<String> deleteConfig(@PathVariable(name="configId") long configId, final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        configerService.deleteConfig(configId);
+        String userName = (String)httpRequest.getAttribute("jwt-user-name");
+        configerService.deleteConfig(configId, userName);
         result.setResult(RestUtils.createResult(0, "succeed", reqid));
         return result;
     }

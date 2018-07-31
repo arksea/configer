@@ -62,15 +62,4 @@ public class LoginController {
         return result;
     }
 
-    @RequestMapping(value="verify/{name}", method = RequestMethod.POST, produces = MEDIA_TYPE)
-    public DeferredResult<String> verifyToken(@RequestBody String token, final HttpServletRequest httpRequest) {
-        DeferredResult<String> result = new DeferredResult<>();
-        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        if (tokenService.verify(token)) {
-            result.setResult(RestUtils.createResult(0, "succeed", reqid));
-        } else {
-            result.setResult(RestUtils.createResult(1, "failed", reqid));
-        }
-        return result;
-    }
 }

@@ -48,7 +48,7 @@ public class TokenService {
         return Pair.of(token, exp);
     }
 
-    public boolean verify(String token) {
+    public DecodedJWT verify(String token) {
         try {
             JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(ISSUER)
@@ -56,10 +56,14 @@ public class TokenService {
                 .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             Date now = new Date(System.currentTimeMillis());
-            return jwt.getExpiresAt().after(now);
+            if (jwt.getExpiresAt().after(now)) {
+                return jwt;
+            } else {
+                return null;
+            }
         } catch (JWTVerificationException ex){
             logger.warn("token verify failed", ex);
-            return false;
+            return null;
         }
     }
 }

@@ -1,5 +1,6 @@
 package net.arksea.config.server.filter;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import net.arksea.config.server.login.TokenService;
 import net.arksea.restapi.RestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +67,12 @@ public class ApiFilter implements Filter {
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
-                if ("access_token".equals(c.getName()) && tokenService.verify(c.getValue())) {
-                    return true;
+                if ("access_token".equals(c.getName())) {
+                    DecodedJWT jwt = tokenService.verify(c.getValue());
+                    if (jwt != null) {
+                        req.setAttribute("jwt-user-name", jwt.getClaim("name").asString());
+                        return true;
+                    }
                 }
             }
         }

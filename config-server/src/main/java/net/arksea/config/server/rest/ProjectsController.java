@@ -78,7 +78,8 @@ public class ProjectsController {
     public DeferredResult<String> createProject(@RequestBody Project project, final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        long prjId = configerService.createProject(project);
+        String userName = (String)httpRequest.getAttribute("jwt-user-name");
+        long prjId = configerService.createProject(project, userName);
         result.setResult(RestUtils.createResult(0, prjId, reqid));
         return result;
     }
@@ -87,7 +88,8 @@ public class ProjectsController {
     public DeferredResult<String> deleteProject(@PathVariable(name="projectId") long projectId, final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        configerService.deleteProject(projectId);
+        String userName = (String)httpRequest.getAttribute("jwt-user-name");
+        configerService.deleteProject(projectId, userName);
         result.setResult(RestUtils.createResult(0, "succeed", reqid));
         return result;
     }
