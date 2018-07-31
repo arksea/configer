@@ -53,6 +53,8 @@ public class LoginService {
                 boolean succeed = slowEquals(pwdhash.getBytes(), u.getPassword().getBytes());
                 logger.info("User login, userName={}, succeed={}", u.getName(), succeed);
                 status = succeed ? LoginStatus.SUCCEED : LoginStatus.INVALID;
+                u.setLastLogin(new Date());
+                userDao.save(u);
             } else {
                 status = LoginStatus.INVALID;
             }
