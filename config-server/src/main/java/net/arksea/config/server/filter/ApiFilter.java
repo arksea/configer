@@ -58,7 +58,7 @@ public class ApiFilter implements Filter {
         } else if (verifyToken(req)) {
             chain.doFilter(request, resp);
         } else {
-            this.resultError(HttpStatus.UNAUTHORIZED, 1, "访问未授权", req, response);
+            this.resultError(HttpStatus.UNAUTHORIZED, 401, "访问未授权", req, response);
         }
     }
 

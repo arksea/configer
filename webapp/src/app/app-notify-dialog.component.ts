@@ -4,7 +4,6 @@ import { NotifyEvent } from './app-notify-dialog.service';
 
 @Component({
   selector: 'app-notify-dialog',
-  styles: ['.notify-message {text-align: center;}'],
   templateUrl: './app-notify-dialog.component.html',
 })
 export class AppNotifyDialogComponent {

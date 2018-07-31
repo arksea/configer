@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -10,7 +11,7 @@ import { AppNotifyDialogService } from './app-notify-dialog.service';
 export class ConfigerRestAPI {
     headers: HttpHeaders;
 
-    public constructor(private http: HttpClient, private notify: AppNotifyDialogService ) {
+    public constructor(private http: HttpClient, private notify: AppNotifyDialogService, private router: Router) {
         this.headers = new HttpHeaders();
         this.headers.append('Content-Type', 'application/json; charset=UTF-8');
     }
@@ -133,14 +134,11 @@ export class ConfigerRestAPI {
         return new BehaviorSubject(error);
     }
 
-    private handleResult(result, request: string) {
-        console.debug(request + ' : ' + result);
-        return new BehaviorSubject(result);
-    }
-
     private handleRestResult(result, request: string) {
         if (result.code === 0) {
             console.debug(request + ' : ' + result);
+        } else if (result.code === 401) {
+            this.router.navigate(['/login']);
         } else {
             this.notify.openWidthDescription('Error', request + ' failed', result);
         }
