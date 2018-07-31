@@ -12,7 +12,8 @@
                 <clr-icon shape="caret down"></clr-icon>
             </button>
             <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
-                <a href="#login" clrDropdownItem>Log in</a>
+                <a href="#signup" clrDropdownItem>Signup new account</a>
+                <a href="#login" (click)="logout()" clrDropdownItem>Logout</a>
             </clr-dropdown-menu>
         </clr-dropdown>
     </div>

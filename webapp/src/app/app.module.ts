@@ -16,6 +16,7 @@ import { AppHeaderComponent } from './app-header.component';
 import { AppNotifyDialogComponent } from './app-notify-dialog.component';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 import { AccountService } from './account/account.service';
+import { AuthGuard } from './account/auth-guard';
 import { SignInComponent } from './account/sign-in.component';
 import { SignUpComponent } from './account/sign-up.component';
 import { ConfigerRestAPI } from './configer.restapi';
@@ -37,11 +38,11 @@ import { ArSelectWidgetComponent } from './widget/ar-select-widget.component';
 import { ArArrayWidgetComponent } from './widget/ar-array-widget.component';
 
 const appRoutes: Routes = [
-  { path: '',   redirectTo: 'login', pathMatch: 'full' },
+  { path: '',   redirectTo: 'projects', pathMatch: 'full' },
   { path: 'login',   component: SignInComponent },
   { path: 'signup',   component: SignUpComponent },
-  { path: 'projects', component: ProjectContainerComponent},
-  { path: 'projects/:id', component: ProjectContainerComponent}
+  { path: 'projects', component: ProjectContainerComponent, canActivate: [AuthGuard]},
+  { path: 'projects/:id', component: ProjectContainerComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({
@@ -85,6 +86,7 @@ const appRoutes: Routes = [
   ],
   providers: [
     AccountService,
+    AuthGuard,
     ConfigerRestAPI,
     ProjectService,
     ConfigService,

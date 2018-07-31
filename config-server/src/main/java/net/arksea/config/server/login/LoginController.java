@@ -44,7 +44,7 @@ public class LoginController {
                 c.setMaxAge(tokenService.getCookieExpiry());
                 c.setHttpOnly(true);
                 httpResponse.addCookie(c);
-                result.setResult(RestUtils.createResult(0, "Succeed", reqid));
+                result.setResult(RestUtils.createResult(0, token.getRight(), reqid));
                 break;
             case FAILED:
                 Cookie c1 = new Cookie(tokenService.getCookieName(), null);

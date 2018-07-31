@@ -43,7 +43,7 @@ public class SignupController {
                 c.setMaxAge(tokenService.getCookieExpiry());
                 c.setHttpOnly(true);
                 httpResponse.addCookie(c);
-                result.setResult(RestUtils.createResult(0, "succeed", reqid));
+                result.setResult(RestUtils.createResult(0, token.getRight(), reqid));
                 break;
             case USERNAME_EXISTS:
                 Cookie c1 = new Cookie(tokenService.getCookieName(), null);
