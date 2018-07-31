@@ -1,13 +1,19 @@
 package net.arksea.config.server.filter;
 
+import net.arksea.config.server.login.TokenService;
+import net.arksea.restapi.RestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.UUID;
 
 /**
@@ -17,6 +23,9 @@ import java.util.UUID;
 public class ApiFilter implements Filter {
     @Autowired
     private Environment env;
+
+    @Autowired
+    TokenService tokenService;
 
     @Override
     public void destroy() {
@@ -40,7 +49,45 @@ public class ApiFilter implements Filter {
             reqid = UUID.randomUUID().toString();
         }
         req.setAttribute("restapi-requestid", reqid);
-        chain.doFilter(request, resp);
+        String uri = req.getRequestURI();
+        if ("/heartbeat".equals(uri) || //haproxy用于监测站点状态的请求，不做校验
+            "/api/v1/login".equals(uri) ||
+            "/api/v1/signup".equals(uri) ||
+            req.getMethod().equals(RequestMethod.OPTIONS.name())) { //跨域OPTIONS请求不校验
+            chain.doFilter(req, resp);
+        } else if (verifyToken(req)) {
+            chain.doFilter(request, resp);
+        } else {
+            this.resultError(HttpStatus.UNAUTHORIZED, 1, "访问未授权", req, response);
+        }
+    }
+
+    private boolean verifyToken(HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("access_token".equals(c.getName()) && tokenService.verify(c.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void resultError(HttpStatus status, int errCode, String error, HttpServletRequest request, HttpServletResponse httpResponse) throws IOException {
+        PrintWriter out = null;
+        try {
+            httpResponse.setStatus(status.value());
+            out = httpResponse.getWriter();
+            String reqid = (String)request.getAttribute("restapi-requestid");
+            String data = RestUtils.createError(errCode, error, reqid);
+            out.write(data);
+            out.flush();
+        } finally {
+            if(out != null) {
+                out.close();
+            }
+        }
     }
 
     @Override
