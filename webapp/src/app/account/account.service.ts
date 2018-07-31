@@ -44,7 +44,8 @@ export class AccountService {
     localStorage.setItem('token_expires',  '0');
     const exp: Date = new Date();
     exp.setTime(exp.getTime() - 24 * 60 * 60_000);
-    document.cookie = 'access_token=;expires=' + exp.toUTCString();
+    const cookie = 'access_token=;path=/api/v1;expires=' + exp.toUTCString();
+    document.cookie = cookie;
   }
 
   private getCookie(name) {

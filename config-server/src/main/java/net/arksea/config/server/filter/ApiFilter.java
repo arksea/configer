@@ -50,7 +50,7 @@ public class ApiFilter implements Filter {
         }
         req.setAttribute("restapi-requestid", reqid);
         String uri = req.getRequestURI();
-        if ("/heartbeat".equals(uri) || //haproxy用于监测站点状态的请求，不做校验
+        if (!uri.startsWith("/api/v1") ||
             "/api/v1/login".equals(uri) ||
             "/api/v1/signup".equals(uri) ||
             req.getMethod().equals(RequestMethod.OPTIONS.name())) { //跨域OPTIONS请求不校验
