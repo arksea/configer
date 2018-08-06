@@ -32,26 +32,25 @@ export class ConfigerRestAPI {
         return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId + '/configs', request);
     }
 
-    public updateConfigDescription(cfgId: number, configDesc: string): void {
+    public updateConfigDescription(cfgId: number, configDesc: string): Observable<RestResult<string>> {
         const request = 'update config description';
         console.log(request + ': cfgId=' + cfgId + ',desc' + configDesc);
         const url = environment.apiUrl + '/api/v1/configs/' + cfgId + '/description';
-        this.httpPut(url, configDesc, request)
-            .subscribe(data => {});
+        return this.httpPut(url, configDesc, request);
     }
 
-    public updateConfigDoc(cfgId: number, docId: number, configDoc: string): void {
+    public updateConfigDoc(cfgId: number, docId: number, configDoc: string): Observable<RestResult<string>> {
         const request = 'update config doc';
         console.log(request + ': cfgId=' + cfgId + ',docId=' + docId + ',doc=' + configDoc);
         const url = environment.apiUrl + '/api/v1/configs/' + cfgId + '/docs/' + docId;
-        this.httpPut(url, configDoc, request).subscribe(data => {});
+        return this.httpPut(url, configDoc, request);
     }
 
-    public updateConfigSchema(cfgId: number, docId: number, configSchema: string): void {
+    public updateConfigSchema(cfgId: number, docId: number, configSchema: string): Observable<RestResult<string>> {
         const request = 'update config schema';
         console.log(request + ': cfgId=' + cfgId + ',docId=' + docId + ',schema=' + configSchema);
         const url = environment.apiUrl + '/api/v1/configs/' + cfgId + '/schema/' + docId;
-        this.httpPut(url, configSchema, request).subscribe(data => { });
+        return this.httpPut(url, configSchema, request);
     }
 
     public createConfig(config: Config):  Observable<RestResult<Config>> {

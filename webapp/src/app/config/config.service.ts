@@ -22,7 +22,9 @@ export class ConfigService {
     // updateConfigs       ──┬──＞ updates ──＞ configMap ──＞ configList
     // updateConfigSchema  ──┤
     // updateConfigDoc     ──┤
-    // updateConfigDesc    ──┘
+    // updateConfigDesc    ──┤
+    // addConfig           ──┤
+    // delConfig           ──┘
 
     updateConfigs: Subject<Config[]> = new Subject();
     updateConfigDoc: Subject<UpdateConfigField> = new Subject();
@@ -124,19 +126,31 @@ export class ConfigService {
             });
     }
 
-    public updateSchema(cfgId: number, docId: number, schema: string): void {
-        this.api.updateConfigSchema(cfgId, docId, schema);
-        this.updateConfigSchema.next({ cfgId: cfgId, fieldValue: schema });
+    public updateSchema(configId: number , docId: number, schema: string): void {
+        this.api.updateConfigSchema(configId, docId, schema).subscribe(
+            ret => {
+                if (ret.code === 0) {
+                    this.updateConfigSchema.next({ cfgId: configId, fieldValue: schema });
+                }
+            });
     }
 
     public updateValue(cfgId: number, docId: number, value: string): void {
-        this.api.updateConfigDoc(cfgId, docId, value);
-        this.updateConfigDoc.next({ cfgId: cfgId, fieldValue: value });
+        this.api.updateConfigDoc(cfgId, docId, value).subscribe(
+            ret => {
+                if (ret.code === 0) {
+                    this.updateConfigDoc.next({ cfgId: cfgId, fieldValue: value });
+                }
+            });
     }
 
     public updateDesc(cfgId: number, desc: string): void {
-        this.api.updateConfigDescription(cfgId, desc);
-        this.updateConfigDesc.next({ cfgId: cfgId, fieldValue: desc });
+        this.api.updateConfigDescription(cfgId, desc).subscribe(
+            ret => {
+                if (ret.code === 0) {
+                    this.updateConfigDesc.next({ cfgId: cfgId, fieldValue: desc });
+                }
+            });
     }
 
     public createConfig(config: Config): void {
