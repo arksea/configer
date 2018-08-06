@@ -38,12 +38,19 @@ public class TokenService {
         return "access_token";
     }
 
-    public Pair<String,Long> create(String userName) throws JWTCreationException {
+    /**
+     * @param userName
+     * @param userId
+     * @return Pair of token and expiresTime
+     * @throws JWTCreationException
+     */
+    public Pair<String,Long> create(String userName,long userId) throws JWTCreationException {
         long exp = System.currentTimeMillis()+EXPIRES_SECONDS*1000L;
         String token = JWT.create()
             .withIssuer(ISSUER)
             .withExpiresAt(new Date(exp))
-            .withClaim("name", userName)
+            .withClaim("userName", userName)
+            .withClaim("userId", userId)
             .sign(algorithm);
         return Pair.of(token, exp);
     }

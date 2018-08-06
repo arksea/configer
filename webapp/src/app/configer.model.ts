@@ -36,3 +36,11 @@ export class SignupInfo {
     email: string;
     password: string;
 }
+
+export class ResultCode {
+    public static SUCCEED = 0;
+    public static FAILED = 1;
+    public static TOKEN_EXPIRED = 3;
+    public static NO_AUTHORITY = 4;
+    public static NOT_EXISTS = 5;
+}

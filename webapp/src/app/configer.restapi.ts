@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Project, Config, RestResult, LoginInfo, SignupInfo } from './configer.model';
+import { Project, Config, RestResult, LoginInfo, SignupInfo, ResultCode } from './configer.model';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 
 @Injectable()
@@ -23,12 +23,12 @@ export class ConfigerRestAPI {
     }
 
     public getProject(prjId: number): Observable<RestResult<Project>> {
-        const request = 'Request project prjId=' + prjId;
+        const request = 'Request project';
         return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId, request);
     }
 
     public getProjectConfigs(prjId: number): Observable<RestResult<Config[]>> {
-        const request = 'Request project configs prjId=' + prjId;
+        const request = 'Request project configs';
         return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId + '/configs', request);
     }
 
@@ -129,18 +129,19 @@ export class ConfigerRestAPI {
         );
     }
 
-    private handleCatchedError(error, request: string) {
-        this.notify.openWidthDescription('Error', request + ' failed', error);
-        return new BehaviorSubject(error);
+    private handleCatchedError(errorRespond, request: string) {
+        console.debug(errorRespond);
+        this.notify.openWidthDescription('Catched Error', request + ' failed', errorRespond.error.error);
+        return new BehaviorSubject(errorRespond.error);
     }
 
     private handleRestResult(result, request: string) {
         if (result.code === 0) {
             console.debug(request + ' : ' + result);
-        } else if (result.code === 401) {
+        } else if (result.code === ResultCode.TOKEN_EXPIRED) {
             this.router.navigate(['/login']);
         } else {
-            this.notify.openWidthDescription('Error', request + ' failed', result);
+            this.notify.openWidthDescription('Reault Error', request + ' failed', result.error);
         }
         return new BehaviorSubject(result);
     }

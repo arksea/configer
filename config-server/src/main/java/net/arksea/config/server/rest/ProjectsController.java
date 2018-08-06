@@ -1,8 +1,6 @@
 package net.arksea.config.server.rest;
 
-import net.arksea.config.server.dao.ConfigDao;
-import net.arksea.config.server.dao.ConfigDocDao;
-import net.arksea.config.server.dao.ProjectDao;
+import net.arksea.config.server.ResultCode;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
 import net.arksea.config.server.service.ConfigerService;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -26,31 +24,16 @@ public class ProjectsController {
     private static final String MEDIA_TYPE = "application/json; charset=UTF-8";
     private Logger logger = LogManager.getLogger(ProjectsController.class);
     @Autowired
-    private ProjectDao projectDao;
-    @Autowired
-    private ConfigDao configDao;
-    @Autowired
-    private ConfigDocDao configDocDao;
-    @Autowired
     private ConfigerService configerService;
 
-    @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
-    public DeferredResult<String> listAllProjects(final HttpServletRequest httpRequest) {
-        DeferredResult<String> result = new DeferredResult<>();
-        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        List<Project> projects = projectDao.getAllNotDeleted();
-        result.setResult(RestUtils.createResult(0, projects, reqid));
-        return result;
-    }
 
-    @RequestMapping(method = RequestMethod.GET, params={"name","profile"}, produces = MEDIA_TYPE)
-    public DeferredResult<String> getProject(@RequestParam(name="name") String name,
-                                              @RequestParam(name="profile") String profile,
-                                              final HttpServletRequest httpRequest) {
+    @RequestMapping(method = RequestMethod.GET, produces = MEDIA_TYPE)
+    public DeferredResult<String> listProjects(final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        Project prj = projectDao.getByNameAndProfile(name, profile);
-        result.setResult(RestUtils.createResult(0, prj, reqid));
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        Iterable<Project> projects = configerService.listProjects(userId);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, projects, reqid));
         return result;
     }
 
@@ -59,8 +42,13 @@ public class ProjectsController {
                                   final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        Project prj = projectDao.findOne(prjId);
-        result.setResult(RestUtils.createResult(0, prj, reqid));
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        Optional<Project> op = configerService.getProject(userId, prjId);
+        if (op.isPresent()) {
+            result.setResult(RestUtils.createResult(ResultCode.SUCCEED, op.get(), reqid));
+        } else {
+            result.setResult(RestUtils.createError(ResultCode.NOT_EXISTS, "未找到指定项目", reqid));
+        }
         return result;
     }
 
@@ -69,8 +57,9 @@ public class ProjectsController {
                                               final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        Iterable<Config> configs = configDao.findByProjectId(prjId);
-        result.setResult(RestUtils.createResult(0, configs, reqid));
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        Iterable<Config> configs = configerService.listProjectConfigs(userId, prjId);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, configs, reqid));
         return result;
     }
 
@@ -78,8 +67,8 @@ public class ProjectsController {
     public DeferredResult<String> createProject(@RequestBody Project project, final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        String userName = (String)httpRequest.getAttribute("jwt-user-name");
-        long prjId = configerService.createProject(project, userName);
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        long prjId = configerService.createProject(project, userId);
         result.setResult(RestUtils.createResult(0, prjId, reqid));
         return result;
     }
@@ -88,9 +77,9 @@ public class ProjectsController {
     public DeferredResult<String> deleteProject(@PathVariable(name="projectId") long projectId, final HttpServletRequest httpRequest) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        String userName = (String)httpRequest.getAttribute("jwt-user-name");
-        configerService.deleteProject(projectId, userName);
-        result.setResult(RestUtils.createResult(0, "succeed", reqid));
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        configerService.deleteProject(userId, projectId);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, "succeed", reqid));
         return result;
     }
 }

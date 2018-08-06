@@ -1,6 +1,7 @@
 package net.arksea.config.server.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import net.arksea.config.server.ResultCode;
 import net.arksea.config.server.login.TokenService;
 import net.arksea.restapi.RestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class ApiFilter implements Filter {
         } else if (verifyToken(req)) {
             chain.doFilter(request, resp);
         } else {
-            this.resultError(HttpStatus.UNAUTHORIZED, 401, "访问未授权", req, response);
+            this.resultError(HttpStatus.UNAUTHORIZED, ResultCode.TOKEN_EXPIRED, "Unauthorized", req, response);
         }
     }
 
@@ -70,7 +71,8 @@ public class ApiFilter implements Filter {
                 if ("access_token".equals(c.getName())) {
                     DecodedJWT jwt = tokenService.verify(c.getValue());
                     if (jwt != null) {
-                        req.setAttribute("jwt-user-name", jwt.getClaim("name").asString());
+                        req.setAttribute("jwt-user-name", jwt.getClaim("userName").asString());
+                        req.setAttribute("jwt-user-id", jwt.getClaim("userId").asLong());
                         return true;
                     }
                 }

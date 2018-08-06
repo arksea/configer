@@ -1,5 +1,7 @@
 package net.arksea.config.server.login;
 
+import net.arksea.config.server.ResultCode;
+import net.arksea.config.server.entity.User;
 import net.arksea.restapi.RestUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -35,27 +37,28 @@ public class SignupController {
                          final HttpServletResponse httpResponse) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        SignupStatus code = loginService.signup(info);
-        switch (code) {
+        Pair<SignupStatus,User> ret = loginService.signup(info);
+        switch (ret.getLeft()) {
             case SUCCEED:
-                Pair<String,Long> token = tokenService.create(info.getName());
+                User user = ret.getRight();
+                Pair<String,Long> token = tokenService.create(user.getName(), user.getId());
                 Cookie c = new Cookie(tokenService.getCookieName(), token.getLeft());
                 c.setMaxAge(tokenService.getCookieExpiry());
                 c.setHttpOnly(true);
                 httpResponse.addCookie(c);
-                result.setResult(RestUtils.createResult(0, token.getRight(), reqid));
+                result.setResult(RestUtils.createResult(ResultCode.SUCCEED, token.getRight(), reqid));
                 break;
             case USERNAME_EXISTS:
                 Cookie c1 = new Cookie(tokenService.getCookieName(), null);
                 c1.setMaxAge(0);
                 httpResponse.addCookie(c1);
-                result.setResult(RestUtils.createError(code.getValue(), "user name exists", reqid));
+                result.setResult(RestUtils.createError(ResultCode.FAILED, "user name exists", reqid));
                 break;
             default:
                 Cookie c2 = new Cookie(tokenService.getCookieName(), null);
                 c2.setMaxAge(0);
                 httpResponse.addCookie(c2);
-                result.setResult(RestUtils.createError(code.getValue(), "signup failed", reqid));
+                result.setResult(RestUtils.createError(ResultCode.FAILED, "signup failed", reqid));
                 break;
         }
         return result;

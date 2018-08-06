@@ -3,6 +3,7 @@ package net.arksea.config.server.login;
 import net.arksea.config.server.dao.UserDao;
 import net.arksea.config.server.entity.User;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -43,8 +45,7 @@ public class LoginService {
         }
     }
 
-    public LoginStatus login(LoginInfo info) {
-        LoginStatus status;
+    public Optional<User> login(LoginInfo info) {
         try {
             List<User> rows = userDao.findByName(info.getName());
             if (rows.size() > 0) {
@@ -52,17 +53,14 @@ public class LoginService {
                 String pwdhash = hashPassword(info.getPassword(), u.getSalt());
                 boolean succeed = slowEquals(pwdhash.getBytes(), u.getPassword().getBytes());
                 logger.info("User login, userName={}, succeed={}", u.getName(), succeed);
-                status = succeed ? LoginStatus.SUCCEED : LoginStatus.INVALID;
                 u.setLastLogin(new Date());
-                userDao.save(u);
-            } else {
-                status = LoginStatus.INVALID;
+                User saved = userDao.save(u);
+                return Optional.of(saved);
             }
         } catch (Exception ex) {
             logger.warn("User login failed, userName={}", info.getName(), ex);
-            status = LoginStatus.FAILED;
         }
-        return status;
+        return Optional.empty();
     }
 
     /**
@@ -77,9 +75,9 @@ public class LoginService {
         return diff == 0;
     }
 
-    public SignupStatus signup(SignupInfo info) {
+    public Pair<SignupStatus,User> signup(SignupInfo info) {
         if (userDao.existsByName(info.getName())) {
-            return SignupStatus.USERNAME_EXISTS;
+            return Pair.of(SignupStatus.USERNAME_EXISTS, null);
         }
         try {
             String salt = createSalt();
@@ -93,12 +91,12 @@ public class LoginService {
             Date today = new Date();
             user.setRegisterDate(today);
             user.setLastLogin(today);
-            userDao.save(user);
+            User saved = userDao.save(user);
             logger.info("SignUp succeed， name={}, email={}", info.getName(), info.getEmail());
-            return SignupStatus.SUCCEED;
+            return Pair.of(SignupStatus.SUCCEED, saved);
         } catch (Exception ex) {
             logger.warn("SignUp failed: name={}, email={}" + info.getName(), info.getEmail(), ex);
-            return SignupStatus.FAILED;
+            return Pair.of(SignupStatus.FAILED, null);
         }
     }
 

@@ -1,5 +1,7 @@
 package net.arksea.config.server.login;
 
+import net.arksea.config.server.ResultCode;
+import net.arksea.config.server.entity.User;
 import net.arksea.restapi.RestUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +16,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  *
@@ -36,28 +39,20 @@ public class LoginController {
                                         final HttpServletResponse httpResponse) {
         DeferredResult<String> result = new DeferredResult<>();
         String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-        LoginStatus status = loginService.login(body);
-        switch (status) {
-            case SUCCEED:
-                Pair<String,Long> token = tokenService.create(body.getName());
-                Cookie c = new Cookie(tokenService.getCookieName(), token.getLeft());
-                c.setMaxAge(tokenService.getCookieExpiry());
-                c.setHttpOnly(true);
-                httpResponse.addCookie(c);
-                result.setResult(RestUtils.createResult(0, token.getRight(), reqid));
-                break;
-            case FAILED:
-                Cookie c1 = new Cookie(tokenService.getCookieName(), null);
-                c1.setMaxAge(0);
-                httpResponse.addCookie(c1);
-                result.setResult(RestUtils.createError(status.getValue(), "Login failed, please try again later", reqid));
-                break;
-            case INVALID:
-                Cookie c2 = new Cookie(tokenService.getCookieName(), null);
-                c2.setMaxAge(0);
-                httpResponse.addCookie(c2);
-                result.setResult(RestUtils.createError(status.getValue(), "Invalid user name or password", reqid));
-                break;
+        Optional<User> op = loginService.login(body);
+        if (op.isPresent()) {
+            User user = op.get();
+            Pair<String,Long> token = tokenService.create(user.getName(), user.getId());
+            Cookie c = new Cookie(tokenService.getCookieName(), token.getLeft());
+            c.setMaxAge(tokenService.getCookieExpiry());
+            c.setHttpOnly(true);
+            httpResponse.addCookie(c);
+            result.setResult(RestUtils.createResult(ResultCode.SUCCEED, token.getRight(), reqid));
+        } else {
+            Cookie c1 = new Cookie(tokenService.getCookieName(), null);
+            c1.setMaxAge(0);
+            httpResponse.addCookie(c1);
+            result.setResult(RestUtils.createError(ResultCode.FAILED, "Invalid user name or password", reqid));
         }
         return result;
     }

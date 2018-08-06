@@ -26,4 +26,10 @@ public interface ConfigDao extends CrudRepository<Config,Long> {
     @Modifying
     @Query("update Config c set c.deleted = true where c.id = ?1")
     void deleteById(long id);
+
+    @Query(nativeQuery = true,
+           value = "select c.* from cs_config c " +
+                   " inner join cs_config_auth a " +
+                   " on c.project_id = ?2 and a.user_id = ?1 and c.id = a.config_id and c.deleted = false")
+    List<Config> findByUserIdAndProjectId(long userId, long prjId);
 }
