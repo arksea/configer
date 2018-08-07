@@ -37,4 +37,6 @@ public interface ProjectAuthDao extends CrudRepository<ProjectAuth, Long> {
             " on c.doc_id = ?1 and a.user_id = ?2 and a.project_id = c.project_id and a.function = ?3"
     )
     int existsByDocIdAndUserIdAndFunction(long docId, long userId, int func);
+
+    Iterable<ProjectAuth> getByProjectId(long projectId);
 }

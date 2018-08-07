@@ -3,6 +3,7 @@ package net.arksea.config.server.rest;
 import net.arksea.config.server.ResultCode;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
+import net.arksea.config.server.entity.ProjectAuth;
 import net.arksea.config.server.service.ConfigerService;
 import net.arksea.restapi.RestUtils;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -82,4 +84,16 @@ public class ProjectsController {
         result.setResult(RestUtils.createResult(ResultCode.SUCCEED, "succeed", reqid));
         return result;
     }
+
+    @RequestMapping(value="{prjId}/users", method = RequestMethod.GET, produces = MEDIA_TYPE)
+    public DeferredResult<String> getProjectUsers(@PathVariable(name="prjId") long prjId,
+                                              final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        List<ProjectUser> auths = configerService.getProjectUsers(userId, prjId);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, auths, reqid));
+        return result;
+    }
+
 }

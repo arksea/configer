@@ -1,12 +1,11 @@
 package net.arksea.config.server.service;
 
-import net.arksea.config.server.dao.AdminDao;
-import net.arksea.config.server.dao.ConfigDao;
-import net.arksea.config.server.dao.ConfigDocDao;
-import net.arksea.config.server.dao.ProjectDao;
+import net.arksea.config.server.dao.*;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
+import net.arksea.config.server.entity.ProjectAuth;
 import net.arksea.config.server.entity.ProjectFunction;
+import net.arksea.config.server.rest.ProjectUser;
 import net.arksea.restapi.RestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.*;
 
 /**
  *
@@ -36,6 +35,8 @@ public class ConfigerService {
     private AuthService authService;
     @Autowired
     private AdminDao adminDao;
+    @Autowired
+    private ProjectAuthDao projectAuthDao;
     /**
      * 新增配置
      * @param cfg
@@ -111,5 +112,38 @@ public class ConfigerService {
 
     public Iterable<Project> listProjects(long userId) {
         return projectDao.findByUserId(userId);
+    }
+
+    public List<ProjectUser> getProjectUsers(long userId, long prjId) {
+        boolean isAdmin = adminDao.existsByUserId(userId);
+        if (!isAdmin) {
+            authService.verifyProjectAuth(userId, prjId, ProjectFunction.MANAGER);
+        }
+        Iterable<ProjectAuth> auths = projectAuthDao.getByProjectId(prjId);
+        Map<Long, ProjectUser> userMap = new HashMap<>();
+        for (ProjectAuth a : auths) {
+            Long uid = a.getUser().getId();
+            ProjectUser u = userMap.get(uid);
+            if (u == null) {
+                u = new ProjectUser();
+                u.setUserId(uid);
+                u.setUserName(a.getUser().getName());
+                userMap.put(uid, u);
+            }
+            switch(a.getFunction()) {
+                case QUERY:
+                    u.setQuery(true);
+                    break;
+                case MANAGER:
+                    u.setManage(true);
+                    break;
+                case CONFIG:
+                    u.setConfig(true);
+                    break;
+            }
+        }
+        List<ProjectUser> userList = new LinkedList<>();
+        userList.addAll(userMap.values());
+        return userList;
     }
 }

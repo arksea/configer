@@ -1,7 +1,9 @@
 package net.arksea.config.server.service;
 
+import net.arksea.config.server.dao.AdminDao;
 import net.arksea.config.server.dao.ConfigAuthDao;
 import net.arksea.config.server.dao.ProjectAuthDao;
+import net.arksea.config.server.entity.ProjectAuth;
 import net.arksea.config.server.entity.ProjectFunction;
 import net.arksea.restapi.RestException;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +23,8 @@ public class AuthService {
     ProjectAuthDao projectAuthDao;
     @Autowired
     ConfigAuthDao configAuthDao;
+    @Autowired
+    private AdminDao adminDao;
     /**
      * 验证用户是否拥有项目的指定权限
      * @param userId

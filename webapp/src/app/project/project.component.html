@@ -3,6 +3,22 @@
     (click)="onBtnConfigAddClick()">
     <clr-icon shape="add-text"></clr-icon> Add Config
 </button>
+<clr-dropdown>
+    <button type="button" class="btn btn-link" clrDropdownTrigger (click)="onBtnUserClick(projectId)">
+        <clr-icon shape="users"></clr-icon>
+        User
+        <clr-icon shape="caret down"></clr-icon>
+    </button>
+    <clr-dropdown-menu *clrIfOpen>
+        <div *ngFor="let u of projectUsers | async">
+                <button type="button" clrDropdownItem>{{u.userName}}</button>
+        </div>
+
+        <!-- <button type="button" disabled clrDropdownItem>Disabled Action</button> -->
+        <div class="dropdown-divider"></div>
+        <button type="button" clrDropdownItem>Add User</button>
+    </clr-dropdown-menu>
+</clr-dropdown>
 
 <table class="table table-bordered" width="100%">
     <colgroup>
@@ -54,4 +70,4 @@
 <app-schema-form></app-schema-form>
 <app-config-value-form></app-config-value-form>
 <app-config-add-form [project]="project | async"></app-config-add-form>
-<!-- <config-form [project]="project"></config-form> -->
+<app-project-auth></app-project-auth>

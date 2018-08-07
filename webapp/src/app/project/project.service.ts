@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject, Observable, ObjectUnsubscribedError } from 'rxjs';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { ConfigerRestAPI } from '../configer.restapi';
-import { Project } from '../configer.model';
+import { Project, ProjectUser } from '../configer.model';
 import { scan, map, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -22,7 +22,10 @@ interface AddProject {
 @Injectable()
 export class ProjectService {
 
-    // updateProjects --> updates --> projects --> projectTreeRoot
+    // updateProjects ──┬──＞ updates ──＞ projects ──＞ projectTreeRoot
+    // addProject     ──┤
+    // delProject     ──┘
+
 
     projects: Observable<ProjectMap>;
     projectTreeRoot: Subject<TreeNode[]> = new BehaviorSubject<TreeNode[]>([]);
@@ -34,6 +37,7 @@ export class ProjectService {
     selectedProject: Subject<Project> = new BehaviorSubject<Project>({
         id: -1, name: '', profile: '', description: ''
     });
+    projectUsers: Subject<ProjectUser[]> = new BehaviorSubject<ProjectUser[]>([]);
 
     constructor(private api: ConfigerRestAPI) {
         this.addProject.pipe(
@@ -151,6 +155,16 @@ export class ProjectService {
             result => {
                 if (result.code === 0 && result.result === 'succeed') {
                     this.delProject.next(prjId);
+                }
+            }
+        );
+    }
+
+    public getProjectUsers(prjId: number): void {
+        this.api.getProjectUsers(prjId).subscribe(
+            result => {
+                if (result.code === 0) {
+                    this.projectUsers.next(result.result);
                 }
             }
         );

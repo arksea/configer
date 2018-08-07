@@ -12,6 +12,14 @@ export class Project {
     description: string;
 }
 
+export interface ProjectUser {
+    query: boolean;
+    manage: boolean;
+    config: boolean;
+    userId: number;
+    userName: string;
+}
+
 export class ConfigDoc {
     id: number;
     value: string;

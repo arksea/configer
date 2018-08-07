@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Project, Config, RestResult, LoginInfo, SignupInfo, ResultCode } from './configer.model';
+import { Project, Config, RestResult, LoginInfo, SignupInfo, ResultCode, ProjectUser } from './configer.model';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 
 @Injectable()
@@ -30,6 +30,11 @@ export class ConfigerRestAPI {
     public getProjectConfigs(prjId: number): Observable<RestResult<Config[]>> {
         const request = 'Request project configs';
         return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId + '/configs', request);
+    }
+
+    public getProjectUsers(prjId: number): Observable<RestResult<ProjectUser[]>> {
+        const request = 'Request project users';
+        return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId + '/users', request);
     }
 
     public updateConfigDescription(cfgId: number, configDesc: string): Observable<RestResult<string>> {
