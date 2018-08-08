@@ -24,7 +24,7 @@ public interface ProjectDao extends CrudRepository<Project,Long> {
         nativeQuery=true,
         value="select distinct p.* from cs_project p " +
                  " inner join (cs_project_auth a, cs_config_auth ac, cs_config c)" +
-                 " on a.user_id = ?1 and a.function = 1 and p.id = a.project_id and p.deleted = false " +
+                 " on a.user_id = ?1 and a.query = true and p.id = a.project_id and p.deleted = false " +
                  " or ac.user_id = ?1 and ac.config_id = c.id and p.id = c.project_id and p.deleted = false"
     )
     List<Project> findByUserId(long userId);

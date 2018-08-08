@@ -3,8 +3,6 @@ package net.arksea.config.server.service;
 import net.arksea.config.server.dao.AdminDao;
 import net.arksea.config.server.dao.ConfigAuthDao;
 import net.arksea.config.server.dao.ProjectAuthDao;
-import net.arksea.config.server.entity.ProjectAuth;
-import net.arksea.config.server.entity.ProjectFunction;
 import net.arksea.restapi.RestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,13 +23,7 @@ public class AuthService {
     ConfigAuthDao configAuthDao;
     @Autowired
     private AdminDao adminDao;
-    /**
-     * 验证用户是否拥有项目的指定权限
-     * @param userId
-     * @param prjId
-     * @param func
-     * @return
-     */
+
     /**
      * 验证用户是否拥有项目的指定权限, 没有权限抛出指定异常
      * @param userId
@@ -46,9 +38,16 @@ public class AuthService {
     }
 
     public boolean hasProjectAuth(long userId, long prjId, ProjectFunction func) {
-        return projectAuthDao.existsByProjectIdAndUserIdAndFunction(prjId, userId, func.ordinal()) == 1
-               || func == ProjectFunction.QUERY &&
-                  configAuthDao.existsByPrjIdAndUserId(prjId, userId) == 1;
+        switch (func) {
+            case QUERY:
+                return projectAuthDao.existsQueryByProjectId(prjId, userId) == 1
+                    || configAuthDao.existsByPrjIdAndUserId(prjId, userId) == 1;
+            case MANAGER:
+                return projectAuthDao.existsManageByProjectId(prjId, userId) == 1;
+            case CONFIG:
+                return projectAuthDao.existsConfigByProjectId(prjId, userId) == 1;
+        }
+        return false;
     }
 
     /**
@@ -58,14 +57,14 @@ public class AuthService {
      * @return
      */
     public void verifyManagerByConfigId(long userId, long cfgId) {
-        boolean exists = projectAuthDao.existsByConfigIdAndUserIdAndFunction(cfgId, userId, ProjectFunction.MANAGER.ordinal()) == 1;
+        boolean exists = projectAuthDao.existsManageByConfigId(cfgId, userId) == 1;
         if (!exists) {
             throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
     }
 
     public void verifyManagerByDocId(long userId, long docId) {
-        boolean exists = projectAuthDao.existsByDocIdAndUserIdAndFunction(docId, userId, ProjectFunction.MANAGER.ordinal()) == 1;
+        boolean exists = projectAuthDao.existsManageByDocId(docId, userId) == 1;
         if (!exists) {
             throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
@@ -74,7 +73,7 @@ public class AuthService {
     public void verifyConfigerByConfigId(long userId, long cfgId) {
         boolean exists = configAuthDao.existsByConfigIdAndUserId(cfgId, userId);
         if (!exists) {
-            exists = projectAuthDao.existsByConfigIdAndUserIdAndFunction(cfgId, userId, ProjectFunction.CONFIG.ordinal()) == 1;
+            exists = projectAuthDao.existsConfigByConfigId(cfgId, userId) == 1;
             if (!exists) {
                 throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }
@@ -84,7 +83,7 @@ public class AuthService {
     public void verifyConfigerByDocId(long userId, long docId) {
         boolean exists = configAuthDao.existsByDocIdAndUserId(docId, userId) == 1;
         if (!exists) {
-            exists = projectAuthDao.existsByDocIdAndUserIdAndFunction(docId, userId, ProjectFunction.CONFIG.ordinal()) == 1;
+            exists = projectAuthDao.existsConfigByDocId(docId, userId) == 1;
             if (!exists) {
                 throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
             }

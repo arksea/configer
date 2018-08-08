@@ -37,6 +37,7 @@ export class ProjectService {
     selectedProject: Subject<Project> = new BehaviorSubject<Project>({
         id: -1, name: '', profile: '', description: ''
     });
+
     projectUsers: Subject<ProjectUser[]> = new BehaviorSubject<ProjectUser[]>([]);
 
     constructor(private api: ConfigerRestAPI) {
@@ -168,6 +169,10 @@ export class ProjectService {
                 }
             }
         );
+    }
+
+    public updateProjectUser(prjId: number, user: ProjectUser) {
+        this.api.updateProjectUser(prjId, user).subscribe();
     }
 }
 

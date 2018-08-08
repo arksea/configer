@@ -4,7 +4,7 @@ import net.arksea.config.server.dao.*;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
 import net.arksea.config.server.entity.ProjectAuth;
-import net.arksea.config.server.entity.ProjectFunction;
+import net.arksea.config.server.entity.User;
 import net.arksea.config.server.rest.ProjectUser;
 import net.arksea.restapi.RestException;
 import org.apache.logging.log4j.LogManager;
@@ -120,30 +120,44 @@ public class ConfigerService {
             authService.verifyProjectAuth(userId, prjId, ProjectFunction.MANAGER);
         }
         Iterable<ProjectAuth> auths = projectAuthDao.getByProjectId(prjId);
-        Map<Long, ProjectUser> userMap = new HashMap<>();
+        List<ProjectUser> userList = new LinkedList<>();
         for (ProjectAuth a : auths) {
             Long uid = a.getUser().getId();
-            ProjectUser u = userMap.get(uid);
-            if (u == null) {
-                u = new ProjectUser();
-                u.setUserId(uid);
-                u.setUserName(a.getUser().getName());
-                userMap.put(uid, u);
-            }
-            switch(a.getFunction()) {
-                case QUERY:
-                    u.setQuery(true);
-                    break;
-                case MANAGER:
-                    u.setManage(true);
-                    break;
-                case CONFIG:
-                    u.setConfig(true);
-                    break;
-            }
+            ProjectUser u = new ProjectUser();
+            u.setUserId(uid);
+            u.setUserName(a.getUser().getName());
+            u.setQuery(a.isQuery());
+            u.setManage(a.isManage());
+            u.setConfig(a.isConfig());
+            userList.add(u);
         }
-        List<ProjectUser> userList = new LinkedList<>();
-        userList.addAll(userMap.values());
         return userList;
+    }
+
+    public void updateProjectUser(long loginedUserId, long prjId, ProjectUser user) {
+        boolean isAdmin = adminDao.existsByUserId(loginedUserId);
+        if (!isAdmin) {
+            authService.verifyProjectAuth(loginedUserId, prjId, ProjectFunction.MANAGER);
+        }
+        List<ProjectAuth> auths = projectAuthDao.getByProjectIdAndUserId(prjId, user.getUserId());
+        ProjectAuth a;
+        if (auths.size() > 0) {
+            a = auths.get(0);
+            a.setQuery(user.isQuery());
+            a.setManage(user.isManage());
+            a.setConfig(user.isConfig());
+        } else {
+            a = new ProjectAuth();
+            a.setQuery(user.isQuery());
+            a.setManage(user.isManage());
+            a.setConfig(user.isConfig());
+            Project p = new Project();
+            p.setId(prjId);
+            a.setProject(p);
+            User u = new User();
+            u.setId(user.getUserId());
+            a.setUser(u);
+        }
+        projectAuthDao.save(a);
     }
 }

@@ -37,6 +37,11 @@ export class ConfigerRestAPI {
         return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId + '/users', request);
     }
 
+    public updateProjectUser(prjId: number, user: ProjectUser): Observable<RestResult<string>> {
+        const request = 'Update user auth';
+        return this.httpPut(environment.apiUrl + '/api/v1/projects/' + prjId + '/users/' + user.userId, user, request);
+    }
+
     public updateConfigDescription(cfgId: number, configDesc: string): Observable<RestResult<string>> {
         const request = 'update config description';
         console.log(request + ': cfgId=' + cfgId + ',desc' + configDesc);

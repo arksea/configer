@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
-import { scan, map, publishReplay, refCount } from 'rxjs/operators';
-import { ProjectService } from '../project/project.service';
+import { map } from 'rxjs/operators';
+import { ProjectService } from './project.service';
+import { ProjectUserAuthFormComponent } from './project-user-auth-form.component';
 import { ConfigService } from '../config/config.service';
 import { Config, Project, ProjectUser } from '../configer.model';
 import { SchemaFormComponent } from '../schema/schema-form.component';
 import { ConfigFormComponent } from '../config/config-form.component';
 import { ConfigValueFormComponent } from '../config/config-value-form.component';
 import { ConfigAddFormComponent } from '../config/config-add-form.component';
-import { ProjectAuthComponent } from './project-auth.component';
 import { AppNotifyDialogService } from '../app-notify-dialog.service';
 
 @Component({
@@ -23,7 +23,7 @@ export class ProjectComponent implements OnInit {
   @ViewChild(ConfigFormComponent) dialogConfigForm: ConfigFormComponent;
   @ViewChild(ConfigValueFormComponent) dialogConfigValueForm: ConfigValueFormComponent;
   @ViewChild(ConfigAddFormComponent) dialogConfigAddForm: ConfigAddFormComponent;
-  @ViewChild(ProjectAuthComponent) dialogProjectAuth: ProjectAuthComponent;
+  @ViewChild(ProjectUserAuthFormComponent) dialogProjectUserForm: ProjectUserAuthFormComponent;
   configs: Subject<Config[]> = this.svcCfg.configList;
   project: Subject<Project> = this.svcPrj.selectedProject;
   projectUsers: Subject<ProjectUser[]> = this.svcPrj.projectUsers;
@@ -68,10 +68,6 @@ export class ProjectComponent implements OnInit {
     this.dialogConfigAddForm.open();
   }
 
-  onBtnProjectAuthClick() {
-    this.dialogProjectAuth.open();
-  }
-
   onBtnConfigDelClick(config: Config) {
     this.notify.openWidthConfirm('Warning', 'Make sure that you want to delete?', config.name).subscribe(
       del => {
@@ -82,9 +78,12 @@ export class ProjectComponent implements OnInit {
     );
   }
 
-  onBtnUserClick() {
+  onBtnUserListClick() {
+    this.projectUsers.next([]);
     this.svcPrj.getProjectUsers(this.projectId);
   }
+
+  onBtnUserClick(user: ProjectUser) {
+    this.dialogProjectUserForm.open(this.projectId, user);
+  }
 }
-
-

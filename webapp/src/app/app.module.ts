@@ -25,6 +25,7 @@ import { ProjectService } from './project/project.service';
 import { ProjectTreeComponent } from './project/project-tree.component';
 import { ProjectComponent } from './project/project.component';
 import { ProjectNewFormComponent } from './project/project-new-form.component';
+import { ProjectUserAuthFormComponent } from './project/project-user-auth-form.component';
 import { ConfigService } from './config/config.service';
 import { ConfigFormComponent } from './config/config-form.component';
 import { ConfigAddFormComponent } from './config/config-add-form.component';
@@ -56,6 +57,7 @@ const appRoutes: Routes = [
     ProjectComponent,
     ProjectTreeComponent,
     ProjectNewFormComponent,
+    ProjectUserAuthFormComponent,
     ConfigValueFormComponent,
     ConfigFormComponent,
     ConfigAddFormComponent,

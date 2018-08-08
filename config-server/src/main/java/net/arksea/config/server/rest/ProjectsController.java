@@ -96,4 +96,17 @@ public class ProjectsController {
         return result;
     }
 
+    @RequestMapping(value="{prjId}/users/{userId}", method = RequestMethod.PUT, produces = MEDIA_TYPE)
+    public DeferredResult<String> updateProjectUsers(@PathVariable(name="prjId") long prjId,
+                                                     @PathVariable(name="userId") long userId,
+                                                     @RequestBody ProjectUser projectUser,
+                                                  final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Long loginedUserId = (Long)httpRequest.getAttribute("jwt-user-id");
+        configerService.updateProjectUser(loginedUserId, prjId, projectUser);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, "succeed", reqid));
+        return result;
+    }
+
 }

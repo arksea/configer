@@ -1,4 +1,4 @@
-package net.arksea.config.server.entity;
+package net.arksea.config.server.service;
 
 /**
  * 项目权限类型
