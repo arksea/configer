@@ -36,6 +36,8 @@ public class ConfigerService {
     @Autowired
     private AdminDao adminDao;
     @Autowired
+    private UserDao userDao;
+    @Autowired
     private ProjectAuthDao projectAuthDao;
     /**
      * 新增配置
@@ -159,5 +161,41 @@ public class ConfigerService {
             a.setUser(u);
         }
         projectAuthDao.save(a);
+    }
+
+    public long addProjectUser(long loginedUserId, long prjId, ProjectUser user) {
+        boolean isAdmin = adminDao.existsByUserId(loginedUserId);
+        if (!isAdmin) {
+            authService.verifyProjectAuth(loginedUserId, prjId, ProjectFunction.MANAGER);
+        }
+        long userId = user.getUserId();
+        if (userId == -1) {
+            List<User> users = userDao.findByName(user.getUserName());
+            if (users.size() > 0) {
+                userId = users.get(0).getId();
+            } else {
+                throw new RestException(HttpStatus.BAD_REQUEST, "User not exists");
+            }
+        }
+        ProjectAuth a = new ProjectAuth();
+        a.setQuery(user.isQuery());
+        a.setManage(user.isManage());
+        a.setConfig(user.isConfig());
+        Project p = new Project();
+        p.setId(prjId);
+        a.setProject(p);
+        User u = new User();
+        u.setId(userId);
+        a.setUser(u);
+        ProjectAuth aSaved = projectAuthDao.save(a);
+        return aSaved.getId();
+    }
+
+    public void delProjectUser(long loginedUserId, long prjId, long userId) {
+        boolean isAdmin = adminDao.existsByUserId(loginedUserId);
+        if (!isAdmin) {
+            authService.verifyProjectAuth(loginedUserId, prjId, ProjectFunction.MANAGER);
+        }
+        projectAuthDao.deleteByProjectIdAndUserId(prjId, userId);
     }
 }

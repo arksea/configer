@@ -174,5 +174,12 @@ export class ProjectService {
     public updateProjectUser(prjId: number, user: ProjectUser) {
         this.api.updateProjectUser(prjId, user).subscribe();
     }
-}
 
+    public addProjectUser(prjId: number, user: ProjectUser) {
+        this.api.addProjectUser(prjId, user).subscribe();
+    }
+
+    public delProjectUser(prjId: number, userId: number) {
+        this.api.delProjectUser(prjId, userId).subscribe();
+    }
+}

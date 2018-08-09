@@ -38,8 +38,18 @@ export class ConfigerRestAPI {
     }
 
     public updateProjectUser(prjId: number, user: ProjectUser): Observable<RestResult<string>> {
-        const request = 'Update user auth';
+        const request = 'Update project user auth';
         return this.httpPut(environment.apiUrl + '/api/v1/projects/' + prjId + '/users/' + user.userId, user, request);
+    }
+
+    public addProjectUser(prjId: number, user: ProjectUser): Observable<RestResult<string>> {
+        const request = 'Add project user auth';
+        return this.httpPost(environment.apiUrl + '/api/v1/projects/' + prjId + '/users', user, request);
+    }
+
+    public delProjectUser(prjId: number, userId: number): Observable<RestResult<string>> {
+        const request = 'Add project user auth';
+        return this.httpDelete(environment.apiUrl + '/api/v1/projects/' + prjId + '/users/' + userId, request);
     }
 
     public updateConfigDescription(cfgId: number, configDesc: string): Observable<RestResult<string>> {

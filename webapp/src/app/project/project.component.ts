@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, Observer, Observable, of, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProjectService } from './project.service';
 import { ProjectUserAuthFormComponent } from './project-user-auth-form.component';
+import { ProjectUserSelectFormComponent } from './project-user-select-form.component';
+import { ProjectUserNameFormComponent } from './project-user-name-form.component';
 import { ConfigService } from '../config/config.service';
 import { Config, Project, ProjectUser } from '../configer.model';
 import { SchemaFormComponent } from '../schema/schema-form.component';
@@ -24,6 +26,8 @@ export class ProjectComponent implements OnInit {
   @ViewChild(ConfigValueFormComponent) dialogConfigValueForm: ConfigValueFormComponent;
   @ViewChild(ConfigAddFormComponent) dialogConfigAddForm: ConfigAddFormComponent;
   @ViewChild(ProjectUserAuthFormComponent) dialogProjectUserForm: ProjectUserAuthFormComponent;
+  @ViewChild(ProjectUserSelectFormComponent) dialogProjectUserSelectForm: ProjectUserSelectFormComponent;
+  @ViewChild(ProjectUserNameFormComponent) dialogProjectUserNameForm: ProjectUserNameFormComponent;
   configs: Subject<Config[]> = this.svcCfg.configList;
   project: Subject<Project> = this.svcPrj.selectedProject;
   projectUsers: Subject<ProjectUser[]> = this.svcPrj.projectUsers;
@@ -85,5 +89,27 @@ export class ProjectComponent implements OnInit {
 
   onBtnUserClick(user: ProjectUser) {
     this.dialogProjectUserForm.open(this.projectId, user);
+  }
+
+  onBtnAddUserClick() {
+    this.dialogProjectUserNameForm.open().subscribe(
+      name => {
+        const user: ProjectUser = {
+          query:  false,
+          manage: false,
+          config: false,
+          userId: -1,
+          userName: name
+        };
+        console.log('=========' + name + '*****' + user);
+        this.svcPrj.addProjectUser(this.projectId, user);
+      }
+    );
+  }
+
+  onBtnDelUserClick() {
+    this.dialogProjectUserSelectForm.open(this.projectUsers).subscribe(
+      userId => this.svcPrj.delProjectUser(this.projectId, userId)
+    );
   }
 }

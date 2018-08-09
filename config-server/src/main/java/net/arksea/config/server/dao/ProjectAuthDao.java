@@ -11,7 +11,7 @@ import java.util.List;
  * Created by xiaohaixing on 2017/9/15.
  */
 public interface ProjectAuthDao extends CrudRepository<ProjectAuth, Long> {
-
+    void deleteByProjectIdAndUserId(long prjId, long userId);
     @Query(
         nativeQuery = true,
         value = "select count(1)>0 from cs_project_auth a " +

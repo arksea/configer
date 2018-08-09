@@ -11,12 +11,6 @@ export class ProjectUserAuthFormComponent {
   private projectId: number;
   public opened = false;
 
-  // private query: boolean;
-  // private manage: boolean;
-  // private config: boolean;
-  // private userName: string;
-
-
   constructor(private projectService: ProjectService) {
     this.user = {
       query: false,
