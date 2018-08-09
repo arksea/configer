@@ -17,7 +17,7 @@ export class AppNotifyDialogService {
         const event: NotifyEvent = {
             title: 'Notify',
             message: message,
-            description: '',
+            description: null,
             confirm: false,
             selection: null
         };
@@ -28,7 +28,7 @@ export class AppNotifyDialogService {
         const event: NotifyEvent = {
             title: title,
             message: message,
-            description: '',
+            description: null,
             confirm: false,
             selection: null
         };

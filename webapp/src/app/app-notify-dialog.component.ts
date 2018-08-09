@@ -33,7 +33,9 @@ export class AppNotifyDialogComponent {
 
   public close(selection: boolean): void {
     this.opened = false;
-    this.notifyEvent.selection.next(selection);
-    this.notifyEvent.selection.complete();
+    if (this.notifyEvent.selection) {
+      this.notifyEvent.selection.next(selection);
+      this.notifyEvent.selection.complete();
+    }
   }
 }

@@ -35,7 +35,6 @@ export class ConfigValueFormComponent implements OnInit {
   }
 
   public saveJson(): void {
-    this.config.doc.value = this.json;
     this.service.updateValue(this.config.id, this.config.doc.id, this.json);
     this.opened = false;
   }

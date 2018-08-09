@@ -1,0 +1,25 @@
+<clr-modal [(clrModalOpen)]="opened">
+    <h3 class="modal-title">{{user.userName}}</h3>
+    <div class="modal-body rows">
+        <div class="auth row">
+            <div class="checkbox col-lg-1"></div>
+            <div class="checkbox col-lg-3">
+                <input type="checkbox" id="query" [(ngModel)]="user.query">
+                <label for="query">Query</label>
+            </div>
+            <div class="checkbox  col-lg-3">
+                <input type="checkbox" id="manager" [(ngModel)]="user.manage">
+                <label for="manager">Manager</label>
+            </div>
+            <div class="checkbox col-lg-3">
+                <input type="checkbox" id="config" [(ngModel)]="user.config">
+                <label for="config">Config</label>
+            </div>
+            <div class="checkbox col-lg-1"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="onSave()">Save</button>
+    </div>
+</clr-modal>

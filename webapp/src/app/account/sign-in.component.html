@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-lg-4 col-md-2"></div>
+  <div class="col-lg-4 col-md-8">
+    <form class="login" (submit)="login($event, username.value, password.value)">
+      <section class="form-block">
+        <div class="card">
+          <div class="card-header">
+            <h2>Login</h2>
+            Arksea Config Server
+          </div>
+          <div class="card-block">
+            <div class="login-form-group">
+              <input type="text" #username class="username" id="username" placeholder="Username">
+              <input type="password" #password class="password" id="password" placeholder="Password">
+              <button type="submit" class="btn btn-primary">Login</button>
+              <a class="signup" [routerLink]="['/signup']">Signup new account</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="col-lg-4 col-md-2"></div>
+</div>

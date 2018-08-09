@@ -80,19 +80,4 @@ http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd"
         <session-timeout>30</session-timeout>
     </session-config>
 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>UserDatabase</web-resource-name>
-            <url-pattern>/index.html</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>configer</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>UserDatabase</realm-name>
-    </login-config>
-    
 </web-app>
