@@ -92,7 +92,7 @@ export class ConfigerRestAPI {
     }
 
     public deleteProject(prjId: number): Observable<RestResult<string>> {
-        const request = 'delete config';
+        const request = 'delete project';
         const url = environment.apiUrl + '/api/v1/projects/' + prjId;
         return this.httpDelete(url, request);
     }

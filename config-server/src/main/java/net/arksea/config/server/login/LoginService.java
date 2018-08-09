@@ -1,6 +1,8 @@
 package net.arksea.config.server.login;
 
+import net.arksea.config.server.dao.AdminDao;
 import net.arksea.config.server.dao.UserDao;
+import net.arksea.config.server.entity.Admin;
 import net.arksea.config.server.entity.User;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,6 +33,8 @@ public class LoginService {
     private static Logger logger = LogManager.getLogger(LoginService.class);
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private AdminDao adminDao;
     private SecureRandom secureRandom;
     private final SecretKeyFactory secretKeyFactory;
     private final int KEY_ITERATION_COUNT = 10000;
@@ -92,6 +96,11 @@ public class LoginService {
             user.setRegisterDate(today);
             user.setLastLogin(today);
             User saved = userDao.save(user);
+            if (info.getName().equals("admin")) {
+                Admin admin = new Admin();
+                admin.setUser(saved);
+                adminDao.save(admin);
+            }
             logger.info("SignUp succeed， name={}, email={}", info.getName(), info.getEmail());
             return Pair.of(SignupStatus.SUCCEED, saved);
         } catch (Exception ex) {
