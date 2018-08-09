@@ -1,70 +1,72 @@
-{{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}}
-<button class="btn btn-sm btn-link"
-    (click)="onBtnConfigAddClick()">
-    <clr-icon shape="add-text"></clr-icon> Add Config
-</button>
-<clr-dropdown>
-    <button type="button" class="btn btn-link" clrDropdownTrigger (click)="onBtnUserListClick(projectId)">
-        <clr-icon shape="users"></clr-icon>
-        Operator
-        <clr-icon shape="caret down"></clr-icon>
-    </button>
-    <clr-dropdown-menu *clrIfOpen>
-        <div *ngFor="let u of projectUsers | async">
-                <button type="button" clrDropdownItem (click)="onBtnUserClick(u)">{{u.userName}}</button>
-        </div>
-        <div class="dropdown-divider"></div>
-        <button type="button" clrDropdownItem (click)= "onBtnAddUserClick()">Add</button>
-        <button type="button" clrDropdownItem (click)= "onBtnDelUserClick()">Delete</button>
-    </clr-dropdown-menu>
-</clr-dropdown>
+<div *ngIf="projectId">
+    {{(project | async).name}}:{{(project | async).profile}} － {{(project | async).description}}
 
-<table class="table table-bordered" width="100%">
-    <colgroup>
-        <col class="col-name">
-        <col class="col-desc">
-        <col class="col-btn">
-        <col class="col-btn">
-        <col class="col-btn">
-        <col class="col-btn">
-    </colgroup>
-    <thead>
-        <tr>
-            <th class="td-text">Name</th>
-            <th class="td-text">Description</th>
-            <th>Json</th>
-            <th>Edit</th>
-            <th>Sche</th>
-            <th>Del</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let i of configs | async">
-            <td class="td-text">{{i.name}}</td>
-            <td class="td-text">{{i.description}}</td>
-            <td>
-                <a (click)="onBtnJsonClick(i)">
-                    <clr-icon shape="eye"></clr-icon>
-                </a>
-            </td>
-            <td>
-                <a *ngIf="i.doc.metadata !== 'json'" (click)="onBtnEditClick(i)">
-                    <clr-icon shape="note"></clr-icon>
-                </a>
-            </td>
-            <td>
-                <a (click)="onBtnSchemaClick(i)">
-                    <clr-icon shape="ruler-pencil"></clr-icon>
-                </a>
-            </td>
-            <td>
-                <a (click)="onBtnConfigDelClick(i)">
-                    <clr-icon shape="trash"></clr-icon>
-                </a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <button class="btn btn-sm btn-link" (click)="onBtnConfigAddClick()">
+        <clr-icon shape="add-text"></clr-icon> Add Config
+    </button>
+    <clr-dropdown>
+        <button type="button" class="btn btn-link" clrDropdownTrigger (click)="onBtnUserListClick(projectId)">
+            <clr-icon shape="users"></clr-icon>
+            Operator
+            <clr-icon shape="caret down"></clr-icon>
+        </button>
+        <clr-dropdown-menu *clrIfOpen>
+            <div *ngFor="let u of projectUsers | async">
+                <button type="button" clrDropdownItem (click)="onBtnUserClick(u)">{{u.userName}}</button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button type="button" clrDropdownItem (click)="onBtnAddUserClick()">Add</button>
+            <button type="button" clrDropdownItem (click)="onBtnDelUserClick()">Delete</button>
+        </clr-dropdown-menu>
+    </clr-dropdown>
+
+    <table class="table table-bordered" width="100%">
+        <colgroup>
+            <col class="col-name">
+            <col class="col-desc">
+            <col class="col-btn">
+            <col class="col-btn">
+            <col class="col-btn">
+            <col class="col-btn">
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="td-text">Name</th>
+                <th class="td-text">Description</th>
+                <th>Json</th>
+                <th>Edit</th>
+                <th>Sche</th>
+                <th>Del</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let i of configs | async">
+                <td class="td-text">{{i.name}}</td>
+                <td class="td-text">{{i.description}}</td>
+                <td>
+                    <a (click)="onBtnJsonClick(i)">
+                        <clr-icon shape="eye"></clr-icon>
+                    </a>
+                </td>
+                <td>
+                    <a *ngIf="i.doc.metadata !== 'json'" (click)="onBtnEditClick(i)">
+                        <clr-icon shape="note"></clr-icon>
+                    </a>
+                </td>
+                <td>
+                    <a (click)="onBtnSchemaClick(i)">
+                        <clr-icon shape="ruler-pencil"></clr-icon>
+                    </a>
+                </td>
+                <td>
+                    <a (click)="onBtnConfigDelClick(i)">
+                        <clr-icon shape="trash"></clr-icon>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <app-config-form></app-config-form>
 <app-schema-form></app-schema-form>
 <app-config-value-form></app-config-value-form>

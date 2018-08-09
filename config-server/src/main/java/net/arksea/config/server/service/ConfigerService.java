@@ -92,13 +92,19 @@ public class ConfigerService {
     }
 
     public void deleteProject(long userId, long prjId) {
-        authService.verifyProjectAuth(userId, prjId, ProjectFunction.MANAGER);
+        boolean isAdmin = adminDao.existsByUserId(userId);
+        if (!isAdmin) {
+            throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
         projectDao.deleteById(prjId);
         logger.info("delete project, prjId={}, userName={}",prjId, userId);
     }
 
     public Optional<Project> getProject(long userId, long prjId) {
-        authService.verifyProjectAuth(userId, prjId, ProjectFunction.QUERY);
+        boolean isAdmin = adminDao.existsByUserId(userId);
+        if (!isAdmin) {
+            authService.verifyProjectAuth(userId, prjId, ProjectFunction.QUERY);
+        }
         Project prj = projectDao.findOne(prjId);
         return Optional.of(prj);
     }
@@ -113,6 +119,10 @@ public class ConfigerService {
     }
 
     public Iterable<Project> listProjects(long userId) {
+        boolean isAdmin = adminDao.existsByUserId(userId);
+        if (isAdmin) {
+            return projectDao.findAll();
+        }
         return projectDao.findByUserId(userId);
     }
 

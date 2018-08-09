@@ -4,6 +4,7 @@ import { ProjectService } from '../project/project.service';
 
 @Component({
   selector: 'app-project-user-auth-form',
+  styles: ['.modal-body {display: flex; flex-direction: column; padding: 1rem 0 0.5rem 0;}; .auth {margin: 0.25rem 0 0.75rem 0;}'],
   templateUrl: './project-user-auth-form.component.html',
 })
 export class ProjectUserAuthFormComponent {

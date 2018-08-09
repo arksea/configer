@@ -21,8 +21,8 @@ public interface ConfigAuthDao extends CrudRepository<ConfigAuth, Long> {
     @Query(
         nativeQuery = true,
         value = "select count(1)>0 " +
-                " from cs_config_auth a inner join (cs_user u, cs_config c) " +
-                " on c.project_id = ?1 and a.config_id = c.id and u.id = ?2"
+                " from cs_config_auth a inner join cs_config c " +
+                " on c.project_id = ?1 and a.config_id = c.id and a.user_id = ?2"
     )
     int existsByPrjIdAndUserId(long prjId, long userId);
 }

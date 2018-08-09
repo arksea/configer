@@ -8,7 +8,10 @@ import { AppNotifyDialogService } from '../app-notify-dialog.service';
 @Injectable()
 export class AccountService {
   loginUser: Subject<string> = new BehaviorSubject<string>(null);
-  public constructor(private api: ConfigerRestAPI, private router: Router, private notify: AppNotifyDialogService) { }
+  public constructor(private api: ConfigerRestAPI, private router: Router, private notify: AppNotifyDialogService) {
+    const userName = localStorage.getItem('login_user');
+    this.loginUser.next(userName);
+  }
 
   public login(info: LoginInfo): void {
     this.api.userLogin(info).subscribe(
@@ -16,6 +19,7 @@ export class AccountService {
         if (response.code === 0) {
           this.loginUser.next(info.name);
           localStorage.setItem('token_expires',  response.result);
+          localStorage.setItem('login_user', info.name);
           this.router.navigate(['/projects']);
         } else {
           this.loginUser.next(null);
@@ -30,6 +34,7 @@ export class AccountService {
         if (response.code === 0) {
           this.loginUser.next(info.name);
           localStorage.setItem('token_expires',  response.result);
+          localStorage.setItem('login_user', info.name);
           this.router.navigate(['/projects']);
           this.notify.openWidthTitle('Notify', 'Signup succeed');
         } else {
@@ -42,6 +47,7 @@ export class AccountService {
   public logout(): void {
     this.loginUser.next(null);
     localStorage.setItem('token_expires',  '0');
+    localStorage.setItem('login_user', '');
     const exp: Date = new Date();
     exp.setTime(exp.getTime() - 24 * 60 * 60_000);
     const cookie = 'access_token=;path=/api/v1;expires=' + exp.toUTCString();
