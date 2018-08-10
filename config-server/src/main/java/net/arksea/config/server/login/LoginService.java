@@ -104,7 +104,7 @@ public class LoginService {
             logger.info("SignUp succeed， name={}, email={}", info.getName(), info.getEmail());
             return Pair.of(SignupStatus.SUCCEED, saved);
         } catch (Exception ex) {
-            logger.warn("SignUp failed: name={}, email={}" + info.getName(), info.getEmail(), ex);
+            logger.warn("SignUp failed: name={}, email={}", info.getName(), info.getEmail(), ex);
             return Pair.of(SignupStatus.FAILED, null);
         }
     }

@@ -8,7 +8,7 @@ import { ProjectService } from '../project/project.service';
   templateUrl: './project-user-auth-form.component.html',
 })
 export class ProjectUserAuthFormComponent {
-  private user: ProjectUser;
+  user: ProjectUser;
   private projectId: number;
   public opened = false;
 

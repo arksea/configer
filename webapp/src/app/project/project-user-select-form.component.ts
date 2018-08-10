@@ -9,9 +9,9 @@ import { ProjectService } from '../project/project.service';
   templateUrl: './project-user-select-form.component.html',
 })
 export class ProjectUserSelectFormComponent {
-  private users: Observable<ProjectUser[]> = new Subject<ProjectUser[]>();
+  users: Observable<ProjectUser[]> = new Subject<ProjectUser[]>();
   private selected: Subject<number>;
-  private selectedUser: number;
+  selectedUser: number;
   public opened = false;
 
   constructor(private projectService: ProjectService) {
