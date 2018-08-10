@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Config, Project, ConfigDoc } from '../configer.model';
+import { Project } from '../configer.model';
 import { ProjectService } from '../project/project.service';
 
 @Component({
@@ -7,9 +7,6 @@ import { ProjectService } from '../project/project.service';
   templateUrl: './project-new-form.component.html',
 })
 export class ProjectNewFormComponent {
-  @Input()
-  private project: Project;
-
   public opened = false;
   public projectName: string;
   public profile: string;

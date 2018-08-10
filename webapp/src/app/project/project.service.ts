@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject, Observable, ObjectUnsubscribedError } from 'rxjs';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { ConfigerRestAPI } from '../configer.restapi';
-import { Project } from '../configer.model';
+import { Project, ProjectUser } from '../configer.model';
 import { scan, map, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -22,7 +22,10 @@ interface AddProject {
 @Injectable()
 export class ProjectService {
 
-    // updateProjects --> updates --> projects --> projectTreeRoot
+    // updateProjects ──┬──＞ updates ──＞ projects ──＞ projectTreeRoot
+    // addProject     ──┤
+    // delProject     ──┘
+
 
     projects: Observable<ProjectMap>;
     projectTreeRoot: Subject<TreeNode[]> = new BehaviorSubject<TreeNode[]>([]);
@@ -34,6 +37,8 @@ export class ProjectService {
     selectedProject: Subject<Project> = new BehaviorSubject<Project>({
         id: -1, name: '', profile: '', description: ''
     });
+
+    projectUsers: Subject<ProjectUser[]> = new BehaviorSubject<ProjectUser[]>([]);
 
     constructor(private api: ConfigerRestAPI) {
         this.addProject.pipe(
@@ -117,13 +122,21 @@ export class ProjectService {
 
     public updateProjectTree(): void {
         this.api.getAllProjects().subscribe(
-            it => this.updateProjects.next(it)
+            result => {
+                if (result.code === 0) {
+                    this.updateProjects.next(result.result);
+                }
+            }
         );
     }
 
     public selectProject(id: number): void {
         this.api.getProject(id).subscribe(
-            prj => this.selectedProject.next(prj)
+            ret => {
+                if (ret.code === 0) {
+                    this.selectedProject.next(ret.result);
+                }
+            }
         );
     }
 
@@ -147,5 +160,26 @@ export class ProjectService {
             }
         );
     }
-}
 
+    public getProjectUsers(prjId: number): void {
+        this.api.getProjectUsers(prjId).subscribe(
+            result => {
+                if (result.code === 0) {
+                    this.projectUsers.next(result.result);
+                }
+            }
+        );
+    }
+
+    public updateProjectUser(prjId: number, user: ProjectUser) {
+        this.api.updateProjectUser(prjId, user).subscribe();
+    }
+
+    public addProjectUser(prjId: number, user: ProjectUser) {
+        this.api.addProjectUser(prjId, user).subscribe();
+    }
+
+    public delProjectUser(prjId: number, userId: number) {
+        this.api.delProjectUser(prjId, userId).subscribe();
+    }
+}

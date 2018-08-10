@@ -1,0 +1,16 @@
+<clr-modal [(clrModalOpen)]="opened">
+    <h3 class="modal-title">Delete Project Operator</h3>
+    <div class="modal-body">
+        <label for="selects">Select one user</label>
+        <div class="select">
+            
+            <select id="selects_1" [(ngModel)]="selectedUser">
+                <option *ngFor="let u of users | async" [value]="u.userId">{{u.userName}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="onSave()">OK</button>
+    </div>
+</clr-modal>
