@@ -8,7 +8,7 @@ import { Subject, Observable } from 'rxjs';
 })
 export class ProjectUserNameFormComponent {
   private result: Subject<string>;
-  private userName: string;
+  userName: string;
   public opened = false;
 
   public open(): Observable<string> {
