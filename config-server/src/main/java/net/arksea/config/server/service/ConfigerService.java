@@ -1,5 +1,6 @@
 package net.arksea.config.server.service;
 
+import net.arksea.config.server.ResultCode;
 import net.arksea.config.server.dao.*;
 import net.arksea.config.server.entity.Config;
 import net.arksea.config.server.entity.Project;
@@ -7,12 +8,16 @@ import net.arksea.config.server.entity.ProjectAuth;
 import net.arksea.config.server.entity.User;
 import net.arksea.config.server.rest.ProjectUser;
 import net.arksea.restapi.RestException;
+import net.arksea.restapi.RestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.async.DeferredResult;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.*;
 
@@ -107,6 +112,17 @@ public class ConfigerService {
         }
         Project prj = projectDao.findOne(prjId);
         return Optional.of(prj);
+    }
+
+    public Optional<Config> getProjectConfig(long userId, String projectName, String profile, String configName) {
+        Project prj = projectDao.getByNameAndProfile(projectName, profile);
+        Config cfg = configDao.getByNameAndProject(configName, prj);
+        if (cfg == null) {
+            return Optional.empty();
+        } else {
+            authService.verifyQueryByConfigId(userId, cfg.getId());
+            return Optional.of(cfg);
+        }
     }
 
     public Iterable<Config> listProjectConfigs(long userId, long prjId) {
