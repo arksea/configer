@@ -9,8 +9,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
@@ -26,9 +28,13 @@ public class TokenService {
     private Algorithm algorithm;
     private final String ISSUER = "arksea.net";
 
-    public TokenService() throws UnsupportedEncodingException {
-        final String secret = "secret";
-        algorithm = Algorithm.HMAC256(secret);
+    @Value("${config.web.tokenSecret}")
+    String tokenSecret;
+
+    @PostConstruct
+    public void init() throws UnsupportedEncodingException {
+        logger.debug("tokenSecret: {}", tokenSecret);
+        algorithm = Algorithm.HMAC256(tokenSecret);
     }
 
     public int getCookieExpiry() {

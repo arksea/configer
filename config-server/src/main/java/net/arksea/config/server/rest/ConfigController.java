@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  *
@@ -26,19 +27,22 @@ public class ConfigController {
     @Autowired
     private ConfigerService configerService;
 
-    @Autowired
-    private ConfigDao configDao;
-
-//    @RequestMapping(params={"name","projectId"},method = RequestMethod.GET, produces = MEDIA_TYPE)
-//    public DeferredResult<String> getConfig(@RequestParam(name="name") String name,
-//                            @RequestParam(name="projectId") long projectId,
-//                            final HttpServletRequest httpRequest) {
-//        DeferredResult<String> result = new DeferredResult<>();
-//        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
-//        Config cfg = configDao.findByProjectIdAndName(projectId, name);
-//        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, cfg, reqid));
-//        return result;
-//    }
+    @RequestMapping(params={"project","profile","config"},method = RequestMethod.GET, produces = MEDIA_TYPE)
+    public DeferredResult<String> getConfig(@RequestParam(name="config") String config,
+                            @RequestParam(name="project") String project,
+                            @RequestParam(name="profile") String profile,
+                            final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        Optional<Config> op = configerService.getProjectConfig(userId, project, profile, config);
+        if (op.isPresent()) {
+            result.setResult(RestUtils.createResult(ResultCode.SUCCEED, op.get(), reqid));
+        } else {
+            result.setResult(RestUtils.createError(ResultCode.NOT_EXISTS, "未找到指定配置", reqid));
+        }
+        return result;
+    }
 
     @RequestMapping(value="/{configId}/description", method = RequestMethod.PUT, produces = MEDIA_TYPE)
     public DeferredResult<String> updateConfigDesc(@RequestBody String configDesc,
