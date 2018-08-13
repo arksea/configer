@@ -80,6 +80,16 @@ public class AuthService {
         }
     }
 
+    public void verifyQueryByConfigId(long userId, long cfgId) {
+        boolean exists = configAuthDao.existsByConfigIdAndUserId(cfgId, userId);
+        if (!exists) {
+            exists = projectAuthDao.existsQueryByConfigId(cfgId, userId) == 1;
+            if (!exists) {
+                throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            }
+        }
+    }
+
     public void verifyConfigerByDocId(long userId, long docId) {
         boolean exists = configAuthDao.existsByDocIdAndUserId(docId, userId) == 1;
         if (!exists) {
