@@ -50,7 +50,7 @@ public class ConfigerService {
      * @return 返回增加的配置ID，如果同名配置已存在，则返回 -1
      */
     public Config createConfig(long userId, Config cfg) {
-        authService.verifyManagerByConfigId(userId, cfg.getProject().getId());
+        authService.verifyProjectAuth(userId, cfg.getProject().getId(), ProjectFunction.MANAGER);
         Config cfg1 = configDao.findByProjectIdAndName(cfg.getProject().getId(), cfg.getName());
         if (cfg1 != null) {
             cfg.setId(cfg1.getId());
@@ -85,7 +85,7 @@ public class ConfigerService {
     }
 
     public void updateConfigSchema(long userId, long docId, String configSchema) {
-        authService.verifyManagerByConfigId(userId, docId);
+        authService.verifyManagerByDocId(userId, docId);
         configDocDao.updateSchema(docId, configSchema);
         logger.info("update config metadata docId={}, userId={}",docId, userId);
     }
