@@ -1,21 +1,16 @@
 package net.arksea.config.server.service;
 
-import net.arksea.config.server.ResultCode;
 import net.arksea.config.server.dao.*;
 import net.arksea.config.server.entity.*;
 import net.arksea.config.server.rest.ConfigUser;
 import net.arksea.config.server.rest.ProjectUser;
 import net.arksea.restapi.RestException;
-import net.arksea.restapi.RestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.async.DeferredResult;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.*;
 
@@ -109,7 +104,9 @@ public class ConfigerService {
     public Optional<Project> getProject(long userId, long prjId) {
         boolean isAdmin = adminDao.existsByUserId(userId);
         if (!isAdmin) {
-            authService.verifyProjectAuth(userId, prjId, ProjectFunction.QUERY);
+            if (!authService.hasProjectAuth(userId, prjId,ProjectFunction.QUERY)) {
+                authService.verifyConfigAuthInProject(userId, prjId);
+            }
         }
         Project prj = projectDao.findOne(prjId);
         return Optional.of(prj);
@@ -127,11 +124,12 @@ public class ConfigerService {
     }
 
     public Iterable<Config> listProjectConfigs(long userId, long prjId) {
-        boolean has = authService.hasProjectAuth(userId, prjId, ProjectFunction.QUERY);
-        if (has) {
+        if (authService.hasProjectAuth(userId, prjId, ProjectFunction.QUERY)) {
             return configDao.findByProjectId(prjId);
-        } else {
+        } else if (authService.hasConfigAuthInProject(userId, prjId)){
             return configDao.findByUserIdAndProjectId(userId, prjId);
+        } else {
+            throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
     }
 
