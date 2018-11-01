@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, Observable, ObjectUnsubscribedError } from 'rxjs';
 import { ConfigerRestAPI } from '../configer.restapi';
-import { Config, ConfigUser } from '../configer.model';
+import { Config, ConfigUser, RestResult } from '../configer.model';
 import { scan, map, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -233,34 +233,45 @@ export class ConfigService {
         );
     }
 
-    public getConfigUsers(cfgId: number, prjId: number): void {
-        this.api.getConfigUsers(cfgId, prjId).subscribe(
-            result => {
+    public getConfigUsers(cfgId: number, prjId: number): Observable<boolean> {
+        const a = this.updateConfigUsers;
+        return this.api.getConfigUsers(cfgId, prjId).pipe(
+            map(function (result: RestResult<ConfigUser[]>): boolean {
                 if (result.code === 0) {
-                    this.updateConfigUsers.next(result.result);
+                    console.log(result);
+                    a.next(result.result);
                 }
-            }
+                return result.code === 0;
+            })
         );
     }
 
-    public addConfigAuth(cfgId: number, user: string) {
-        this.api.addConfigUser(cfgId, user).subscribe(
-            result => {
+    public addConfigAuth(cfgId: number, user: string): Observable<boolean> {
+        const a = this.addConfigUser;
+        return this.api.addConfigUser(cfgId, user).pipe(
+            map(function (result: RestResult<ConfigUser>): boolean {
                 if (result.code === 0) {
-                    this.addConfigUser.next({user: result.result});
+                    a.next({user: result.result});
                 }
-            }
+                return result.code === 0;
+            })
         );
     }
 
-    public delConfigAuth(cfgId: number, userId: number) {
-        this.api.delConfigUser(cfgId, userId).subscribe(
-            result => {
+    public delConfigAuth(cfgId: number, userId: number): Observable<boolean> {
+        const a = this.delConfigUser;
+        return this.api.delConfigUser(cfgId, userId).pipe(
+            map(function (result: RestResult<string>): boolean {
                 if (result.code === 0) {
-                    this.delConfigUser.next(userId);
+                    a.next(userId);
                 }
-            }
+                return result.code === 0;
+            })
         );
+    }
+
+    public clearConfigAuth() {
+        this.updateConfigUsers.next([]);
     }
 
 }
