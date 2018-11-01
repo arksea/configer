@@ -1,23 +1,16 @@
 package net.arksea.config.server.service;
 
-import net.arksea.config.server.ResultCode;
 import net.arksea.config.server.dao.*;
-import net.arksea.config.server.entity.Config;
-import net.arksea.config.server.entity.Project;
-import net.arksea.config.server.entity.ProjectAuth;
-import net.arksea.config.server.entity.User;
+import net.arksea.config.server.entity.*;
+import net.arksea.config.server.rest.ConfigUser;
 import net.arksea.config.server.rest.ProjectUser;
 import net.arksea.restapi.RestException;
-import net.arksea.restapi.RestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.async.DeferredResult;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.*;
 
@@ -44,6 +37,9 @@ public class ConfigerService {
     private UserDao userDao;
     @Autowired
     private ProjectAuthDao projectAuthDao;
+    @Autowired
+    private ConfigAuthDao configAuthDao;
+
     /**
      * 新增配置
      * @param cfg
@@ -108,7 +104,9 @@ public class ConfigerService {
     public Optional<Project> getProject(long userId, long prjId) {
         boolean isAdmin = adminDao.existsByUserId(userId);
         if (!isAdmin) {
-            authService.verifyProjectAuth(userId, prjId, ProjectFunction.QUERY);
+            if (!authService.hasProjectAuth(userId, prjId,ProjectFunction.QUERY)) {
+                authService.verifyConfigAuthInProject(userId, prjId);
+            }
         }
         Project prj = projectDao.findOne(prjId);
         return Optional.of(prj);
@@ -126,11 +124,12 @@ public class ConfigerService {
     }
 
     public Iterable<Config> listProjectConfigs(long userId, long prjId) {
-        boolean has = authService.hasProjectAuth(userId, prjId, ProjectFunction.QUERY);
-        if (has) {
+        if (authService.hasProjectAuth(userId, prjId, ProjectFunction.QUERY)) {
             return configDao.findByProjectId(prjId);
-        } else {
+        } else if (authService.hasConfigAuthInProject(userId, prjId)){
             return configDao.findByUserIdAndProjectId(userId, prjId);
+        } else {
+            throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
     }
 
@@ -157,6 +156,25 @@ public class ConfigerService {
             u.setQuery(a.isQuery());
             u.setManage(a.isManage());
             u.setConfig(a.isConfig());
+            userList.add(u);
+        }
+        return userList;
+    }
+
+    public List<ConfigUser> getConfigUsers(long userId, long prjId, long cfgId) {
+        boolean isAdmin = adminDao.existsByUserId(userId);
+        if (!isAdmin) {
+            authService.verifyProjectAuth(userId, prjId, ProjectFunction.MANAGER);
+        }
+        Iterable<ConfigAuth> auths = configAuthDao.getByConfigId(cfgId);
+        List<ConfigUser> userList = new LinkedList<>();
+        for (ConfigAuth a : auths) {
+            Long uid = a.getUser().getId();
+            ConfigUser u = new ConfigUser();
+            u.setUserId(uid);
+            u.setUserName(a.getUser().getName());
+            u.setId(a.getId());
+            u.setConfigId(a.getConfig().getId());
             userList.add(u);
         }
         return userList;
@@ -217,11 +235,40 @@ public class ConfigerService {
         return aSaved.getId();
     }
 
+    public ConfigAuth addConfigUser(long loginedUserId, long configId, String userName) {
+        boolean isAdmin = adminDao.existsByUserId(loginedUserId);
+        if (!isAdmin) {
+            authService.verifyManagerByConfigId(loginedUserId, configId);
+        }
+        List<User> users = userDao.findByName(userName);
+        if (users.size() > 0) {
+            long userId = users.get(0).getId();
+            ConfigAuth a = new ConfigAuth();
+            Config c = new Config();
+            c.setId(configId);
+            User u = new User();
+            u.setId(userId);
+            a.setConfig(c);
+            a.setUser(u);
+            return configAuthDao.save(a);
+        } else {
+            throw new RestException(HttpStatus.BAD_REQUEST, "User not exists");
+        }
+    }
+
     public void delProjectUser(long loginedUserId, long prjId, long userId) {
         boolean isAdmin = adminDao.existsByUserId(loginedUserId);
         if (!isAdmin) {
             authService.verifyProjectAuth(loginedUserId, prjId, ProjectFunction.MANAGER);
         }
         projectAuthDao.deleteByProjectIdAndUserId(prjId, userId);
+    }
+
+    public void delConfigUser(long loginedUserId, long cfgId, long userId) {
+        boolean isAdmin = adminDao.existsByUserId(loginedUserId);
+        if (!isAdmin) {
+            authService.verifyManagerByConfigId(loginedUserId, cfgId);
+        }
+        configAuthDao.deleteByConfigIdAndUserId(cfgId, userId);
     }
 }

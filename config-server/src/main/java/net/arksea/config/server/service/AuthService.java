@@ -40,14 +40,24 @@ public class AuthService {
     public boolean hasProjectAuth(long userId, long prjId, ProjectFunction func) {
         switch (func) {
             case QUERY:
-                return projectAuthDao.existsQueryByProjectId(prjId, userId) == 1
-                    || configAuthDao.existsByPrjIdAndUserId(prjId, userId) == 1;
+                return projectAuthDao.existsQueryByProjectId(prjId, userId) == 1;
             case MANAGER:
                 return projectAuthDao.existsManageByProjectId(prjId, userId) == 1;
             case CONFIG:
                 return projectAuthDao.existsConfigByProjectId(prjId, userId) == 1;
         }
         return false;
+    }
+
+    public void verifyConfigAuthInProject(long userId, long prjId) {
+        boolean has = configAuthDao.existsByPrjIdAndUserId(prjId, userId) == 1;
+        if (!has) {
+            throw new RestException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
+    }
+
+    public boolean hasConfigAuthInProject(long userId, long prjId) {
+        return configAuthDao.existsByPrjIdAndUserId(prjId, userId) == 1;
     }
 
     /**

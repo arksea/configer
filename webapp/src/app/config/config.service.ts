@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, Observable, ObjectUnsubscribedError } from 'rxjs';
 import { ConfigerRestAPI } from '../configer.restapi';
-import { Config } from '../configer.model';
+import { Config, ConfigUser, RestResult } from '../configer.model';
 import { scan, map, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -16,6 +16,11 @@ interface AddConfig {
     config: Config;
 }
 
+type IConfigUsersOperation = (users: ConfigUser[]) => ConfigUser[];
+interface AddConfigUser {
+    user: ConfigUser;
+}
+
 @Injectable()
 export class ConfigService {
 
@@ -25,7 +30,6 @@ export class ConfigService {
     // updateConfigDesc    ──┤
     // addConfig           ──┤
     // delConfig           ──┘
-
     updateConfigs: Subject<Config[]> = new Subject();
     updateConfigDoc: Subject<UpdateConfigField> = new Subject();
     updateConfigSchema: Subject<UpdateConfigField> = new Subject();
@@ -35,6 +39,12 @@ export class ConfigService {
     updates: Subject<any> = new Subject<any>();
     configMap: Observable<ConfigMap>;
     configList: Subject<Config[]> = new BehaviorSubject<Config[]>([]);
+
+    addConfigUser: Subject<AddConfigUser> = new Subject();
+    delConfigUser: Subject<number> = new Subject();
+    updateConfigUsers: Subject<ConfigUser[]> = new Subject();
+    userUpdates: Subject<any> = new Subject<any>();
+    configUsers: Observable<ConfigUser[]>;
 
     constructor(private api: ConfigerRestAPI) {
         this.addConfig.pipe(
@@ -115,6 +125,56 @@ export class ConfigService {
                 return _.sortBy(list, (t: Config) => t.name);
             })
         ).subscribe(this.configList);
+
+
+
+        //---------------------------------------------------
+        // updateConfigUsers ──┬──＞ userUpdates ──＞ configUsers
+        // delConfigUser     ──┤
+        // addConfigUser     ──┘
+
+        this.addConfigUser.pipe(
+            map(function (add: AddConfigUser): IConfigUsersOperation {
+                return (users: ConfigUser[]) => {
+                    users.push(add.user);
+                    return users;
+                };
+            })
+        ).subscribe(this.userUpdates);
+
+        this.delConfigUser.pipe(
+            map(function (userId: number): IConfigUsersOperation {
+                return (users: ConfigUser[]) => {
+                    const newUsers: ConfigUser[] = [];
+                    users.forEach((it) => {
+                        if (it.userId != userId) {
+                            newUsers.push(it);
+                        }
+                    });
+                    return newUsers;
+                };
+            })
+        ).subscribe(this.userUpdates);
+
+        this.updateConfigUsers.pipe(
+            map(function (newUsers: ConfigUser[]): IConfigUsersOperation {
+                return (users: ConfigUser[]) => {
+                    return newUsers;
+                };
+            })
+        ).subscribe(this.userUpdates);
+
+        // configUsers订阅更新操作
+        this.configUsers = this.userUpdates.pipe(
+            scan((users: ConfigUser[], op: IConfigUsersOperation) => {
+                const newUsers = op(users);
+                return newUsers;
+            }, []),
+            publishReplay(1),
+            refCount()
+        );
+        //---------------------------------------------------
+
     }
 
     public selectProject(id: number): void {
@@ -172,4 +232,46 @@ export class ConfigService {
             }
         );
     }
+
+    public getConfigUsers(cfgId: number, prjId: number): Observable<boolean> {
+        const a = this.updateConfigUsers;
+        return this.api.getConfigUsers(cfgId, prjId).pipe(
+            map(function (result: RestResult<ConfigUser[]>): boolean {
+                if (result.code === 0) {
+                    console.log(result);
+                    a.next(result.result);
+                }
+                return result.code === 0;
+            })
+        );
+    }
+
+    public addConfigAuth(cfgId: number, user: string): Observable<boolean> {
+        const a = this.addConfigUser;
+        return this.api.addConfigUser(cfgId, user).pipe(
+            map(function (result: RestResult<ConfigUser>): boolean {
+                if (result.code === 0) {
+                    a.next({user: result.result});
+                }
+                return result.code === 0;
+            })
+        );
+    }
+
+    public delConfigAuth(cfgId: number, userId: number): Observable<boolean> {
+        const a = this.delConfigUser;
+        return this.api.delConfigUser(cfgId, userId).pipe(
+            map(function (result: RestResult<string>): boolean {
+                if (result.code === 0) {
+                    a.next(userId);
+                }
+                return result.code === 0;
+            })
+        );
+    }
+
+    public clearConfigAuth() {
+        this.updateConfigUsers.next([]);
+    }
+
 }
