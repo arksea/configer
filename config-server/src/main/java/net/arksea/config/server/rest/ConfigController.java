@@ -130,4 +130,16 @@ public class ConfigController {
         result.setResult(RestUtils.createResult(ResultCode.SUCCEED, u, reqid));
         return result;
     }
+
+    @RequestMapping(value="{configId}/users/{userId}", method = RequestMethod.DELETE, produces = MEDIA_TYPE)
+    public DeferredResult<String> delConfigUser(@PathVariable(name="configId") long configId,
+                                                @PathVariable(name="userId") long userId,
+                                                final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Long loginedUserId = (Long)httpRequest.getAttribute("jwt-user-id");
+        configerService.delConfigUser(loginedUserId, configId, userId);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, "succeed", reqid));
+        return result;
+    }
 }

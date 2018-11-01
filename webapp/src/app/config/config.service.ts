@@ -41,6 +41,7 @@ export class ConfigService {
     configList: Subject<Config[]> = new BehaviorSubject<Config[]>([]);
 
     addConfigUser: Subject<AddConfigUser> = new Subject();
+    delConfigUser: Subject<number> = new Subject();
     updateConfigUsers: Subject<ConfigUser[]> = new Subject();
     userUpdates: Subject<any> = new Subject<any>();
     configUsers: Observable<ConfigUser[]>;
@@ -128,14 +129,29 @@ export class ConfigService {
 
 
         //---------------------------------------------------
-        // addConfigUser     ──┬──＞ userUpdates ──＞ configUsers
-        // updateConfigUsers ──┘
+        // updateConfigUsers ──┬──＞ userUpdates ──＞ configUsers
+        // delConfigUser     ──┤
+        // addConfigUser     ──┘
 
         this.addConfigUser.pipe(
             map(function (add: AddConfigUser): IConfigUsersOperation {
                 return (users: ConfigUser[]) => {
                     users.push(add.user);
                     return users;
+                };
+            })
+        ).subscribe(this.userUpdates);
+
+        this.delConfigUser.pipe(
+            map(function (userId: number): IConfigUsersOperation {
+                return (users: ConfigUser[]) => {
+                    const newUsers: ConfigUser[] = [];
+                    users.forEach((it) => {
+                        if (it.userId != userId) {
+                            newUsers.push(it);
+                        }
+                    });
+                    return newUsers;
                 };
             })
         ).subscribe(this.userUpdates);
@@ -236,4 +252,15 @@ export class ConfigService {
             }
         );
     }
+
+    public delConfigAuth(cfgId: number, userId: number) {
+        this.api.delConfigUser(cfgId, userId).subscribe(
+            result => {
+                if (result.code === 0) {
+                    this.delConfigUser.next(userId);
+                }
+            }
+        );
+    }
+
 }

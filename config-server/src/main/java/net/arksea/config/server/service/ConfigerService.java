@@ -263,4 +263,12 @@ public class ConfigerService {
         }
         projectAuthDao.deleteByProjectIdAndUserId(prjId, userId);
     }
+
+    public void delConfigUser(long loginedUserId, long cfgId, long userId) {
+        boolean isAdmin = adminDao.existsByUserId(loginedUserId);
+        if (!isAdmin) {
+            authService.verifyManagerByConfigId(loginedUserId, cfgId);
+        }
+        configAuthDao.deleteByConfigIdAndUserId(cfgId, userId);
+    }
 }

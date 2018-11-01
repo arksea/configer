@@ -28,5 +28,7 @@ public interface ConfigAuthDao extends CrudRepository<ConfigAuth, Long> {
     )
     int existsByPrjIdAndUserId(long prjId, long userId);
 
+    void deleteByConfigIdAndUserId(long cfgId, long userId);
+
     List<ConfigAuth> getByConfigId(long configId);
 }

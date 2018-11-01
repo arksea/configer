@@ -59,8 +59,13 @@ export class ConfigerRestAPI {
     }
 
     public delProjectUser(prjId: number, userId: number): Observable<RestResult<string>> {
-        const request = 'Add project user auth';
+        const request = 'Delete project user auth';
         return this.httpDelete(environment.apiUrl + '/api/v1/projects/' + prjId + '/users/' + userId, request);
+    }
+
+    public delConfigUser(cfgId: number, userId: number): Observable<RestResult<string>> {
+        const request = 'Delete config user auth';
+        return this.httpDelete(environment.apiUrl + '/api/v1/configs/' + cfgId + '/users/' + userId, request);
     }
 
     public updateConfigDescription(cfgId: number, configDesc: string): Observable<RestResult<string>> {

@@ -36,6 +36,6 @@ export class ConfigAuthFormComponent {
   }
 
   public onBtnDelClick(user: ConfigUser): void {
-
+      this.configService.delConfigAuth(user.configId, user.userId);
   }
 }
