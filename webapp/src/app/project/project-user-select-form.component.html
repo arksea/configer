@@ -2,8 +2,7 @@
     <h3 class="modal-title">Delete Project Operator</h3>
     <div class="modal-body">
         <label for="selects">Select one user</label>
-        <div class="select">
-            
+        <div class="select" id="selects">
             <select id="selects_1" [(ngModel)]="selectedUser">
                 <option *ngFor="let u of users | async" [value]="u.userId">{{u.userName}}</option>
             </select>

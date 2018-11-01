@@ -4,6 +4,8 @@ import net.arksea.config.server.entity.ConfigAuth;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 /**
  *
  * Created by xiaohaixing on 2017/9/15.
@@ -25,4 +27,6 @@ public interface ConfigAuthDao extends CrudRepository<ConfigAuth, Long> {
                 " on c.project_id = ?1 and a.config_id = c.id and a.user_id = ?2"
     )
     int existsByPrjIdAndUserId(long prjId, long userId);
+
+    List<ConfigAuth> getByConfigId(long configId);
 }

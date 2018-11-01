@@ -3,6 +3,7 @@ package net.arksea.config.server.rest;
 import net.arksea.config.server.ResultCode;
 import net.arksea.config.server.dao.ConfigDao;
 import net.arksea.config.server.entity.Config;
+import net.arksea.config.server.entity.ConfigAuth;
 import net.arksea.config.server.service.ConfigerService;
 import net.arksea.restapi.*;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -97,6 +99,35 @@ public class ConfigController {
         Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
         configerService.deleteConfig(userId, configId);
         result.setResult(RestUtils.createResult(ResultCode.SUCCEED, "succeed", reqid));
+        return result;
+    }
+
+    @RequestMapping(value="{configId}/users", method = RequestMethod.GET, produces = MEDIA_TYPE)
+    public DeferredResult<String> getConfigUsers(@PathVariable(name="configId") long configId,
+                                                  @RequestParam(name="prjId") long prjId,
+                                                  final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Long userId = (Long)httpRequest.getAttribute("jwt-user-id");
+        List<ConfigUser> auths = configerService.getConfigUsers(userId, prjId, configId);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, auths, reqid));
+        return result;
+    }
+
+    @RequestMapping(value="{configId}/users", method = RequestMethod.POST, produces = MEDIA_TYPE)
+    public DeferredResult<String> addConfigUser(@PathVariable(name="configId") long configId,
+                                                @RequestParam(name="name") String userName,
+                                                 final HttpServletRequest httpRequest) {
+        DeferredResult<String> result = new DeferredResult<>();
+        String reqid = (String)httpRequest.getAttribute("restapi-requestid");
+        Long loginedUserId = (Long)httpRequest.getAttribute("jwt-user-id");
+        ConfigAuth a = configerService.addConfigUser(loginedUserId, configId, userName);
+        ConfigUser u = new ConfigUser();
+        u.setConfigId(configId);
+        u.setId(a.getId());
+        u.setUserId(a.getUser().getId());
+        u.setUserName(userName);
+        result.setResult(RestUtils.createResult(ResultCode.SUCCEED, u, reqid));
         return result;
     }
 }

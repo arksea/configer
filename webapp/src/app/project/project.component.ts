@@ -11,6 +11,7 @@ import { SchemaFormComponent } from '../schema/schema-form.component';
 import { ConfigFormComponent } from '../config/config-form.component';
 import { ConfigValueFormComponent } from '../config/config-value-form.component';
 import { ConfigAddFormComponent } from '../config/config-add-form.component';
+import { ConfigAuthFormComponent } from '../config/config-auth-form.component';
 import { AppNotifyDialogService } from '../app-notify-dialog.service';
 
 @Component({
@@ -24,6 +25,7 @@ export class ProjectComponent implements OnInit {
   @ViewChild(SchemaFormComponent) dialogSchemaForm: SchemaFormComponent;
   @ViewChild(ConfigFormComponent) dialogConfigForm: ConfigFormComponent;
   @ViewChild(ConfigValueFormComponent) dialogConfigValueForm: ConfigValueFormComponent;
+  @ViewChild(ConfigAuthFormComponent) dialogConfigAuthForm: ConfigAuthFormComponent;
   @ViewChild(ConfigAddFormComponent) dialogConfigAddForm: ConfigAddFormComponent;
   @ViewChild(ProjectUserAuthFormComponent) dialogProjectUserForm: ProjectUserAuthFormComponent;
   @ViewChild(ProjectUserSelectFormComponent) dialogProjectUserSelectForm: ProjectUserSelectFormComponent;
@@ -64,6 +66,10 @@ export class ProjectComponent implements OnInit {
     this.dialogSchemaForm.open(config);
   }
 
+  onBtnConfigAuthClick(config: Config) {
+    this.dialogConfigAuthForm.open(config);
+  }
+
   onBtnJsonClick(config: Config) {
     this.dialogConfigValueForm.open(config);
   }
@@ -101,7 +107,6 @@ export class ProjectComponent implements OnInit {
           userId: -1,
           userName: name
         };
-        console.log('=========' + name + '*****' + user);
         this.svcPrj.addProjectUser(this.projectId, user);
       }
     );

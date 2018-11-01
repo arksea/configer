@@ -31,6 +31,7 @@ import { ProjectUserNameFormComponent } from './project/project-user-name-form.c
 import { ConfigService } from './config/config.service';
 import { ConfigFormComponent } from './config/config-form.component';
 import { ConfigAddFormComponent } from './config/config-add-form.component';
+import { ConfigAuthFormComponent } from './config/config-auth-form.component';
 import { ConfigValueFormComponent } from './config/config-value-form.component';
 import { SchemaFormComponent } from './schema/schema-form.component';
 
@@ -65,6 +66,7 @@ const appRoutes: Routes = [
     ConfigValueFormComponent,
     ConfigFormComponent,
     ConfigAddFormComponent,
+    ConfigAuthFormComponent,
     SchemaFormComponent,
 
     ArBooleanWidgetComponent,

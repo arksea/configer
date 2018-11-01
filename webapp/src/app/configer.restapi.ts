@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Project, Config, RestResult, LoginInfo, SignupInfo, ResultCode, ProjectUser } from './configer.model';
+import { Project, Config, ConfigUser, RestResult, LoginInfo, SignupInfo, ResultCode, ProjectUser } from './configer.model';
 import { AppNotifyDialogService } from './app-notify-dialog.service';
 
 @Injectable()
@@ -37,6 +37,12 @@ export class ConfigerRestAPI {
         return this.httpGet(environment.apiUrl + '/api/v1/projects/' + prjId + '/users', request);
     }
 
+    public getConfigUsers(cfgId: number, prjId: number): Observable<RestResult<ConfigUser[]>> {
+        const request = 'Request config users';
+        return this.httpGet(environment.apiUrl + '/api/v1/configs/' + cfgId + '/users?prjId=' + prjId
+            , request);
+    }
+
     public updateProjectUser(prjId: number, user: ProjectUser): Observable<RestResult<string>> {
         const request = 'Update project user auth';
         return this.httpPut(environment.apiUrl + '/api/v1/projects/' + prjId + '/users/' + user.userId, user, request);
@@ -45,6 +51,11 @@ export class ConfigerRestAPI {
     public addProjectUser(prjId: number, user: ProjectUser): Observable<RestResult<string>> {
         const request = 'Add project user auth';
         return this.httpPost(environment.apiUrl + '/api/v1/projects/' + prjId + '/users', user, request);
+    }
+
+    public addConfigUser(cfgId: number, userName: string): Observable<RestResult<ConfigUser>> {
+        const request = 'Add config user auth';
+        return this.httpPost(environment.apiUrl + '/api/v1/configs/' + cfgId + '/users?name=' + userName, '', request);
     }
 
     public delProjectUser(prjId: number, userId: number): Observable<RestResult<string>> {
