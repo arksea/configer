@@ -1,0 +1,32 @@
+<clr-modal [(clrModalOpen)]="opened">
+  <h3 class="modal-title">Config Editor List</h3>
+  <div class="modal-body">
+    <table id="usersTable" class="table table-bordered" width="100%">
+      <colgroup>
+        <col class="col-name">
+        <col class="col-btn">
+      </colgroup>
+      <thead>
+      <tr>
+        <th class="td-text">User Name</th>
+        <th>Delete</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let i of users | async">
+        <td class="td-text">{{i.userName}}</td>
+        <td>
+          <a (click)="onBtnDelClick(i)">
+            <clr-icon shape="trash"></clr-icon>
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <label for="userName">Add New User</label>
+    <input id="userName" type="text" [(ngModel)]="userName">
+    <button type="button" [disabled]="btnDisabled()" class="btn btn-link" (click)="onAddUser(userName)">Add</button>
+  </div>
+</clr-modal>

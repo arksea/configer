@@ -45,6 +45,13 @@ export class SignupInfo {
     password: string;
 }
 
+export class ConfigUser {
+    id: number;
+    configId: number;
+    userId: number;
+    userName: string;
+}
+
 export class ResultCode {
     public static SUCCEED = 0;
     public static FAILED = 1;
