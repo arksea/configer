@@ -216,7 +216,7 @@ public class ConfigService {
         ICacheConfig<ConfigKey> cfg = new ICacheConfig<ConfigKey>() {
             @Override
             public String getCacheName() {
-                return "localConfigCache";
+                return "localConfigCache-"+project+"-"+profile;
             }
         };
         localArticleCache = LocalCacheCreator.createLocalCache(system, cfg, remoteCacheAsker, timeout, timeout * 5);
