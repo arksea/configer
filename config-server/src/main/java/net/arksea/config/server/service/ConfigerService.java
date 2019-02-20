@@ -9,17 +9,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
  * Created by xiaohaixing on 2017/8/5.
  */
-@Component
-@Transactional
+@Service
+@Transactional(readOnly = true)
 public class ConfigerService {
     private Logger logger = LogManager.getLogger(ConfigerService.class);
 
@@ -45,6 +47,7 @@ public class ConfigerService {
      * @param cfg
      * @return 返回增加的配置ID，如果同名配置已存在，则返回 -1
      */
+    @Transactional
     public Config createConfig(long userId, Config cfg) {
         authService.verifyProjectAuth(userId, cfg.getProject().getId(), ProjectFunction.MANAGER);
         Config cfg1 = configDao.findByProjectIdAndName(cfg.getProject().getId(), cfg.getName());
@@ -57,6 +60,7 @@ public class ConfigerService {
         return cfg1;
     }
 
+    @Transactional
     public long createProject(Project prj, long userId) {
         boolean isAdmin = adminDao.existsByUserId(userId);
         if (isAdmin) {
@@ -68,30 +72,35 @@ public class ConfigerService {
         }
     }
 
+    @Transactional
     public void updateConfigDescription(long userId, long cfgId, String desc) {
         authService.verifyManagerByConfigId(userId, cfgId);
         configDao.updateDescription(cfgId, desc);
         logger.info("update config description configId={}, desc={}, userId={}",cfgId,desc,userId);
     }
 
+    @Transactional
     public void updateConfigDoc(long userId, long docId, String configDoc) {
         authService.verifyConfigerByDocId(userId, docId);
         configDocDao.updateValue(docId, configDoc);
         logger.info("update config value docId={}, value={}, userId={}",docId, configDoc, userId);
     }
 
+    @Transactional
     public void updateConfigSchema(long userId, long docId, String configSchema) {
         authService.verifyManagerByDocId(userId, docId);
         configDocDao.updateSchema(docId, configSchema);
         logger.info("update config metadata docId={}, userId={}",docId, userId);
     }
 
+    @Transactional
     public void deleteConfig(long userId, long cfgId) {
         authService.verifyManagerByConfigId(userId, cfgId);
         configDao.deleteById(cfgId);
         logger.info("delete config, Id={}, userId={}", cfgId, userId);
     }
 
+    @Transactional
     public void deleteProject(long userId, long prjId) {
         boolean isAdmin = adminDao.existsByUserId(userId);
         if (!isAdmin) {
@@ -180,6 +189,7 @@ public class ConfigerService {
         return userList;
     }
 
+    @Transactional
     public void updateProjectUser(long loginedUserId, long prjId, ProjectUser user) {
         boolean isAdmin = adminDao.existsByUserId(loginedUserId);
         if (!isAdmin) {
@@ -207,6 +217,7 @@ public class ConfigerService {
         projectAuthDao.save(a);
     }
 
+    @Transactional
     public long addProjectUser(long loginedUserId, long prjId, ProjectUser user) {
         boolean isAdmin = adminDao.existsByUserId(loginedUserId);
         if (!isAdmin) {
@@ -235,6 +246,7 @@ public class ConfigerService {
         return aSaved.getId();
     }
 
+    @Transactional
     public ConfigAuth addConfigUser(long loginedUserId, long configId, String userName) {
         boolean isAdmin = adminDao.existsByUserId(loginedUserId);
         if (!isAdmin) {
@@ -256,6 +268,7 @@ public class ConfigerService {
         }
     }
 
+    @Transactional
     public void delProjectUser(long loginedUserId, long prjId, long userId) {
         boolean isAdmin = adminDao.existsByUserId(loginedUserId);
         if (!isAdmin) {
@@ -264,6 +277,7 @@ public class ConfigerService {
         projectAuthDao.deleteByProjectIdAndUserId(prjId, userId);
     }
 
+    @Transactional
     public void delConfigUser(long loginedUserId, long cfgId, long userId) {
         boolean isAdmin = adminDao.existsByUserId(loginedUserId);
         if (!isAdmin) {

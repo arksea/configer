@@ -6,7 +6,7 @@ dependencies {
     compile project (':service-config')
 
     compile 'net.arksea:restapi-base:1.0.0-SNAPSHOT'
-    compile 'net.arksea:aregister-client:0.4-SNAPSHOT'
+    compile 'net.arksea:aregister-client:0.5-SNAPSHOT'
 
     compile 'org.springframework:spring-core:4.3.9.RELEASE'
     compile 'org.springframework:spring-context:4.3.9.RELEASE'
