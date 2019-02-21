@@ -7,6 +7,8 @@ import com.typesafe.config.Config;
 import net.arksea.acache.CacheActor;
 import net.arksea.acache.ICacheConfig;
 import net.arksea.config.ConfigKey;
+import net.arksea.dsf.codes.ICodes;
+import net.arksea.dsf.codes.JavaSerializeCodes;
 import net.arksea.dsf.register.RegisterClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -59,7 +62,9 @@ public class CacheServerFactory {
             regname = serviceRegisterName + "-" + serverProfile;
         }
         if (registerClient != null) {
-            registerClient.register(regname, bindPort, actorRef, system);
+            String hostAddrss = InetAddress.getLocalHost().getHostAddress();
+            ICodes codes = new JavaSerializeCodes();
+            registerClient.register(regname, hostAddrss, bindPort, actorRef, system, codes);
         }
         return actorRef;
     }
