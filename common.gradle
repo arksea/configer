@@ -18,7 +18,6 @@ repositories {
 dependencies {
     compile 'net.arksea:acache:0.7.4-SNAPSHOT'
 
-    //runtime 'com.felink:dsf-alarm-log4j2:1.4-SNAPSHOT'
     compile 'org.apache.logging.log4j:log4j-api:2.5'
     compile 'org.apache.logging.log4j:log4j-core:2.5'
 
