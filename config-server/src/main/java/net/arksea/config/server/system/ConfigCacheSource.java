@@ -27,7 +27,7 @@ public class ConfigCacheSource implements IDataSource<ConfigKey,String> {
     ProjectDao projectDao;
     @Autowired
     ConfigDao configDao;
-    @Value("${config.cache.timeout}")
+    @Value("${config.cache.timeout:300000}")
     private long CACHE_DEFAULT_TIMEOUT;
 
     @Override

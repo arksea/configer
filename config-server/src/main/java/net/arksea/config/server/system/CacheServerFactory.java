@@ -30,8 +30,11 @@ public class CacheServerFactory {
     @Autowired
     ConfigCacheSource configCacheSource;
 
-    @Value("${config.serviceRegisterName}")
+    @Value("${config.serviceRegisterName:net.arksea.ConfigServer}")
     String serviceRegisterName;
+
+    @Value("${config.cache.actorCount:1}")
+    int cacheActorCount;
 
     @Autowired
     RegisterClient registerClient;
