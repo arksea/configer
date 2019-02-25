@@ -1,11 +1,16 @@
 package net.arksea.dsf.demo.client;
 
+import akka.actor.ActorSystem;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import net.arksea.config.ConfigService;
+import net.arksea.config.ConfigUpdateService;
 import net.arksea.dsf.client.Client;
 import net.arksea.dsf.register.RegisterClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,22 +26,31 @@ public final class ClientMain {
      * @param args command line args
      */
     public static void main(final String[] args) {
-        test();
+        testEnableRegister();
     }
 
     public static void test() {
         try {
             logger.info("Start DEMO Client");
-            ConfigService configService = new ConfigService("172.17.150.87:8806", "net.arksea.TestProject", "online");
-            try {
-                String value = configService.getString("app.init.configer1");
-                logger.info(value);
-            } catch (Exception ex) {
-                logger.warn("read config failed", ex);
-            }
+            Config cfg = ConfigFactory.parseResources("default-system.conf");
+            ActorSystem system = akka.actor.ActorSystem.create("configServiceSystem", cfg);
+            ConfigService configService = new ConfigService(
+                "172.17.150.87:8806",
+                "net.arksea.TestProject", "online",
+                5000, system);
+            String value = configService.getString("app.init.configer1");
+            logger.info(value);
+
+            ConfigUpdateService updateSvc = new ConfigUpdateService(
+                "xiaohaixing","123456",
+                "172.17.150.87:8806",
+                "net.arksea.TestProject", "online",
+                5000, system);
+            updateSvc.update("appBoot.testConfig3", "\""+LocalDateTime.now().toString()+"\"");
+
             Thread.sleep(3000);
         } catch (Exception ex) {
-            logger.error("Start DEMO Client failed", ex);
+            logger.error("DEMO Client failed", ex);
         }
     }
 
@@ -49,15 +63,24 @@ public final class ClientMain {
             RegisterClient register = new RegisterClient("configer-demo-client", registerAddrs);
             Client client = register.subscribe("net.arksea.ConfigServer-DEV");
             ConfigService configService = new ConfigService(client, "net.arksea.TestProject", "online", 5000, client.system);
-            try {
-                String value = configService.getString("app.init.configer1");
-                logger.info(value);
-            } catch (Exception ex) {
-                logger.warn("read config failed", ex);
-            }
+            String value = configService.getString("app.init.configer1");
+            logger.info(value);
+
+            Thread.sleep(3000);
+
+            Client updateClient = register.subscribe("net.arksea.ConfigUpdateServer-DEV");
+            ConfigUpdateService updateSvc = new ConfigUpdateService(
+                "xiaohaixing", "123456",
+                 updateClient,
+                "net.arksea.TestProject", "online",
+                5000);
+            updateSvc.update("appBoot.testConfig3", "\""+LocalDateTime.now().toString()+"\"");
+
+
+
             Thread.sleep(3000);
         } catch (Exception ex) {
-            logger.error("Start DEMO Client failed", ex);
+            logger.error("DEMO Client failed", ex);
         }
     }
 }

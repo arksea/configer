@@ -87,6 +87,12 @@ public class ConfigerService {
     }
 
     @Transactional
+    public void updateConfigDoc(long userId, String projectName, String profile, String configName, String configDoc) {
+        long docId = configDocDao.getIdByName(projectName, profile, configName);
+        updateConfigDoc(userId, docId, configDoc);
+    }
+
+    @Transactional
     public void updateConfigSchema(long userId, long docId, String configSchema) {
         authService.verifyManagerByDocId(userId, docId);
         configDocDao.updateSchema(docId, configSchema);
