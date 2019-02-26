@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 
 public class ConfigKey implements ConsistentHashingRouter.ConsistentHashable,Serializable {
+    private static final long serialVersionUID = -2597538113359207514L;
     public final String project;
     public final String profile;
     public final String config;
