@@ -24,5 +24,5 @@ public interface ConfigDocDao extends Repository<ConfigDoc,Long> {
         value = "select d.id from cs_project p,cs_config c,cs_config_doc d"
               + " where p.name = ?1 and p.profile = ?2 and c.project_id = p.id"
               + " and c.name = ?3 and c.doc_id = d.id")
-    long getIdByName(String projectName, String profile, String configName);
+    Long getIdByName(String projectName, String profile, String configName);
 }

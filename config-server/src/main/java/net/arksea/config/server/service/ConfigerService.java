@@ -88,7 +88,10 @@ public class ConfigerService {
 
     @Transactional
     public void updateConfigDoc(long userId, String projectName, String profile, String configName, String configDoc) {
-        long docId = configDocDao.getIdByName(projectName, profile, configName);
+        Long docId = configDocDao.getIdByName(projectName, profile, configName);
+        if (docId == null) {
+            throw new IllegalArgumentException("The config not exits: "+projectName+":"+profile+":"+configName);
+        }
         updateConfigDoc(userId, docId, configDoc);
     }
 

@@ -22,6 +22,7 @@ public class ConfigUpdateService {
     public  final String project;
     public  final String profile;
     public  final int timeout;
+    public  final ActorSystem system;
     private final ActorSelection actor;
     private final Client dsfClient;
     private String accessToken;
@@ -42,6 +43,7 @@ public class ConfigUpdateService {
         this.userName = userName;
         this.password = password;
         this.dsfClient = dsfClient;
+        this.system = this.dsfClient.system;
         this.actor = null;
         try {
             login();
@@ -63,6 +65,7 @@ public class ConfigUpdateService {
         this.userName = userName;
         this.password = password;
         this.dsfClient = null;
+        this.system = system;
         this.actor = system.actorSelection("akka.tcp://system@"+serverAddr+"/user/configUpdateServer");
         try {
             login();

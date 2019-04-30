@@ -186,11 +186,11 @@ public class ConfigService {
         }
     }
 
-    private <T> T get(String key, Class<T> clazz) {
+    public <T> T get(String key, Class<T> clazz) {
         return get(key, clazz, false);
     }
 
-    private <T> T get(String key, Class<T> clazz, boolean fromServer) {
+    public <T> T get(String key, Class<T> clazz, boolean fromServer) {
         TimedData td = configMap.get(key);
         if (td == null || fromServer && fromServerRateLimiter.tryAcquire()) {
             ConfigKey configKey = new ConfigKey(project, profile, key);
