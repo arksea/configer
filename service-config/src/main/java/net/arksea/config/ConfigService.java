@@ -36,7 +36,7 @@ public class ConfigService {
     private final Map<String,TimedData<Object>> configMap = new ConcurrentHashMap<>();
 
     public ConfigService(final Client dsfClient, final String project, final String profile) {
-        this(dsfClient, project, profile, 5000, dsfClient.system);
+        this(dsfClient, project, profile, 3000, dsfClient.system);
     }
 
     public ConfigService(final Client dsfClient,
@@ -68,7 +68,7 @@ public class ConfigService {
 
 
     public ConfigService(final String serverAddr, final String project,final String profile) {
-        this(serverAddr, project, profile, 5000, null);
+        this(serverAddr, project, profile, 3000, null);
     }
 
     public ConfigService(final String serverAddr,
@@ -107,44 +107,95 @@ public class ConfigService {
         return get(key, Integer.class);
     }
 
+    public Integer getInteger(String key, int def) {
+        return getByDefault(key, Integer.class, def);
+    }
+
     public Long getLong(String key) {
         return get(key, Long.class);
+    }
+
+    public Long getLong(String key, long def) {
+        return getByDefault(key, Long.class, def);
     }
 
     public Double getDouble(String key) {
         return get(key, Double.class);
     }
 
+    public Double getDouble(String key, double def) {
+        return getByDefault(key, Double.class, def);
+    }
+
     public Float getFloat(String key) {
         return get(key, Float.class);
+    }
+
+    public Float getFloat(String key, float def) {
+        return getByDefault(key, Float.class, def);
     }
 
     public String getString(String key) {
         return get(key, String.class);
     }
 
+    public String getString(String key, String def) {
+        return getByDefault(key, String.class, def);
+    }
+
     public Boolean getBoolean(String key) {
         return get(key, Boolean.class);
+    }
+
+    public Boolean getBoolean(String key, boolean def) {
+        return getByDefault(key, Boolean.class, def);
     }
 
     public List getList(String key) {
         return get(key, List.class);
     }
 
-    public <T> T get(String key, Class<T> clazz, T defaultValue) {
+    public List getList(String key, List def) {
+        return getByDefault(key, List.class, def);
+    }
+
+    public <T> T getByDefault(String key, Class<T> clazz, T defaultValue) {
+        return getByDefault(key, clazz, defaultValue, false);
+    }
+
+    /**
+     *
+     * @param key
+     * @param clazz
+     * @param defaultValue 默认值
+     * @param waitForUpdate   true:  优先从服务获取: 当缓存的数据已过期，则从服务端同步获取，并且等待直到新值返回，当等待超时则用旧值返回
+     *                        false: 优先立即返回;   当缓存的数据已过期，则发起从服务端更新数据的异步请求，随即不等待立即用当前缓存的旧值返回
+     * @param <T>
+     * @return
+     */
+    public <T> T getByDefault(String key, Class<T> clazz, T defaultValue, boolean waitForUpdate) {
         try {
-            return get(key, clazz);
+            return get(key, clazz, waitForUpdate);
         } catch (Exception ex) {
             logger.warn(ex.getMessage(),ex);
             return defaultValue;
         }
     }
 
-    private <T> T get(String key, Class<T> clazz) {
+    public <T> T get(String key, Class<T> clazz) {
+        return get(key, clazz, false);
+    }
+
+    public <T> T get(String key, Class<T> clazz, boolean waitForUpdate) {
         TimedData td = configMap.get(key);
-        if (td == null) {
+        long now = System.currentTimeMillis();
+        if (td == null || waitForUpdate && now>td.time) {
             ConfigKey configKey = new ConfigKey(project, profile, key);
-            logger.info("从服务读取配置: {}", configKey);
+            if (td == null) {
+                logger.info("从服务读取配置: {}", configKey);
+            } else {
+                logger.debug("从服务读取配置: {}", configKey);
+            }
             GetData<ConfigKey,String> req = new GetData<>(configKey);
             try { //配置初始值优先从配置服务读取，防止应用启动后首次读取本地配置造成与配置服务的值不同
                 DataResult<ConfigKey,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
@@ -217,6 +268,9 @@ public class ConfigService {
             @Override
             public String getCacheName() {
                 return "localConfigCache-"+project+"-"+profile;
+            }
+            public boolean waitForRespond() {
+                return true;
             }
         };
         localArticleCache = LocalCacheCreator.createLocalCache(system, cfg, remoteCacheAsker, timeout, timeout * 5);

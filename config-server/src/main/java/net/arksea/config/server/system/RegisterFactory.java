@@ -14,16 +14,16 @@ import java.util.List;
  */
 @Component
 public class RegisterFactory {
-    @Value("${config.enableRegisterService}")
+    @Value("${config.enableRegisterService:false}")
     boolean enableRegisterService;
 
-    @Value("${dsf.registerAddr1}")
+    @Value("${dsf.registerAddr1:}")
     String dsfRegisterAddr1;
 
-    @Value("${dsf.registerAddr2}")
+    @Value("${dsf.registerAddr2:}")
     String dsfRegisterAddr2;
 
-    @Value("${dsf.clientName}")
+    @Value("${dsf.clientName:config-server}")
     String dsfClientName;
 
     @Bean

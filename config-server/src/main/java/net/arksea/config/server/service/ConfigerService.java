@@ -87,6 +87,15 @@ public class ConfigerService {
     }
 
     @Transactional
+    public void updateConfigDoc(long userId, String projectName, String profile, String configName, String configDoc) {
+        Long docId = configDocDao.getIdByName(projectName, profile, configName);
+        if (docId == null) {
+            throw new IllegalArgumentException("The config not exits: "+projectName+":"+profile+":"+configName);
+        }
+        updateConfigDoc(userId, docId, configDoc);
+    }
+
+    @Transactional
     public void updateConfigSchema(long userId, long docId, String configSchema) {
         authService.verifyManagerByDocId(userId, docId);
         configDocDao.updateSchema(docId, configSchema);

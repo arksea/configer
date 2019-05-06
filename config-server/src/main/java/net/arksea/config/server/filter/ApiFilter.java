@@ -38,7 +38,7 @@ public class ApiFilter implements Filter {
     @Autowired
     TokenService tokenService;
 
-    @Value("${config.web.allowedOrigins}")
+    @Value("${config.web.allowedOrigins:}")
     String allowOriginsStr;
     private Set<String> allowOrigins;
 
