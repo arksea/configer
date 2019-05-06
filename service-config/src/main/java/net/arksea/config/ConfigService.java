@@ -4,7 +4,6 @@ import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.dispatch.OnComplete;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.util.concurrent.RateLimiter;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.arksea.acache.*;
@@ -35,7 +34,6 @@ public class ConfigService {
     private CacheAsker<ConfigKey, String> localArticleCache;
     private IConfigPersistence configPersistence;
     private final Map<String,TimedData<Object>> configMap = new ConcurrentHashMap<>();
-    private RateLimiter fromServerRateLimiter = RateLimiter.create(1);
 
     public ConfigService(final Client dsfClient, final String project, final String profile) {
         this(dsfClient, project, profile, 3000, dsfClient.system);
@@ -110,7 +108,7 @@ public class ConfigService {
     }
 
     public Integer getInteger(String key, int def) {
-        return get(key, Integer.class, def);
+        return getByDefault(key, Integer.class, def);
     }
 
     public Long getLong(String key) {
@@ -118,7 +116,7 @@ public class ConfigService {
     }
 
     public Long getLong(String key, long def) {
-        return get(key, Long.class, def);
+        return getByDefault(key, Long.class, def);
     }
 
     public Double getDouble(String key) {
@@ -126,7 +124,7 @@ public class ConfigService {
     }
 
     public Double getDouble(String key, double def) {
-        return get(key, Double.class, def);
+        return getByDefault(key, Double.class, def);
     }
 
     public Float getFloat(String key) {
@@ -134,7 +132,7 @@ public class ConfigService {
     }
 
     public Float getFloat(String key, float def) {
-        return get(key, Float.class, def);
+        return getByDefault(key, Float.class, def);
     }
 
     public String getString(String key) {
@@ -142,7 +140,7 @@ public class ConfigService {
     }
 
     public String getString(String key, String def) {
-        return get(key, String.class, def);
+        return getByDefault(key, String.class, def);
     }
 
     public Boolean getBoolean(String key) {
@@ -150,7 +148,7 @@ public class ConfigService {
     }
 
     public Boolean getBoolean(String key, boolean def) {
-        return get(key, Boolean.class, def);
+        return getByDefault(key, Boolean.class, def);
     }
 
     public List getList(String key) {
@@ -158,28 +156,26 @@ public class ConfigService {
     }
 
     public List getList(String key, List def) {
-        return get(key, List.class, def);
+        return getByDefault(key, List.class, def);
     }
 
-    public <T> T get(String key, Class<T> clazz, T defaultValue) {
-        return get(key, clazz, defaultValue, false);
+    public <T> T getByDefault(String key, Class<T> clazz, T defaultValue) {
+        return getByDefault(key, clazz, defaultValue, false);
     }
 
     /**
      *
      * @param key
      * @param clazz
-     * @param defaultValue  默认值
-     * @param fromServer    优先从服务获取，适合那种读取量很少，又希望及时获得新值的情境，
-     *                      此时本地缓存将退化为服务错误时的备用值，
-     *                      对于访问量大的配置，配置服务及数据库将承受不必要的压力，为了防止这种情况出现
-     *                      对于fromServer为true的访问做了流量限制（每秒1次）
+     * @param defaultValue 默认值
+     * @param waitForUpdate   true:  优先从服务获取: 当缓存的数据已过期，则从服务端同步获取，并且等待直到新值返回，当等待超时则用旧值返回
+     *                        false: 优先立即返回;   当缓存的数据已过期，则发起从服务端更新数据的异步请求，随即不等待立即用当前缓存的旧值返回
      * @param <T>
      * @return
      */
-    public <T> T get(String key, Class<T> clazz, T defaultValue, boolean fromServer) {
+    public <T> T getByDefault(String key, Class<T> clazz, T defaultValue, boolean waitForUpdate) {
         try {
-            return get(key, clazz, fromServer);
+            return get(key, clazz, waitForUpdate);
         } catch (Exception ex) {
             logger.warn(ex.getMessage(),ex);
             return defaultValue;
@@ -190,11 +186,16 @@ public class ConfigService {
         return get(key, clazz, false);
     }
 
-    public <T> T get(String key, Class<T> clazz, boolean fromServer) {
+    public <T> T get(String key, Class<T> clazz, boolean waitForUpdate) {
         TimedData td = configMap.get(key);
-        if (td == null || fromServer && fromServerRateLimiter.tryAcquire()) {
+        long now = System.currentTimeMillis();
+        if (td == null || waitForUpdate && now>td.time) {
             ConfigKey configKey = new ConfigKey(project, profile, key);
-            logger.info("从服务读取配置: {}", configKey);
+            if (td == null) {
+                logger.info("从服务读取配置: {}", configKey);
+            } else {
+                logger.debug("从服务读取配置: {}", configKey);
+            }
             GetData<ConfigKey,String> req = new GetData<>(configKey);
             try { //配置初始值优先从配置服务读取，防止应用启动后首次读取本地配置造成与配置服务的值不同
                 DataResult<ConfigKey,String> ret = Await.result(localArticleCache.ask(req), Duration.create(timeout, "ms"));
@@ -267,6 +268,9 @@ public class ConfigService {
             @Override
             public String getCacheName() {
                 return "localConfigCache-"+project+"-"+profile;
+            }
+            public boolean waitForRespond() {
+                return true;
             }
         };
         localArticleCache = LocalCacheCreator.createLocalCache(system, cfg, remoteCacheAsker, timeout, timeout * 5);
