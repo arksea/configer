@@ -1,12 +1,16 @@
 package net.arksea.config;
 
+import akka.routing.ConsistentHashingRouter;
+
 import java.io.Serializable;
 
 /**
+ *
  * Created by xiaohaixing on 2017/8/5.
  */
 
-public class ConfigKey implements Serializable {
+public class ConfigKey implements ConsistentHashingRouter.ConsistentHashable,Serializable {
+    private static final long serialVersionUID = -2597538113359207514L;
     public final String project;
     public final String profile;
     public final String config;
@@ -32,5 +36,9 @@ public class ConfigKey implements Serializable {
         return this.strValue.equals(((ConfigKey) o).strValue);
     }
 
+    @Override
+    public Object consistentHashKey() {
+        return strValue;
+    }
 }
 

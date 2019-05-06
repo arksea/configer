@@ -50,11 +50,15 @@ public class LoginService {
     }
 
     public Optional<User> login(LoginInfo info) {
+        return login(info.getName(), info.getPassword());
+    }
+
+    public Optional<User> login(String name, String pwd) {
         try {
-            List<User> rows = userDao.findByName(info.getName());
+            List<User> rows = userDao.findByName(name);
             if (rows.size() > 0) {
                 User u = rows.get(0);
-                String pwdhash = hashPassword(info.getPassword(), u.getSalt());
+                String pwdhash = hashPassword(pwd, u.getSalt());
                 boolean succeed = slowEquals(pwdhash.getBytes(), u.getPassword().getBytes());
                 logger.info("User login, userName={}, succeed={}", u.getName(), succeed);
                 u.setLastLogin(new Date());
@@ -62,7 +66,7 @@ public class LoginService {
                 return Optional.of(saved);
             }
         } catch (Exception ex) {
-            logger.warn("User login failed, userName={}", info.getName(), ex);
+            logger.warn("User login failed, userName={}", name, ex);
         }
         return Optional.empty();
     }

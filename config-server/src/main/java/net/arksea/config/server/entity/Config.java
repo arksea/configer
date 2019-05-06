@@ -15,6 +15,7 @@ public class Config extends IdEntity {
     private String name;
     private String description;
     private ConfigDoc doc;
+    private int cacheMinutes;
     private boolean deleted;
 
     @ManyToOne
@@ -63,6 +64,15 @@ public class Config extends IdEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Column(nullable = false, columnDefinition = "TINYINT(2) DEFAULT 0")
+    public int getCacheMinutes() {
+        return cacheMinutes;
+    }
+
+    public void setCacheMinutes(int cacheMinutes) {
+        this.cacheMinutes = cacheMinutes;
     }
 
     @Override

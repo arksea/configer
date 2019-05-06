@@ -7,6 +7,7 @@ import com.typesafe.config.Config;
 import net.arksea.acache.CacheActor;
 import net.arksea.acache.ICacheConfig;
 import net.arksea.config.ConfigKey;
+import net.arksea.config.RegisterName;
 import net.arksea.dsf.codes.ICodes;
 import net.arksea.dsf.codes.JavaSerializeCodes;
 import net.arksea.dsf.register.RegisterClient;
@@ -30,8 +31,8 @@ public class CacheServerFactory {
     @Autowired
     ConfigCacheSource configCacheSource;
 
-    @Value("${config.serviceRegisterName}")
-    String serviceRegisterName;
+    @Value("${config.cache.actorCount:1}")
+    int cacheActorCount;
 
     @Autowired
     RegisterClient registerClient;
@@ -54,12 +55,17 @@ public class CacheServerFactory {
                 return true;
             }
         };
-        Props props = CacheActor.props(cacheConfig, configCacheSource);
+        Props props;
+        if (cacheActorCount > 1) {
+            props = CacheActor.propsOfCachePool(cacheActorCount, cacheConfig, configCacheSource);
+        } else {
+            props = CacheActor.props(cacheConfig, configCacheSource);
+        }
         ActorRef actorRef = system.actorOf(props, "configCacheServer");
         int bindPort = systemConfig.getInt("akka.remote.netty.tcp.port");
-        String regname = serviceRegisterName;
+        String regname = RegisterName.configServer;
         if (!serverProfile.equals("online")) {
-            regname = serviceRegisterName + "-" + serverProfile;
+            regname = RegisterName.configServer + "-" + serverProfile;
         }
         if (registerClient != null) {
             String hostAddrss = InetAddress.getLocalHost().getHostAddress();

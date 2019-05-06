@@ -27,15 +27,17 @@ public class ConfigCacheSource implements IDataSource<ConfigKey,String> {
     ProjectDao projectDao;
     @Autowired
     ConfigDao configDao;
-    @Value("${config.cache.timeout}")
-    private long CACHE_DEFAULT_TIMEOUT;
+
+    @Value("${config.cacheMinutes:5}")
+    private int CACHE_DEFAULT_MINUTES;
 
     @Override
     public Future<TimedData<String>> request(ActorRef cacheActor, String cacheName, ConfigKey key) {
         return Futures.future(() -> {
             Project prj = projectDao.getByNameAndProfile(key.project, key.profile);
             Config cfg = configDao.getByNameAndProject(key.config, prj);
-            long expiredTime = System.currentTimeMillis() + CACHE_DEFAULT_TIMEOUT;
+            int cacheMinutes = cfg.getCacheMinutes() == 0 ? CACHE_DEFAULT_MINUTES : cfg.getCacheMinutes();
+            long expiredTime = System.currentTimeMillis() + cacheMinutes * 60_000;
             return new TimedData<>(expiredTime, cfg.getDoc().getValue());
         },system.dispatcher());
     }
