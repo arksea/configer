@@ -63,7 +63,11 @@ public class LoginService {
                 logger.info("User login, userName={}, succeed={}", u.getName(), succeed);
                 u.setLastLogin(new Date());
                 User saved = userDao.save(u);
-                return Optional.of(saved);
+                if (succeed) {
+                    return Optional.of(saved);
+                } else {
+                    return Optional.empty();
+                }
             }
         } catch (Exception ex) {
             logger.warn("User login failed, userName={}", name, ex);
